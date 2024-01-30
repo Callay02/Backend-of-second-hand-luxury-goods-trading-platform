@@ -54,5 +54,10 @@ public class UserController {
     public SaResult getCode(@RequestParam(name = "email") String email){
         return userService.getCode(email);
     }
+
+    @GetMapping("isLogin")
+    public SaResult isLogin(){
+        return SaResult.ok(String.valueOf(StpUtil.isLogin()));
+    }
 }
 

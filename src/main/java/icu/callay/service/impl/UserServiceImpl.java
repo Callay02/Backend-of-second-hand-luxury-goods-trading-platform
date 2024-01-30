@@ -56,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         if(password.equals(user.getPassword())) {
             StpUtil.login(selectUser.getId());
-            return SaResult.data(selectUser);
+            return SaResult.data(StpUtil.getTokenInfo()).setMsg(String.valueOf(selectUser.getType()));
         }
         else
             return SaResult.error();
