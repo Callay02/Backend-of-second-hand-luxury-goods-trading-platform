@@ -27,5 +27,10 @@ public class GoodsController {
     public SaResult getRandomGoodsInfo(){
         return goodsService.getRandomGoodsInfo();
     }
+
+    @GetMapping("getGoodsByType")
+    public SaResult getGoodsByType(@RequestParam(name="type") int type){
+        return goodsService.getGoodsByType(type);
+    }
 }
 

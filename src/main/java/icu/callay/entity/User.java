@@ -1,5 +1,7 @@
 package icu.callay.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,7 +25,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @TableName("user")
 public class User implements Serializable {
 
-    private Integer id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     private String name;
 

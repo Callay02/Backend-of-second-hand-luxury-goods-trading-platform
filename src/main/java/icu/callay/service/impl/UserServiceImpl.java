@@ -56,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         if(password.equals(user.getPassword())) {
             StpUtil.login(selectUser.getId());
-            return SaResult.data(StpUtil.getTokenInfo()).setMsg(String.valueOf(selectUser.getType()));
+            return SaResult.data(StpUtil.getTokenInfo());
         }
         else
             return SaResult.error();
@@ -79,7 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
                     userMapper.insert(user);
                     StpUtil.login(user.getId());
-                    return SaResult.data(user);
+                    return SaResult.data(StpUtil.getTokenInfo());
                 }
                 catch (Exception e){
                     return SaResult.error(e.getMessage());
@@ -107,7 +107,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
 
-
+    @Override
+    public SaResult getUserInfo(Long id) {
+        User user = getById(id);
+        return SaResult.data(user);
+    }
 
 
 }

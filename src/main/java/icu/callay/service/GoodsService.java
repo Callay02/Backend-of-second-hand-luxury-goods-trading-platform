@@ -13,6 +13,8 @@ import icu.callay.entity.Goods;
 public interface GoodsService extends IService<Goods> {
 
     SaResult getRandomGoodsInfo();
+
+    SaResult getGoodsByType(int type);
 }
 
 
