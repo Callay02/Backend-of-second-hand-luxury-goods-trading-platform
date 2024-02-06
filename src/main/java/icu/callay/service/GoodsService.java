@@ -15,6 +15,8 @@ public interface GoodsService extends IService<Goods> {
     SaResult getRandomGoodsInfo();
 
     SaResult getGoodsByType(int type);
+
+    SaResult getGoodsByType(int type, int page, int rows);
 }
 
 

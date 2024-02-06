@@ -32,5 +32,10 @@ public class GoodsController {
     public SaResult getGoodsByType(@RequestParam(name="type") int type){
         return goodsService.getGoodsByType(type);
     }
+
+    @GetMapping("getPageByType")
+    public SaResult getPageByType(@RequestParam("type") int type,@RequestParam("page") int page,@RequestParam("rows") int rows){
+        return goodsService.getGoodsByType(type,page,rows);
+    }
 }
 
