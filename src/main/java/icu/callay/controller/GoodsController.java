@@ -3,10 +3,13 @@ package icu.callay.controller;
 
 
 import cn.dev33.satoken.util.SaResult;
+import icu.callay.entity.GoodsBrand;
 import icu.callay.service.GoodsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * (Goods)表控制层
@@ -34,8 +37,13 @@ public class GoodsController {
     }
 
     @GetMapping("getPageByType")
-    public SaResult getPageByType(@RequestParam("type") int type,@RequestParam("page") int page,@RequestParam("rows") int rows){
-        return goodsService.getGoodsByType(type,page,rows);
+    public SaResult getPageByType(@RequestParam("type") int type, @RequestParam("page") int page, @RequestParam("rows") int rows){
+        return goodsService.getPageByType(type,page,rows);
+    }
+
+    @GetMapping("getGoodsById")
+    public SaResult getGoodsById(@RequestParam("id")int id){
+        return goodsService.getGoodsById(id);
     }
 }
 

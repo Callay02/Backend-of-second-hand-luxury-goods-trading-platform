@@ -3,6 +3,9 @@ package icu.callay.service;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 import icu.callay.entity.Goods;
+import icu.callay.entity.GoodsBrand;
+
+import java.util.List;
 
 /**
  * (Goods)表服务接口
@@ -16,7 +19,9 @@ public interface GoodsService extends IService<Goods> {
 
     SaResult getGoodsByType(int type);
 
-    SaResult getGoodsByType(int type, int page, int rows);
+    SaResult getPageByType(int type, int page, int rows);
+
+    SaResult getGoodsById(int id);
 }
 
 

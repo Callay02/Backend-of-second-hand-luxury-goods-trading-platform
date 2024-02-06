@@ -2,6 +2,8 @@ package icu.callay.vo;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class GoodsVo {
     private Integer id;
@@ -17,4 +19,6 @@ public class GoodsVo {
     private String img;
 
     private Integer fineness;
+
+    private Date addTime;
 }

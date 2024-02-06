@@ -4,6 +4,7 @@ import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import icu.callay.entity.GoodsBrand;
 import icu.callay.entity.GoodsType;
 import icu.callay.mapper.GoodsBrandMapper;
 import icu.callay.mapper.GoodsMapper;
@@ -56,7 +57,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     public SaResult getGoodsByType(int type) {
         System.out.println(type);
         QueryWrapper<Goods> goodsQueryWrapper = new QueryWrapper<>();
-        goodsQueryWrapper.eq("type",type);
+        goodsQueryWrapper.eq("type",type).and(wrapper->wrapper.eq("state",1));
 
         List<Goods> goodsList = goodsMapper.selectList(goodsQueryWrapper);
         //System.out.println(goodsList);
@@ -75,11 +76,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public SaResult getGoodsByType(int type, int page, int rows) {
+    public SaResult getPageByType(int type, int page, int rows) {
         //System.out.println(page+""+rows);
         Page<Goods> goodsPage = new Page<>(page,rows);
         QueryWrapper<Goods> goodsQueryWrapper = new QueryWrapper<>();
-        goodsQueryWrapper.eq("type",type);
+        goodsQueryWrapper.eq("type",type).and(wrapper->wrapper.eq("state",1));
+
         goodsMapper.selectPage(goodsPage,goodsQueryWrapper);
 
         List<GoodsVo> goodsVoList = new ArrayList<>();
@@ -99,6 +101,19 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goodsPageVo.setTotal(goodsPage.getTotal());
 
         return SaResult.data(goodsPageVo);
+    }
+
+    @Override
+    public SaResult getGoodsById(int id) {
+        Goods goods = getById(id);
+        GoodsVo goodsVo = new GoodsVo();
+        BeanUtils.copyProperties(goods,goodsVo);
+
+        goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+        QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
+        goodsTypeQueryWrapper.eq("type",goods.getType());
+        goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
+        return SaResult.data(goodsVo);
     }
 }
 

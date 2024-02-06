@@ -17,7 +17,7 @@ import java.util.List;
 @Mapper
 public interface GoodsMapper extends BaseMapper<Goods> {
 
-    @Select("select * from goods order by rand() limit 24")
+    @Select("select * from goods where state = 1 order by rand() limit 24")
     List<Goods> getRandomGoodsInfo();
 
 }
