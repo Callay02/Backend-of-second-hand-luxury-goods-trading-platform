@@ -34,7 +34,7 @@ public class Goods implements Serializable {
     private String img;
 
     private Integer fineness;
-//来自用户
+    //来自用户
     private Long userId;
 
     private Date addTime;

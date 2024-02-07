@@ -21,4 +21,6 @@ public class GoodsVo {
     private Integer fineness;
 
     private Date addTime;
+
+    private Integer state;
 }
