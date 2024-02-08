@@ -7,7 +7,7 @@ import icu.callay.entity.GoodsBrand;
 /**
  * (GoodsBrand)表服务接口
  *
- * @author makejava
+ * @author Callay
  * @since 2024-01-30 19:07:20
  */
 public interface GoodsBrandService extends IService<GoodsBrand> {

@@ -7,7 +7,7 @@ import icu.callay.entity.User;
 /**
  * (User)表服务接口
  *
- * @author makejava
+ * @author Callay
  * @since 2024-01-11 23:24:05
  */
 public interface UserService extends IService<User> {

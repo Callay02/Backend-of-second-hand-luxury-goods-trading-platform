@@ -8,21 +8,21 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 
 /**
- * (GoodsBrand)表实体类
+ * (OrderFormState)表实体类
  *
  * @author Callay
- * @since 2024-01-30 19:07:20
+ * @since 2024-02-08 23:02:33
  */
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("goods_brand")
-public class GoodsBrand implements Serializable {
+@TableName("order_form_state")
+public class OrderFormState implements Serializable {
 
     private Integer id;
 
-    private String name;
+    private String state;
 
 }
 

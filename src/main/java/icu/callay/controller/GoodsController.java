@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * (Goods)表控制层
  *
- * @author makejava
+ * @author Callay
  * @since 2024-01-30 19:08:08
  */
 @Slf4j

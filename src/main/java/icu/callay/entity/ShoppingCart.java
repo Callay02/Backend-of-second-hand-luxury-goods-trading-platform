@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 /**
  * (ShoppingCart)表实体类
  *
- * @author makejava
+ * @author Callay
  * @since 2024-02-07 11:40:36
  */
 

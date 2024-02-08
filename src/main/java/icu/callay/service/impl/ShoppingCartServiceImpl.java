@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * (ShoppingCart)表服务实现类
  *
- * @author makejava
+ * @author Callay
  * @since 2024-02-07 11:40:36
  */
 @Service("shoppingCartService")

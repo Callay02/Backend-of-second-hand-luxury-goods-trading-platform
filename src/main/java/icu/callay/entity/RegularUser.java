@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 /**
  * (RegularUser)表实体类
  *
- * @author makejava
+ * @author Callay
  * @since 2024-02-07 19:45:58
  */
 

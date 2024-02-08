@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * (GoodsBrand)表数据库访问层
  *
- * @author makejava
+ * @author Callay
  * @since 2024-01-30 19:07:20
  */
 

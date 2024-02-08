@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 /**
  * (Goods)表实体类
  *
- * @author makejava
+ * @author Callay
  * @since 2024-02-01 16:05:40
  */
 

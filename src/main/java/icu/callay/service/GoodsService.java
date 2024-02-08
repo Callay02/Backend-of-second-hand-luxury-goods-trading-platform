@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * (Goods)表服务接口
  *
- * @author makejava
+ * @author Callay
  * @since 2024-01-30 19:05:04
  */
 public interface GoodsService extends IService<Goods> {

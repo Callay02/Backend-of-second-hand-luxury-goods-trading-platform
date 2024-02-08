@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * (GoodsBrand)表控制层
  *
- * @author makejava
+ * @author Callay
  * @since 2024-01-30 19:07:20
  */
 @Slf4j

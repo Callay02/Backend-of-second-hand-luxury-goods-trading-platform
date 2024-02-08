@@ -7,7 +7,7 @@ import icu.callay.entity.ShoppingCart;
 /**
  * (ShoppingCart)表服务接口
  *
- * @author makejava
+ * @author Callay
  * @since 2024-02-07 11:40:36
  */
 public interface ShoppingCartService extends IService<ShoppingCart> {

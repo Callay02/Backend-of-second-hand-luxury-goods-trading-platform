@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * (GoodsType)表控制层
  *
- * @author makejava
+ * @author Callay
  * @since 2024-01-30 19:07:47
  */
 @Slf4j

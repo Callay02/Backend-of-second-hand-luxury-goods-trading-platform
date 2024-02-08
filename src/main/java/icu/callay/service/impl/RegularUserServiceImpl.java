@@ -1,6 +1,7 @@
 package icu.callay.service.impl;
 
 import cn.dev33.satoken.util.SaResult;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import icu.callay.mapper.RegularUserMapper;
 import icu.callay.entity.RegularUser;
@@ -11,10 +12,12 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+
 /**
  * (RegularUser)表服务实现类
  *
- * @author makejava
+ * @author Callay
  * @since 2024-02-07 19:45:58
  */
 @Service("regularUserService")
@@ -35,6 +38,24 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
         }
 
 
+    }
+
+    @Override
+    public SaResult updateUserInfoById(RegularUser regularUser) {
+        regularUser.setUpdateTime(new Date());
+        regularUser.setMoney(null);
+        try {
+            if(count(new QueryWrapper<RegularUser>().eq("id",regularUser.getId()))>0){
+                update(regularUser,new QueryWrapper<RegularUser>().eq("id",regularUser.getId()));
+                return SaResult.ok("修改成功");
+            }else{
+                save(regularUser);
+                return SaResult.ok("录入成功");
+            }
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
     }
 
 }

@@ -1,44 +1,37 @@
 package icu.callay.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.io.Serializable;
-import java.util.Date;
-
 import com.baomidou.mybatisplus.annotation.TableName;
 
 
 /**
- * (User)表实体类
+ * (OrderForm)表实体类
  *
  * @author Callay
- * @since 2024-01-13 21:28:58
+ * @since 2024-02-08 22:59:10
  */
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("user")
-public class User implements Serializable {
+@TableName("order_form")
+public class OrderForm implements Serializable {
 
-    @TableId(type = IdType.AUTO)
     private Long id;
 
-    private String name;
+    private Long uid;
 
-    private String password;
+    private Integer gid;
 
-    private String email;
+    private Integer logisticsNumber;
 
-    private String idCard;
-
-    private String realName;
-
-    private Integer type;
+    private Integer state;
 
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createTime;

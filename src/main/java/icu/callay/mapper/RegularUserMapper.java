@@ -7,7 +7,7 @@ import icu.callay.entity.RegularUser;
 /**
  * (RegularUser)表数据库访问层
  *
- * @author makejava
+ * @author Callay
  * @since 2024-02-07 19:45:58
  */
 
