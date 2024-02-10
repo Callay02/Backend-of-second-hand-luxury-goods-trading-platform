@@ -1,6 +1,9 @@
 package icu.callay.entity;
 
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +24,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @TableName("goods")
 public class Goods implements Serializable {
 
-    private Integer id;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     private Integer type;
 
@@ -35,7 +39,7 @@ public class Goods implements Serializable {
 
     private Integer fineness;
     //来自用户
-    private Long userId;
+    private Integer userId;
 
     private Date addTime;
 

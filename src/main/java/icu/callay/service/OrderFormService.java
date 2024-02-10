@@ -15,6 +15,10 @@ import java.util.List;
 public interface OrderFormService extends IService<OrderForm> {
 
     SaResult createOrderForm(List<OrderForm> orderFormList);
+
+    SaResult getToBeShippedById(int id);
+
+    SaResult cancelOrderById(Long id,Long uid);
 }
 
 

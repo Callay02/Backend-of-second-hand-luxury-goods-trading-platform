@@ -42,6 +42,7 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
 
     @Override
     public SaResult updateUserInfoById(RegularUser regularUser) {
+        //System.out.println(regularUser);
         regularUser.setUpdateTime(new Date());
         regularUser.setMoney(null);
         try {

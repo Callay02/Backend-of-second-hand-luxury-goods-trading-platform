@@ -16,7 +16,7 @@ public interface ShoppingCartService extends IService<ShoppingCart> {
 
     SaResult getShoppingCartById(int id);
 
-    SaResult deleteShoppingCartById(int uid, int gid);
+    SaResult deleteShoppingCartById(Long uid, Long gid);
 }
 
 

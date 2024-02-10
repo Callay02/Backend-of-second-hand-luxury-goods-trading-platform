@@ -32,8 +32,7 @@ public class ShoppingCartController {
     }
 
     @GetMapping("deleteShoppingCartById")
-    public SaResult deleteShoppingCartById(@RequestParam("uid")int uid,@RequestParam("gid")int gid){
-        System.out.println(uid+" "+gid);
+    public SaResult deleteShoppingCartById(@RequestParam("uid")Long uid,@RequestParam("gid")Long gid){
         return shoppingCartService.deleteShoppingCartById(uid,gid);
     }
 }

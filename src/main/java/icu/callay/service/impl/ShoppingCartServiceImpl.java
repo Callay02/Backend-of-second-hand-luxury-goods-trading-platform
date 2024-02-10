@@ -81,7 +81,7 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
     }
 
     @Override
-    public SaResult deleteShoppingCartById(int uid, int gid) {
+    public SaResult deleteShoppingCartById(Long uid, Long gid) {
         QueryWrapper<ShoppingCart> shoppingCartQueryWrapper = new QueryWrapper<>();
         shoppingCartQueryWrapper.eq("uid",uid).and(wrapper->{
             wrapper.eq("gid",gid);

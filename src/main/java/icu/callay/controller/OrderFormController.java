@@ -27,5 +27,15 @@ public class OrderFormController {
     public SaResult createOrderForm(@RequestBody List<OrderForm> orderFormList){
         return orderFormService.createOrderForm(orderFormList);
     }
+
+    @GetMapping("getToBeShippedById")
+    public SaResult getToBeShippedById(@RequestParam("id")int id){
+        return orderFormService.getToBeShippedById(id);
+    }
+
+    @GetMapping("cancelOrderById")
+    public SaResult cancelOrderById(@RequestParam("id")Long id,@RequestParam("uid")Long uid){
+        return orderFormService.cancelOrderById(id,uid);
+    }
 }
 

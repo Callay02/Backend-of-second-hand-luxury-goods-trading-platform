@@ -1,12 +1,18 @@
 package icu.callay.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class GoodsVo {
+public class OrderFormVo {
+
+    //订单号
     private Long id;
+
+    //商品信息相关
+    private Long gid;
 
     private String typeName;
 
@@ -20,7 +26,8 @@ public class GoodsVo {
 
     private Integer fineness;
 
-    private Date addTime;
+    private Integer logisticsNumber;
 
-    private Integer state;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date createTime;
 }
