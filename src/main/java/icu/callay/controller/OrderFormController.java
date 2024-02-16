@@ -37,5 +37,20 @@ public class OrderFormController {
     public SaResult cancelOrderById(@RequestParam("id")Long id,@RequestParam("uid")Long uid){
         return orderFormService.cancelOrderById(id,uid);
     }
+
+    @GetMapping("getShippedById")
+    public SaResult getShippedById(@RequestParam("id")Long id){
+        return orderFormService.getShippedById(id);
+    }
+
+    @GetMapping("getSignedById")
+    public SaResult getSignedById(@RequestParam("id")Long id){
+        return orderFormService.getSignedById(id);
+    }
+
+    @PostMapping("Sign")
+    public SaResult Sign(@RequestBody OrderForm orderForm){
+        return orderFormService.Sign(orderForm);
+    }
 }
 

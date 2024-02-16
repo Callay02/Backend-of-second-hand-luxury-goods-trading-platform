@@ -51,7 +51,7 @@ public class UserController {
     //注册
     @PostMapping("register")
     public SaResult register(@RequestBody User user){
-        System.out.println(user);
+        //System.out.println(user);
         return userService.userRegister(user);
     }
 
@@ -66,8 +66,8 @@ public class UserController {
     }
 
     @GetMapping("getUserInfo")
-    public SaResult getUserInfo(@RequestParam(name = "id") Long id){
-        return userService.getUserInfo(id);
+    public SaResult getUserInfo(@RequestParam(name = "id") Long id,@RequestParam("password")String pwd){
+        return userService.getUserInfo(id,pwd);
     }
 }
 

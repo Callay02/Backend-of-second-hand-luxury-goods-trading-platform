@@ -13,6 +13,10 @@ import icu.callay.entity.GoodsBrand;
 public interface GoodsBrandService extends IService<GoodsBrand> {
 
     SaResult getGoodsBrand();
+
+    SaResult getGoodsBrandPage(int page, int rows);
+
+    SaResult addBrand(GoodsBrand goodsBrand);
 }
 
 

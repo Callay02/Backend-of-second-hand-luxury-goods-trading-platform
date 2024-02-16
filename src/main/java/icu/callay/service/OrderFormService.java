@@ -19,6 +19,12 @@ public interface OrderFormService extends IService<OrderForm> {
     SaResult getToBeShippedById(int id);
 
     SaResult cancelOrderById(Long id,Long uid);
+
+    SaResult getShippedById(Long id);
+
+    SaResult getSignedById(Long id);
+
+    SaResult Sign(OrderForm orderForm);
 }
 
 

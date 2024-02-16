@@ -18,7 +18,7 @@ public interface UserService extends IService<User> {
 
     SaResult getCode(String email);
 
-    SaResult getUserInfo(Long id);
+    SaResult getUserInfo(Long id,String pwd);
 }
 
 

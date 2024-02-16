@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * (User)表服务实现类
@@ -108,9 +109,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public SaResult getUserInfo(Long id) {
+    public SaResult getUserInfo(Long id,String pwd) {
         User user = getById(id);
-        return SaResult.data(user);
+
+        //AES解密密码
+        String a = user.getIdCard();
+        String aesKey = Base64.encode(a);
+        AES aes = SecureUtil.aes(aesKey.getBytes());
+        String encryptHex = user.getPassword();
+        String password = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
+
+        //System.out.println(password);
+        //System.out.println(pwd);
+        if(password.equals(pwd)){
+            return SaResult.data(user);
+        }
+        return SaResult.error();
+
     }
 
 

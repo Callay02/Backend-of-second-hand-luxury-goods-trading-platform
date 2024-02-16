@@ -3,6 +3,7 @@ package icu.callay.controller;
 
 
 import cn.dev33.satoken.util.SaResult;
+import icu.callay.entity.GoodsBrand;
 import icu.callay.service.GoodsBrandService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,16 @@ public class GoodsBrandController {
     @GetMapping("getGoodsBrand")
     public SaResult getGoodsBrand(){
         return goodsBrandService.getGoodsBrand();
+    }
+
+    @GetMapping("getGoodsBrandPage")
+    public SaResult getGoodsBrandPage(@RequestParam("page") int page,@RequestParam("rows") int rows){
+        return goodsBrandService.getGoodsBrandPage(page,rows);
+    }
+
+    @PostMapping("addBrand")
+    public SaResult addBrand(@RequestBody GoodsBrand goodsBrand){
+        return goodsBrandService.addBrand(goodsBrand);
     }
 }
 

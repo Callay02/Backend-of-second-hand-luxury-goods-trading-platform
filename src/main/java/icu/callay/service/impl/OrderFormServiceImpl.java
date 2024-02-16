@@ -132,6 +132,99 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             return SaResult.error(e.getMessage());
         }
     }
+
+    @Override
+    public SaResult getShippedById(Long id) {
+
+        QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
+        orderFormQueryWrapper.eq("uid",id).and(wrapper->{
+            wrapper.eq("state",1);
+        });
+        try{
+            List<OrderFormVo> orderFormList = new ArrayList<>();
+            orderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
+                //System.out.println(orderForm.getId());
+                OrderFormVo orderFormVo = new OrderFormVo();
+                Goods goods = goodsMapper.selectById(orderForm.getGid());
+
+
+                orderFormVo.setGid(orderForm.getGid());
+                orderFormVo.setImg(goods.getImg());
+                orderFormVo.setInfo(goods.getInfo());
+                orderFormVo.setFineness(goods.getFineness());
+
+                orderFormVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+                orderFormVo.setTypeName(goodsTypeMapper.selectOne(new QueryWrapper<GoodsType>().eq("type",goods.getType())).getName());
+
+                orderFormVo.setPrice(goods.getPrice());
+                orderFormVo.setCreateTime(orderForm.getCreateTime());
+
+                orderFormVo.setId(orderForm.getId());
+                orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
+                //System.out.println("========"+orderFormVo.getId());
+
+                orderFormList.add(orderFormVo);
+
+            });
+            return SaResult.data(orderFormList);
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult getSignedById(Long id) {
+        QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
+        orderFormQueryWrapper.eq("uid",id).and(wrapper->{
+            wrapper.eq("state",2);
+        });
+        try{
+            List<OrderFormVo> orderFormList = new ArrayList<>();
+            orderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
+                //System.out.println(orderForm.getId());
+                OrderFormVo orderFormVo = new OrderFormVo();
+                Goods goods = goodsMapper.selectById(orderForm.getGid());
+
+
+                orderFormVo.setGid(orderForm.getGid());
+                orderFormVo.setImg(goods.getImg());
+                orderFormVo.setInfo(goods.getInfo());
+                orderFormVo.setFineness(goods.getFineness());
+
+                orderFormVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+                orderFormVo.setTypeName(goodsTypeMapper.selectOne(new QueryWrapper<GoodsType>().eq("type",goods.getType())).getName());
+
+                orderFormVo.setPrice(goods.getPrice());
+                orderFormVo.setCreateTime(orderForm.getCreateTime());
+
+                orderFormVo.setId(orderForm.getId());
+                orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
+                //System.out.println("========"+orderFormVo.getId());
+
+                orderFormList.add(orderFormVo);
+
+            });
+            return SaResult.data(orderFormList);
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult Sign(OrderForm orderForm) {
+        try {
+            if(Objects.equals(getById(orderForm.getId()).getUid(), orderForm.getUid())) {
+                update(new UpdateWrapper<OrderForm>().eq("id", orderForm.getId()).set("state", 2));
+                return SaResult.ok();
+            }
+            return SaResult.error("ID不匹配");
+        }
+        catch (Exception e){
+            return SaResult.error();
+        }
+    }
 }
 
 
