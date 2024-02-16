@@ -54,9 +54,12 @@ public class GoodsBrandServiceImpl extends ServiceImpl<GoodsBrandMapper, GoodsBr
     @Override
     public SaResult addBrand(GoodsBrand goodsBrand) {
         try {
-            //System.out.println(goodsBrand);
-            save(goodsBrand);
-            return SaResult.ok();
+            if(count(new QueryWrapper<GoodsBrand>().eq("id",goodsBrand.getId()))==0){
+                save(goodsBrand);
+                return SaResult.ok("添加成功");
+            }
+            return SaResult.error("商品已存在");
+
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());

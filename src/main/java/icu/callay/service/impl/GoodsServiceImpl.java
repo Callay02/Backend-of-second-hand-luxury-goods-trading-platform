@@ -43,8 +43,11 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         randomList.forEach(goods -> {
             GoodsVo goodsVo = new GoodsVo();
             BeanUtils.copyProperties(goods,goodsVo);
+            //System.out.println(goods.getBrand());
+            String brandName = goodsBrandMapper.selectById(goods.getBrand()).getName();
+            //System.out.println(brandName);
 
-            goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+            goodsVo.setBrandName(brandName);
             QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
             goodsTypeQueryWrapper.eq("type",goods.getType());
             goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());

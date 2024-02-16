@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @TableName("goods_brand")
 public class GoodsBrand implements Serializable {
 
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.ASSIGN_UUID)
     private Integer id;
 
     private String name;
