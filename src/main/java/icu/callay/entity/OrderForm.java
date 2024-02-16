@@ -32,7 +32,7 @@ public class OrderForm implements Serializable {
 
     private Long gid;
 
-    private String logisticsNumber;
+    private Integer logisticsNumber;
 
     private Integer state;
 

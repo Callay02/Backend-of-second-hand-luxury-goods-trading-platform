@@ -26,7 +26,7 @@ public class OrderFormVo {
 
     private Integer fineness;
 
-    private String logisticsNumber;
+    private Integer logisticsNumber;
 
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createTime;

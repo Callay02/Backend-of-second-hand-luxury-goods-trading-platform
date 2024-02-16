@@ -2,6 +2,7 @@ package icu.callay.service.impl;
 
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import icu.callay.entity.Goods;
@@ -53,8 +54,31 @@ public class GoodsBrandServiceImpl extends ServiceImpl<GoodsBrandMapper, GoodsBr
     @Override
     public SaResult addBrand(GoodsBrand goodsBrand) {
         try {
+            //System.out.println(goodsBrand);
             save(goodsBrand);
             return SaResult.ok();
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult deleteBrandById(GoodsBrand goodsBrand) {
+        try{
+            remove(new QueryWrapper<GoodsBrand>().eq("id",goodsBrand.getId()));
+            return SaResult.ok("删除成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult updateBrand(GoodsBrand goodsBrand) {
+        try {
+            update(new UpdateWrapper<GoodsBrand>().eq("id",goodsBrand.getId()).set("name",goodsBrand.getName()));
+            return SaResult.ok("修改成功");
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());

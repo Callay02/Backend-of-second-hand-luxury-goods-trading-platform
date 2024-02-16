@@ -17,6 +17,10 @@ public interface GoodsBrandService extends IService<GoodsBrand> {
     SaResult getGoodsBrandPage(int page, int rows);
 
     SaResult addBrand(GoodsBrand goodsBrand);
+
+    SaResult deleteBrandById(GoodsBrand goodsBrand);
+
+    SaResult updateBrand(GoodsBrand goodsBrand);
 }
 
 

@@ -38,5 +38,15 @@ public class GoodsBrandController {
     public SaResult addBrand(@RequestBody GoodsBrand goodsBrand){
         return goodsBrandService.addBrand(goodsBrand);
     }
+
+    @PostMapping("deleteBrandById")
+    public SaResult deleteBrandById(@RequestBody GoodsBrand goodsBrand){
+        return goodsBrandService.deleteBrandById(goodsBrand);
+    }
+
+    @PostMapping("updateBrand")
+    public SaResult updateBrand(@RequestBody GoodsBrand goodsBrand){
+        return goodsBrandService.updateBrand(goodsBrand);
+    }
 }
 

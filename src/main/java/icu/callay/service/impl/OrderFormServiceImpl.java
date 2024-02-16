@@ -63,6 +63,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
                     )==0){
                         goodsMapper.update(null,new UpdateWrapper<Goods>().eq("id",gid).set("state",0));
                         orderForm.setState(0);
+                        System.out.println(orderForm);
                         save(orderForm);
                         regularUserMapper.update(null,new UpdateWrapper<RegularUser>().eq("id",uid).set("money",regularUserMapper.selectById(uid).getMoney()-goodsMapper.selectById(gid).getPrice()));
                         //删除购物车物品
