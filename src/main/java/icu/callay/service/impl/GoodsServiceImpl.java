@@ -118,6 +118,30 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
         return SaResult.data(goodsVo);
     }
+
+    @Override
+    public SaResult getGoodsPageByState(int state,int page, int rows) {
+        Page<Goods> goodsPage = new Page<>(page,rows);
+        goodsMapper.selectPage(goodsPage,new QueryWrapper<Goods>().eq("state",state));
+
+        List<GoodsVo> goodsVoList = new ArrayList<>();
+        goodsPage.getRecords().forEach(goods -> {
+            GoodsVo goodsVo = new GoodsVo();
+            BeanUtils.copyProperties(goods,goodsVo);
+
+            goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+            QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
+            goodsTypeQueryWrapper.eq("type",goods.getType());
+            goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
+            goodsVoList.add(goodsVo);
+        });
+        GoodsPageVo goodsPageVo = new GoodsPageVo();
+        goodsPageVo.setGoodsVoList(goodsVoList);
+        goodsPageVo.setTotal(goodsPage.getTotal());
+
+        return SaResult.data(goodsPageVo);
+    }
+
 }
 
 
