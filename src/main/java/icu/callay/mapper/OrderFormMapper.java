@@ -1,18 +1,18 @@
 package icu.callay.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import icu.callay.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import icu.callay.entity.OrderForm;
 
 /**
- * (User)表数据库访问层
+ * (OrderForm)表数据库访问层
  *
  * @author Callay
- * @since 2024-01-11 23:24:04
+ * @since 2024-02-08 22:59:10
  */
 
 @Mapper
-public interface UserMapper extends BaseMapper<User> {
+public interface OrderFormMapper extends BaseMapper<OrderForm> {
 
 }
 
