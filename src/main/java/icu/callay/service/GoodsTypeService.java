@@ -13,6 +13,14 @@ import icu.callay.entity.GoodsType;
 public interface GoodsTypeService extends IService<GoodsType> {
 
     SaResult getGoodsType();
+
+    SaResult getGoodsTypePage(int page, int rows);
+
+    SaResult addGoodsType(GoodsType goodsType);
+
+    SaResult deleteTypeById(int type);
+
+    SaResult updateTypeName(GoodsType goodsType);
 }
 
 

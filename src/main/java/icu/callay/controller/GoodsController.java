@@ -45,5 +45,10 @@ public class GoodsController {
     public SaResult getGoodsById(@RequestParam("id")int id){
         return goodsService.getGoodsById(id);
     }
+
+    @GetMapping("getGoodsPageByState")
+    public SaResult getGoodsPage(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return goodsService.getGoodsPageByState(state,page,rows);
+    }
 }
 
