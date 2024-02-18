@@ -2,6 +2,7 @@ package icu.callay.service.impl;
 
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import icu.callay.entity.GoodsBrand;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -140,6 +142,51 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goodsPageVo.setTotal(goodsPage.getTotal());
 
         return SaResult.data(goodsPageVo);
+    }
+
+    @Override
+    public SaResult addGoods(Goods goods) {
+        try {
+            goods.setState(1);
+            goods.setAddTime(new Date());
+            save(goods);
+            return SaResult.ok("添加成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult deleteGoodsById(Goods goods) {
+        try {
+            remove(new QueryWrapper<Goods>().eq("id",goods.getId()));
+            return SaResult.ok("删除成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult updateGoods(Goods goods) {
+        try {
+            update(goods,new UpdateWrapper<Goods>().eq("id",goods.getId()));
+            return SaResult.ok("更新成功");
+        }
+        catch (Exception e) {
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult getGoodsByIdNoVo(Long id) {
+        try {
+            return SaResult.data(getById(id));
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
     }
 
 }

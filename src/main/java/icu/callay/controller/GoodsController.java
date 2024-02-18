@@ -3,6 +3,7 @@ package icu.callay.controller;
 
 
 import cn.dev33.satoken.util.SaResult;
+import icu.callay.entity.Goods;
 import icu.callay.entity.GoodsBrand;
 import icu.callay.service.GoodsService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,7 @@ public class GoodsController {
         return goodsService.getPageByType(type,page,rows);
     }
 
+    //封装后输出
     @GetMapping("getGoodsById")
     public SaResult getGoodsById(@RequestParam("id")int id){
         return goodsService.getGoodsById(id);
@@ -49,6 +51,27 @@ public class GoodsController {
     @GetMapping("getGoodsPageByState")
     public SaResult getGoodsPage(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return goodsService.getGoodsPageByState(state,page,rows);
+    }
+
+    @PostMapping("addGoods")
+    public SaResult addGoods(@RequestBody Goods goods){
+        return goodsService.addGoods(goods);
+    }
+
+    @PostMapping("deleteGoodsById")
+    public SaResult deleteGoodsById(@RequestBody Goods goods){
+        return goodsService.deleteGoodsById(goods);
+    }
+
+    @PostMapping("updateGoods")
+    public SaResult updateGoods(@RequestBody Goods goods){
+        return goodsService.updateGoods(goods);
+    }
+
+    //未封装
+    @GetMapping("getGoodsByIdNoVo")
+    public SaResult getGoodsByIdNoVo(@RequestParam Long id){
+        return goodsService.getGoodsByIdNoVo(id);
     }
 }
 

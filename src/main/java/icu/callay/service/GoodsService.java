@@ -24,6 +24,14 @@ public interface GoodsService extends IService<Goods> {
     SaResult getGoodsById(int id);
 
     SaResult getGoodsPageByState(int state,int page, int rows);
+
+    SaResult addGoods(Goods goods);
+
+    SaResult deleteGoodsById(Goods goods);
+
+    SaResult updateGoods(Goods goods);
+
+    SaResult getGoodsByIdNoVo(Long id);
 }
 
 
