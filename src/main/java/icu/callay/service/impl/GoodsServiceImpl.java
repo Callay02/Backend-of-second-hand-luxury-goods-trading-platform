@@ -189,6 +189,17 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         }
     }
 
+    @Override
+    public SaResult updateGoodsById(Goods goods) {
+        try {
+            update(goods,new UpdateWrapper<Goods>().eq("id",goods.getId()));
+            return SaResult.ok("更新成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
 }
 
 

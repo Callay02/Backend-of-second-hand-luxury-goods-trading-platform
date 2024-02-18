@@ -73,5 +73,10 @@ public class GoodsController {
     public SaResult getGoodsByIdNoVo(@RequestParam Long id){
         return goodsService.getGoodsByIdNoVo(id);
     }
+
+    @PostMapping("updateGoodsById")
+    public SaResult updateGoodsById(@RequestBody Goods goods){
+        return goodsService.updateGoodsById(goods);
+    }
 }
 

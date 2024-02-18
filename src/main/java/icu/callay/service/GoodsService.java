@@ -32,6 +32,8 @@ public interface GoodsService extends IService<Goods> {
     SaResult updateGoods(Goods goods);
 
     SaResult getGoodsByIdNoVo(Long id);
+
+    SaResult updateGoodsById(Goods goods);
 }
 
 
