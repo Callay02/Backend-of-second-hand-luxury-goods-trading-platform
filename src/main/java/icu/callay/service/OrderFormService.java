@@ -25,6 +25,8 @@ public interface OrderFormService extends IService<OrderForm> {
     SaResult getSignedById(Long id);
 
     SaResult Sign(OrderForm orderForm);
+
+    SaResult getOrderFormPageByState(int state, int page, int rows);
 }
 
 

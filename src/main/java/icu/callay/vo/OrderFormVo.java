@@ -11,6 +11,22 @@ public class OrderFormVo {
     //订单号
     private Long id;
 
+    private Integer logisticsNumber;
+
+    private Integer state;
+
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date createTime;
+
+    //用户信息
+    private Long uid;
+
+    private String name;
+
+    private String address;
+
+    private String phone;
+
     //商品信息相关
     private Long gid;
 
@@ -25,9 +41,4 @@ public class OrderFormVo {
     private String img;
 
     private Integer fineness;
-
-    private Integer logisticsNumber;
-
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
-    private Date createTime;
 }

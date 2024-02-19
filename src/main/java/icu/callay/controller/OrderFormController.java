@@ -28,29 +28,39 @@ public class OrderFormController {
         return orderFormService.createOrderForm(orderFormList);
     }
 
+    //用户Id
     @GetMapping("getToBeShippedById")
     public SaResult getToBeShippedById(@RequestParam("id")int id){
         return orderFormService.getToBeShippedById(id);
     }
 
+    //订单Id
     @GetMapping("cancelOrderById")
     public SaResult cancelOrderById(@RequestParam("id")Long id,@RequestParam("uid")Long uid){
         return orderFormService.cancelOrderById(id,uid);
     }
 
+    //用户Id
     @GetMapping("getShippedById")
     public SaResult getShippedById(@RequestParam("id")Long id){
         return orderFormService.getShippedById(id);
     }
 
+    //用户Id
     @GetMapping("getSignedById")
     public SaResult getSignedById(@RequestParam("id")Long id){
         return orderFormService.getSignedById(id);
     }
 
+    //签收
     @PostMapping("Sign")
     public SaResult Sign(@RequestBody OrderForm orderForm){
         return orderFormService.Sign(orderForm);
+    }
+
+    @GetMapping("getOrderFormPageByState")
+    public SaResult getOrderFormPageByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return orderFormService.getOrderFormPageByState(state,page,rows);
     }
 }
 

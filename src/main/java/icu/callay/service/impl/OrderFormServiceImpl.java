@@ -3,11 +3,15 @@ package icu.callay.service.impl;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import icu.callay.entity.*;
 import icu.callay.mapper.*;
 import icu.callay.service.OrderFormService;
 import icu.callay.service.ShoppingCartService;
+import icu.callay.vo.GoodsPageVo;
+import icu.callay.vo.GoodsVo;
+import icu.callay.vo.OrderFormPageVo;
 import icu.callay.vo.OrderFormVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +49,8 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     @Autowired
     private ShoppingCartService shoppingCartService;
 
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public SaResult createOrderForm(List<OrderForm> orderFormList) {
@@ -225,6 +231,40 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
         catch (Exception e){
             return SaResult.error();
         }
+    }
+
+    @Override
+    public SaResult getOrderFormPageByState(int state, int page, int rows) {
+        Page<OrderForm> orderFormPage = new Page<>(page,rows);
+        orderFormMapper.selectPage(orderFormPage,new QueryWrapper<OrderForm>().eq("state",state));
+
+        List<OrderFormVo> orderFormVoList = new ArrayList<>();
+        orderFormPage.getRecords().forEach(orderForm -> {
+            OrderFormVo orderFormVo = new OrderFormVo();
+            BeanUtils.copyProperties(orderForm,orderFormVo);
+
+            //用户信息获取
+            RegularUser regularUser = regularUserMapper.selectById(orderForm.getUid());
+            BeanUtils.copyProperties(regularUser,orderFormVo);
+            User user = userMapper.selectById(orderForm.getUid());
+            BeanUtils.copyProperties(user,orderFormVo);
+
+            //商品信息获取
+            Goods goods = goodsMapper.selectById(orderForm.getGid());
+            BeanUtils.copyProperties(goods,orderFormVo);
+            GoodsType goodsType = goodsTypeMapper.selectOne(new QueryWrapper<GoodsType>().eq("type",goods.getType()));
+            orderFormVo.setTypeName(goodsType.getName());
+            GoodsBrand goodsBrand = goodsBrandMapper.selectById(goods.getBrand());
+            orderFormVo.setBrandName(goodsBrand.getName());
+
+            orderFormVoList.add(orderFormVo);
+        });
+
+        OrderFormPageVo orderFormPageVo = new OrderFormPageVo();
+        orderFormPageVo.setOrderFormVoList(orderFormVoList);
+        orderFormPageVo.setTotal(orderFormPage.getTotal());
+
+        return SaResult.data(orderFormPageVo);
     }
 }
 
