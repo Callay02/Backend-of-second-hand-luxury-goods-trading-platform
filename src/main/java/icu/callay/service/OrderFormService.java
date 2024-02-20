@@ -27,6 +27,10 @@ public interface OrderFormService extends IService<OrderForm> {
     SaResult Sign(OrderForm orderForm);
 
     SaResult getOrderFormPageByState(int state, int page, int rows);
+
+    SaResult delivery(OrderForm orderForm);
+
+    SaResult updateShippedOrderFormById(OrderForm orderForm);
 }
 
 

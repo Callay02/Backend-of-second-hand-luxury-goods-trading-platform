@@ -62,5 +62,16 @@ public class OrderFormController {
     public SaResult getOrderFormPageByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return orderFormService.getOrderFormPageByState(state,page,rows);
     }
+
+    //发货
+    @PostMapping("delivery")
+    public SaResult delivery(@RequestBody OrderForm orderForm){
+        return orderFormService.delivery(orderForm);
+    }
+
+    @PostMapping("updateShippedOrderFormById")
+    public SaResult updateShippedOrderFormById(@RequestBody OrderForm orderForm){
+        return orderFormService.updateShippedOrderFormById(orderForm);
+    }
 }
 

@@ -69,7 +69,8 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
                     )==0){
                         goodsMapper.update(null,new UpdateWrapper<Goods>().eq("id",gid).set("state",0));
                         orderForm.setState(0);
-                        System.out.println(orderForm);
+                        //System.out.println(orderForm);
+                        orderForm.setAddress(regularUserMapper.selectById(uid).getAddress());
                         save(orderForm);
                         regularUserMapper.update(null,new UpdateWrapper<RegularUser>().eq("id",uid).set("money",regularUserMapper.selectById(uid).getMoney()-goodsMapper.selectById(gid).getPrice()));
                         //删除购物车物品
@@ -257,6 +258,10 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             GoodsBrand goodsBrand = goodsBrandMapper.selectById(goods.getBrand());
             orderFormVo.setBrandName(goodsBrand.getName());
 
+            orderFormVo.setId(orderForm.getId());
+            orderFormVo.setState(orderForm.getState());
+            orderFormVo.setAddress(orderForm.getAddress());
+
             orderFormVoList.add(orderFormVo);
         });
 
@@ -265,6 +270,39 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
         orderFormPageVo.setTotal(orderFormPage.getTotal());
 
         return SaResult.data(orderFormPageVo);
+    }
+
+    @Override
+    public SaResult delivery(OrderForm orderForm) {
+        try {
+            OrderForm orderForm1 = getById(orderForm.getId());
+            if(orderForm1.getState()==0){
+                orderForm.setState(1);
+                orderForm.setDeliveryTime(new Date());
+                update(orderForm,new UpdateWrapper<OrderForm>().eq("id",orderForm.getId()));
+                return SaResult.ok("发货成功");
+            }
+            return SaResult.error("商品已发货");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult updateShippedOrderFormById(OrderForm orderForm) {
+        try {
+            OrderForm orderForm1 = getById(orderForm.getId());
+            if(orderForm1.getState()==1){
+                orderForm.setDeliveryTime(new Date());
+                update(orderForm,new UpdateWrapper<OrderForm>().eq("id",orderForm.getId()));
+                return SaResult.ok("更新成功");
+            }
+            return SaResult.ok("订单状态错误");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
     }
 }
 

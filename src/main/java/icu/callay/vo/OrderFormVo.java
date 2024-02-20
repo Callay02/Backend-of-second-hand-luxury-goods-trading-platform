@@ -18,6 +18,9 @@ public class OrderFormVo {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date deliveryTime;
+
     //用户信息
     private Long uid;
 

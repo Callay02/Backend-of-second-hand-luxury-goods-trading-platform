@@ -39,5 +39,10 @@ public class OrderForm implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date deliveryTime;
+
+    private String address;
+
 }
 
