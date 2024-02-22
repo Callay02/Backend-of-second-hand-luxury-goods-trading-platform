@@ -42,7 +42,7 @@ public class UserController {
     public SaResult logout(@RequestParam(name = "token") String token){
         if(token!=null){
             StpUtil.logoutByTokenValue(token);
-            System.out.println(token);
+            //System.out.println(token);
             log.info(token+"已注销");
         }
         return SaResult.ok();
@@ -68,6 +68,16 @@ public class UserController {
     @GetMapping("getUserInfo")
     public SaResult getUserInfo(@RequestParam(name = "id") Long id,@RequestParam("password")String pwd){
         return userService.getUserInfo(id,pwd);
+    }
+
+    @GetMapping("getUserPageByType")
+    public SaResult getUserPageByType(@RequestParam("type")int type,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return userService.getUserPageByType(type,page,rows);
+    }
+
+    @PostMapping("deleteUserById")
+    public SaResult deleteUserById(@RequestBody User user){
+        return userService.deleteUserById(user);
     }
 }
 

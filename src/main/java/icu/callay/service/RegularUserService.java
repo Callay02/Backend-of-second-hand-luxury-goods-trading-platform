@@ -16,6 +16,8 @@ public interface RegularUserService extends IService<RegularUser> {
     SaResult getUserInfoById(int id);
 
     SaResult updateUserInfoById(RegularUser regularUser);
+
+    SaResult recharge(RegularUser regularUser);
 }
 
 

@@ -14,20 +14,23 @@ import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import cn.hutool.extra.mail.MailUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import icu.callay.entity.RegularUser;
 import icu.callay.entity.User;
+import icu.callay.mapper.RegularUserMapper;
 import icu.callay.mapper.UserMapper;
 import icu.callay.service.UserService;
+import icu.callay.vo.RegularUserVo;
+import icu.callay.vo.UserPageVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.PublicKey;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * (User)表服务实现类
@@ -40,6 +43,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private RegularUserMapper regularUserMapper;
 
     @Override
     public SaResult userLogin(User user) {
@@ -79,8 +85,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     user.setCreateTime(new Date());
 
                     userMapper.insert(user);
-                    StpUtil.login(user.getId());
-                    return SaResult.data(StpUtil.getTokenInfo());
+                    if(user.getType()==0){
+                        RegularUser regularUser = new RegularUser();
+                        regularUser.setId(user.getId());
+                        regularUser.setUpdateTime(user.getCreateTime());
+                        regularUser.setAddress("");
+                        regularUser.setMoney((double) 0);
+                        regularUser.setPhone("");
+                        regularUserMapper.insert(regularUser);
+                    }
+                    return SaResult.data(user);
                 }
                 catch (Exception e){
                     return SaResult.error(e.getMessage());
@@ -126,6 +140,69 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         return SaResult.error();
 
+    }
+
+
+    @Override
+    public SaResult getUserPageByType(int type, int page, int rows) {
+        try {
+            Page<User> userPage = new Page<>();
+            userMapper.selectPage(userPage,new QueryWrapper<User>().eq("type",type));
+
+            //普通用户
+            if(type==0){
+                List<RegularUserVo> regularUserVoList = new ArrayList<>();
+                userPage.getRecords().forEach(user -> {
+                    RegularUserVo regularUserVo = new RegularUserVo();
+
+                    BeanUtils.copyProperties(user,regularUserVo);
+                    RegularUser regularUser = regularUserMapper.selectById(user.getId());
+                    BeanUtils.copyProperties(regularUser,regularUserVo);
+
+                    regularUserVoList.add(regularUserVo);
+                });
+                UserPageVo<RegularUserVo> regularUserVoUserPageVo = new UserPageVo<>();
+                regularUserVoUserPageVo.setUserVoList(regularUserVoList);
+                regularUserVoUserPageVo.setTotal(userPage.getTotal());
+                return SaResult.data(regularUserVoUserPageVo);
+            }
+            //TODO
+            else if(type==1){
+                return SaResult.ok("销售员");
+
+            }
+            //TODO
+            else if(type==2){
+                return SaResult.ok("鉴定师");
+            }
+            else if(type==3){
+                UserPageVo<User> userUserPageVo = new UserPageVo<>();
+                userUserPageVo.setUserVoList(userPage.getRecords());
+                userUserPageVo.setTotal(userUserPageVo.getTotal());
+                return SaResult.data(userUserPageVo);
+            }
+            return SaResult.error("查找失败");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public SaResult deleteUserById(User user) {
+        try {
+            //普通用户
+            if(user.getType()==0){
+                removeById(user.getId());
+                regularUserMapper.deleteById(user.getId());
+                return SaResult.ok("删除成功");
+            }
+            return SaResult.error("删除失败");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
     }
 
 

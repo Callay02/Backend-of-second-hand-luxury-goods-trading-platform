@@ -2,17 +2,23 @@ package icu.callay.service.impl;
 
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import icu.callay.entity.User;
 import icu.callay.mapper.RegularUserMapper;
 import icu.callay.entity.RegularUser;
 import icu.callay.mapper.UserMapper;
 import icu.callay.service.RegularUserService;
+import icu.callay.vo.UserPageVo;
 import icu.callay.vo.RegularUserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * (RegularUser)表服务实现类
@@ -58,6 +64,19 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
             return SaResult.error(e.getMessage());
         }
     }
+
+    @Override
+    public SaResult recharge(RegularUser regularUser) {
+        try {
+            Double money = getById(regularUser.getId()).getMoney();
+            update(new UpdateWrapper<RegularUser>().eq("id",regularUser.getId()).set("money",money+regularUser.getMoney()));
+            return SaResult.ok("充值成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
 
 }
 

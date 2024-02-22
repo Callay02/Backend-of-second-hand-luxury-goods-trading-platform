@@ -31,5 +31,12 @@ public class RegularUserController {
         return regularUserService.updateUserInfoById(regularUser);
     }
 
+    //充值
+    //接收用户id和充值的金额
+    @PostMapping("recharge")
+    public SaResult recharge(@RequestBody RegularUser regularUser){
+        return regularUserService.recharge(regularUser);
+    }
+
 }
 

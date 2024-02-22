@@ -19,6 +19,10 @@ public interface UserService extends IService<User> {
     SaResult getCode(String email);
 
     SaResult getUserInfo(Long id,String pwd);
+
+    SaResult getUserPageByType(int type, int page, int rows);
+
+    SaResult deleteUserById(User user);
 }
 
 
