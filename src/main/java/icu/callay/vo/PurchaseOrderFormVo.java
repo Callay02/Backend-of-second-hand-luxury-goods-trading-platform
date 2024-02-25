@@ -1,32 +1,15 @@
-package icu.callay.entity;
-
-import java.util.Date;
+package icu.callay.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.io.Serializable;
-import com.baomidou.mybatisplus.annotation.TableName;
 
-
-/**
- * (PurchaseOrderForm)表实体类
- *
- * @author makejava
- * @since 2024-02-24 03:08:04
- */
+import java.util.Date;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@TableName("purchase_order_form")
-public class PurchaseOrderForm implements Serializable {
+public class PurchaseOrderFormVo {
 
-    @TableId(type = IdType.AUTO)
     private String id;
 
     private Long uid;
@@ -35,9 +18,9 @@ public class PurchaseOrderForm implements Serializable {
 
     private String info;
 
-    private Integer type;
+    private String typeName;
 
-    private Integer brand;
+    private String brandName;
 
     private Double price;
 
@@ -52,6 +35,4 @@ public class PurchaseOrderForm implements Serializable {
     private Integer fineness;
 
     private String img;
-
 }
-

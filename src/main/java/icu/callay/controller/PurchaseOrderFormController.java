@@ -21,9 +21,16 @@ public class PurchaseOrderFormController {
     @Autowired
     private PurchaseOrderFormService purchaseOrderFormService;
 
+    //普通用户创建收购订单
     @PostMapping("createOrderForm")
     public SaResult createOrderForm(@RequestBody PurchaseOrderForm purchaseOrderForm){
         return purchaseOrderFormService.createOrderForm(purchaseOrderForm);
+    }
+
+    //普通用户查找收购订单
+    @GetMapping("getPurchaseOrderFormPageByStateAndUid")
+    public SaResult getPurchaseOrderFormPageByStateAndUid(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return purchaseOrderFormService.getPurchaseOrderFormPageByStateAndUid(state,page,rows);
     }
 }
 

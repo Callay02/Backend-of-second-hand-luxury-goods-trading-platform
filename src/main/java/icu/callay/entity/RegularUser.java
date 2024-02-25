@@ -34,7 +34,7 @@ public class RegularUser implements Serializable {
 
     private Double money;
 
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
 }

@@ -13,6 +13,8 @@ import icu.callay.entity.PurchaseOrderForm;
 public interface PurchaseOrderFormService extends IService<PurchaseOrderForm> {
 
     SaResult createOrderForm(PurchaseOrderForm purchaseOrderForm);
+
+    SaResult getPurchaseOrderFormPageByStateAndUid(int state,int page,int rows);
 }
 
 
