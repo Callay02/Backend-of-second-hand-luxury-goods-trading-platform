@@ -32,5 +32,16 @@ public class PurchaseOrderFormController {
     public SaResult getPurchaseOrderFormPageByStateAndUid(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return purchaseOrderFormService.getPurchaseOrderFormPageByStateAndUid(state,page,rows);
     }
+
+    //管理员获取收购订单
+    @GetMapping("getPurchaseOrderFormPageByState")
+    public SaResult getPurchaseOrderFormPageByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return purchaseOrderFormService.getPurchaseOrderFormPageByState(state,page,rows);
+    }
+
+    @GetMapping("updatePurchaseOrderFormSateById")
+    public SaResult updatePurchaseOrderFormSateById(@RequestParam("id")Long id){
+        return purchaseOrderFormService.updatePurchaseOrderFormSateById(id);
+    }
 }
 

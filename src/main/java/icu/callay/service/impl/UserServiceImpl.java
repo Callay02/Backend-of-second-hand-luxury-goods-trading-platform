@@ -166,6 +166,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 regularUserVoUserPageVo.setTotal(userPage.getTotal());
                 return SaResult.data(regularUserVoUserPageVo);
             }
+            //鉴定师
+            else if (type==2) {
+                UserPageVo<User> userUserPageVo = new UserPageVo<>();
+                userUserPageVo.setUserVoList(userPage.getRecords());
+                userUserPageVo.setTotal(userPage.getTotal());
+                return SaResult.data(userUserPageVo);
+            }
             //TODO
             else if(type==1){
                 return SaResult.ok("销售员");
