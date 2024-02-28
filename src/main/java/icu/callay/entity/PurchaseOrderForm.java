@@ -39,7 +39,11 @@ public class PurchaseOrderForm implements Serializable {
 
     private Integer brand;
 
-    private Double price;
+    private String apid;
+
+    private Double acquisitionPrice;
+
+    private Double sellingPrice;
 
     private Integer state;
 

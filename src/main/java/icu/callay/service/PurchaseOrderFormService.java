@@ -19,6 +19,14 @@ public interface PurchaseOrderFormService extends IService<PurchaseOrderForm> {
     SaResult getPurchaseOrderFormPageByState(int state, int page, int rows);
 
     SaResult updatePurchaseOrderFormSateById(Long id);
+
+    SaResult getPurchaseOrderFormById(Long id);
+
+    SaResult updateStateSet2ById(Long id);
+
+    SaResult getPurchaseOrderFormPageByApid(String apid,int page,int rows);
+
+    SaResult updateStateSet3ById(PurchaseOrderForm purchaseOrderForm);
 }
 
 

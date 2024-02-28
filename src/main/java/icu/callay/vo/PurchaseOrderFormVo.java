@@ -22,9 +22,13 @@ public class PurchaseOrderFormVo {
 
     private String brandName;
 
-    private Double price;
+    private String apid;
 
-    private Integer state;
+    private Double acquisitionPrice;
+
+    private Double sellingPrice;
+
+    private String stateName;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
     private Date createTime;

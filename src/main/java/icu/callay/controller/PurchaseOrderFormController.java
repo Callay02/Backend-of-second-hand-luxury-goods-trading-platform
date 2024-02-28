@@ -43,5 +43,29 @@ public class PurchaseOrderFormController {
     public SaResult updatePurchaseOrderFormSateById(@RequestParam("id")Long id){
         return purchaseOrderFormService.updatePurchaseOrderFormSateById(id);
     }
+
+    //鉴定师根据Id查找收购订单
+    @GetMapping("getPurchaseOrderFormById")
+    public SaResult getPurchaseOrderFormById(@RequestParam("id")Long id){
+        return purchaseOrderFormService.getPurchaseOrderFormById(id);
+    }
+
+    //鉴定师鉴定不通过
+    @GetMapping("updateStateSet2ById")
+    public SaResult updateStateSet2ById(@RequestParam("id")Long id){
+        return purchaseOrderFormService.updateStateSet2ById(id);
+    }
+
+    //鉴定师鉴定通过
+    @PostMapping("updateStateSet3ById")
+    public SaResult updateStateSet3ById(@RequestBody PurchaseOrderForm purchaseOrderForm){
+        return purchaseOrderFormService.updateStateSet3ById(purchaseOrderForm);
+    }
+
+    //鉴定师查看自己已审核订单
+    @GetMapping("getPurchaseOrderFormPageByApid")
+    public SaResult getPurchaseOrderFormPageByApid(@RequestParam("apid")String apid,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return purchaseOrderFormService.getPurchaseOrderFormPageByApid(apid,page,rows);
+    }
 }
 

@@ -10,7 +10,6 @@ import icu.callay.mapper.RegularUserMapper;
 import icu.callay.entity.RegularUser;
 import icu.callay.mapper.UserMapper;
 import icu.callay.service.RegularUserService;
-import icu.callay.vo.UserPageVo;
 import icu.callay.vo.RegularUserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
