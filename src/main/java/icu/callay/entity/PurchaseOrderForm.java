@@ -41,6 +41,8 @@ public class PurchaseOrderForm implements Serializable {
 
     private String apid;
 
+    private String address;
+
     private Double acquisitionPrice;
 
     private Double sellingPrice;

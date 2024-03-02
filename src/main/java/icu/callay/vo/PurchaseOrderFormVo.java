@@ -24,6 +24,8 @@ public class PurchaseOrderFormVo {
 
     private String apid;
 
+    private String address;
+
     private Double acquisitionPrice;
 
     private Double sellingPrice;

@@ -39,6 +39,7 @@ public class PurchaseOrderFormController {
         return purchaseOrderFormService.getPurchaseOrderFormPageByState(state,page,rows);
     }
 
+    //管理员签收setState=1
     @GetMapping("updatePurchaseOrderFormSateById")
     public SaResult updatePurchaseOrderFormSateById(@RequestParam("id")Long id){
         return purchaseOrderFormService.updatePurchaseOrderFormSateById(id);
@@ -66,6 +67,42 @@ public class PurchaseOrderFormController {
     @GetMapping("getPurchaseOrderFormPageByApid")
     public SaResult getPurchaseOrderFormPageByApid(@RequestParam("apid")String apid,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return purchaseOrderFormService.getPurchaseOrderFormPageByApid(apid,page,rows);
+    }
+
+    //用户申请退回
+    @GetMapping("updateStateSet4ByIdAndUid")
+    public SaResult updateStateSet4ByIdAndUid(@RequestParam("id")Long id){
+        return purchaseOrderFormService.updateStateSet4ByIdAndUid(id);
+    }
+
+    //管理员退货
+    @PostMapping("updateStateSet5ById")
+    public SaResult updateStateSet5ById(@RequestBody PurchaseOrderForm purchaseOrderForm){
+        return purchaseOrderFormService.updateStateSet5ById(purchaseOrderForm);
+    }
+
+    //用户确认出售
+    @GetMapping("userConfirmsSale")
+    public SaResult userConfirmsSale(@RequestParam("id")Long id){
+        return purchaseOrderFormService.userConfirmsSale(id);
+    }
+
+    //管理员更新待上架订单数据
+    @PostMapping("updatePurchaseOrderFormById")
+    public SaResult updatePurchaseOrderFormById(@RequestBody PurchaseOrderForm purchaseOrderForm){
+        return purchaseOrderFormService.updatePurchaseOrderFormById(purchaseOrderForm);
+    }
+
+    //管理员上架商品
+    @GetMapping("productListingById")
+    public SaResult productListingById(@RequestParam("id")Long id){
+        return purchaseOrderFormService.productListingById(id);
+    }
+
+    //用户签收SetState=6
+    @GetMapping("updateStateSet6ById")
+    public SaResult updateStateSet6ById(@RequestParam("id")Long id){
+        return purchaseOrderFormService.updateStateSet6ById(id);
     }
 }
 

@@ -6,12 +6,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import icu.callay.entity.Goods;
+import icu.callay.entity.RegularUser;
 import icu.callay.entity.User;
-import icu.callay.mapper.GoodsBrandMapper;
-import icu.callay.mapper.GoodsTypeMapper;
-import icu.callay.mapper.PurchaseOrderFormMapper;
+import icu.callay.mapper.*;
 import icu.callay.entity.PurchaseOrderForm;
-import icu.callay.mapper.PurchaseOrderFormStateMapper;
 import icu.callay.service.PurchaseOrderFormService;
 import icu.callay.vo.PageVo;
 import icu.callay.vo.PurchaseOrderFormPageVo;
@@ -44,6 +43,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
 
     @Autowired
     private GoodsBrandMapper goodsBrandMapper;
+
+    @Autowired
+    private RegularUserMapper regularUserMapper;
+
+    @Autowired
+    private GoodsMapper goodsMapper;
 
     @Override
     public SaResult createOrderForm(PurchaseOrderForm purchaseOrderForm) {
@@ -101,6 +106,7 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
                 PurchaseOrderFormVo purchaseOrderFormVo = new PurchaseOrderFormVo();
                 BeanUtils.copyProperties(purchaseOrderForm,purchaseOrderFormVo);
 
+                purchaseOrderFormVo.setAddress(regularUserMapper.selectById(purchaseOrderForm.getUid()).getAddress());
                 purchaseOrderFormVo.setBrandName(goodsBrandMapper.selectById(purchaseOrderForm.getBrand()).getName());
                 purchaseOrderFormVo.setTypeName(goodsTypeMapper.selectById(purchaseOrderForm.getType()).getName());
 
@@ -196,6 +202,104 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             purchaseOrderForm.setUpdateTime(new Date());
             update(purchaseOrderForm,new UpdateWrapper<PurchaseOrderForm>().eq("id",purchaseOrderForm.getId()));
             return SaResult.ok("审核通过");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult updateStateSet4ByIdAndUid(Long id) {
+        try {
+            String uid = (String) StpUtil.getLoginId();
+            PurchaseOrderForm purchaseOrderForm = getById(id);
+            purchaseOrderForm.setState(4);
+            purchaseOrderForm.setLogisticsNumber("");
+            purchaseOrderForm.setUpdateTime(new Date());
+            update(purchaseOrderForm,new UpdateWrapper<PurchaseOrderForm>().eq("id",id).eq("uid",uid));
+            return SaResult.ok();
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult updateStateSet5ById(PurchaseOrderForm purchaseOrderForm) {
+        try {
+            purchaseOrderForm.setState(5);
+            purchaseOrderForm.setUpdateTime(new Date());
+            update(purchaseOrderForm,new UpdateWrapper<PurchaseOrderForm>().eq("id",purchaseOrderForm.getId()));
+            return SaResult.ok("退货成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult userConfirmsSale(Long id) {
+        try {
+            PurchaseOrderForm purchaseOrderForm = getById(id);
+            purchaseOrderForm.setState(7);
+            purchaseOrderForm.setUpdateTime(new Date());
+            update(purchaseOrderForm,new UpdateWrapper<PurchaseOrderForm>().eq("id",purchaseOrderForm.getId()));
+
+            //更新用户余额
+            Long uid = purchaseOrderForm.getUid();
+            Double money = regularUserMapper.selectById(uid).getMoney()+purchaseOrderForm.getAcquisitionPrice();
+            regularUserMapper.update(new UpdateWrapper<RegularUser>().eq("id",uid).set("money",money));
+            return SaResult.ok("出售成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult updatePurchaseOrderFormById(PurchaseOrderForm purchaseOrderForm) {
+        try {
+            purchaseOrderForm.setUpdateTime(new Date());
+            update(purchaseOrderForm,new UpdateWrapper<PurchaseOrderForm>().eq("id",purchaseOrderForm.getId()));
+            return SaResult.ok("修改成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult productListingById(Long id) {
+        try {
+            PurchaseOrderForm purchaseOrderForm = getById(id);
+            Goods goods = new Goods();
+
+            BeanUtils.copyProperties(purchaseOrderForm,goods);
+            goods.setPrice(purchaseOrderForm.getSellingPrice());
+            goods.setUserId(purchaseOrderForm.getUid());
+            goods.setState(1);
+            goods.setAddTime(new Date());
+
+            //上架
+            goodsMapper.insert(goods);
+
+            //更新订单状态
+            purchaseOrderForm.setState(8);
+            purchaseOrderForm.setUpdateTime(new Date());
+            update(purchaseOrderForm,new UpdateWrapper<PurchaseOrderForm>().eq("id",id));
+
+            return SaResult.ok("上架成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult updateStateSet6ById(Long id) {
+        try {
+            update(new UpdateWrapper<PurchaseOrderForm>().eq("id",id).set("state",6));
+            return SaResult.ok("签收成功");
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());

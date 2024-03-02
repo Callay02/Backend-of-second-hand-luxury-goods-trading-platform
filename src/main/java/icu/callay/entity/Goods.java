@@ -40,12 +40,14 @@ public class Goods implements Serializable {
 
     private Integer fineness;
     //来自用户
-    private Integer userId;
+    private Long userId;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
     private Date addTime;
 
     private Integer state;
+
+    private String apid;
 
 }
 
