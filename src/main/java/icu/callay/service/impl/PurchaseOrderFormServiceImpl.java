@@ -305,6 +305,34 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.error(e.getMessage());
         }
     }
+
+    @Override
+    public SaResult getPageByIdAndState(int state, int page, int rows) {
+        try {
+            Page<PurchaseOrderForm> purchaseOrderFormPage = new Page<>(page,rows);
+            purchaseOrderFormMapper.selectPage(purchaseOrderFormPage,new QueryWrapper<PurchaseOrderForm>().eq("uid",StpUtil.getLoginId()).and(wrappr->{wrappr.eq("state",state);}));
+            //System.out.println(purchaseOrderFormPage.getRecords());
+            List<PurchaseOrderFormVo> purchaseOrderFormVoList = new ArrayList<>();
+
+            purchaseOrderFormPage.getRecords().forEach(purchaseOrderForm -> {
+                PurchaseOrderFormVo purchaseOrderFormVo = new PurchaseOrderFormVo();
+                BeanUtils.copyProperties(purchaseOrderForm,purchaseOrderFormVo);
+
+                purchaseOrderFormVo.setBrandName(goodsBrandMapper.selectById(purchaseOrderForm.getBrand()).getName());
+                purchaseOrderFormVo.setTypeName(goodsTypeMapper.selectById(purchaseOrderForm.getType()).getName());
+
+                purchaseOrderFormVoList.add(purchaseOrderFormVo);
+            });
+
+            PageVo<PurchaseOrderFormVo> purchaseOrderFormPageVo = new PageVo<>();
+            purchaseOrderFormPageVo.setData(purchaseOrderFormVoList);
+            purchaseOrderFormPageVo.setTotal(purchaseOrderFormPage.getTotal());
+            return SaResult.data(purchaseOrderFormPageVo);
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
 }
 
 

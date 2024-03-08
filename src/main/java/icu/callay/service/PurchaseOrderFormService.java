@@ -39,6 +39,8 @@ public interface PurchaseOrderFormService extends IService<PurchaseOrderForm> {
     SaResult productListingById(Long id);
 
     SaResult updateStateSet6ById(Long id);
+
+    SaResult getPageByIdAndState(int state, int page, int rows);
 }
 
 

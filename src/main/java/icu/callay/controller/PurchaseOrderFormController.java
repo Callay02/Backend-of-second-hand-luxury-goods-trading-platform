@@ -104,5 +104,11 @@ public class PurchaseOrderFormController {
     public SaResult updateStateSet6ById(@RequestParam("id")Long id){
         return purchaseOrderFormService.updateStateSet6ById(id);
     }
+
+    //用户查找已成功出售商品页面
+    @GetMapping("getPageByUidAndState")
+    public SaResult getPageByIdAndState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return purchaseOrderFormService.getPageByIdAndState(state,page,rows);
+    }
 }
 
