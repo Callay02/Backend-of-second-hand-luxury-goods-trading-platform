@@ -24,6 +24,7 @@ public class GoodsBrandController {
     @Autowired
     private GoodsBrandService goodsBrandService;
 
+    //获取品牌信息
     @GetMapping("getGoodsBrand")
     public SaResult getGoodsBrand(){
         return goodsBrandService.getGoodsBrand();

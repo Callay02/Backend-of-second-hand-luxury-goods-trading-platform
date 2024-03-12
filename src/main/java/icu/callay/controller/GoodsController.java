@@ -6,6 +6,7 @@ import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.Goods;
 import icu.callay.entity.GoodsBrand;
 import icu.callay.service.GoodsService;
+import icu.callay.vo.SearchGoodsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -77,6 +78,12 @@ public class GoodsController {
     @PostMapping("updateGoodsById")
     public SaResult updateGoodsById(@RequestBody Goods goods){
         return goodsService.updateGoodsById(goods);
+    }
+
+    //根据品牌、类型、详情分页查找商品
+    @PostMapping("getGoodsPageByBrandAndTypeAndInfo")
+    public SaResult getGoodsPageByBrandAndTypeAndInfo(@RequestBody SearchGoodsVo searchGoodsVo){
+        return goodsService.getGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
     }
 }
 

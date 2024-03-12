@@ -4,6 +4,7 @@ import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 import icu.callay.entity.Goods;
 import icu.callay.entity.GoodsBrand;
+import icu.callay.vo.SearchGoodsVo;
 
 import java.util.List;
 
@@ -34,6 +35,8 @@ public interface GoodsService extends IService<Goods> {
     SaResult getGoodsByIdNoVo(Long id);
 
     SaResult updateGoodsById(Goods goods);
+
+    SaResult getGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo);
 }
 
 

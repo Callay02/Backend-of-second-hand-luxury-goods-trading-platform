@@ -14,6 +14,7 @@ import icu.callay.mapper.GoodsTypeMapper;
 import icu.callay.service.GoodsService;
 import icu.callay.vo.GoodsPageVo;
 import icu.callay.vo.GoodsVo;
+import icu.callay.vo.SearchGoodsVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -198,6 +199,42 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         catch (Exception e){
             return SaResult.error(e.getMessage());
         }
+    }
+
+    @Override
+    public SaResult getGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo) {
+        QueryWrapper<Goods> goodsQueryWrapper = new QueryWrapper<>();
+        //System.out.println(searchGoodsVo);
+        if(!searchGoodsVo.getBrand().equals("未选择")){
+            goodsQueryWrapper.eq("brand",searchGoodsVo.getBrand());
+        }
+        if(!searchGoodsVo.getType().equals("未选择")){
+            goodsQueryWrapper.eq("type",searchGoodsVo.getType());
+        }
+        if (!searchGoodsVo.getInfo().isEmpty()){
+            goodsQueryWrapper.like("info",searchGoodsVo.getInfo());
+        }
+        goodsQueryWrapper.eq("state",1);
+        Page<Goods> goodsPage = new Page<>(searchGoodsVo.getPage(),searchGoodsVo.getRows());
+        goodsMapper.selectPage(goodsPage,goodsQueryWrapper);
+
+        List<GoodsVo> goodsVoList = new ArrayList<>();
+        goodsPage.getRecords().forEach(goods -> {
+            //System.out.println(goods);
+            GoodsVo goodsVo = new GoodsVo();
+            BeanUtils.copyProperties(goods,goodsVo);
+
+            goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+            QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
+            goodsTypeQueryWrapper.eq("type",goods.getType());
+            goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
+            goodsVoList.add(goodsVo);
+        });
+        GoodsPageVo goodsPageVo = new GoodsPageVo();
+        goodsPageVo.setGoodsVoList(goodsVoList);
+        goodsPageVo.setTotal(goodsPage.getTotal());
+
+        return SaResult.data(goodsPageVo);
     }
 
 }
