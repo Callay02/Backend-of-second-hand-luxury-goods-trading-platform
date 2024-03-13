@@ -212,6 +212,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
 
+    @Override
+    public SaResult updateMyUserInfoById(User user) {
+        try {
+            String id = (String) StpUtil.getLoginId();
+            user.setId(Long.valueOf(id));
+            User getUser = getById(id);
+
+            //AES加密密码
+            String a = getUser.getIdCard();
+            String aesKey = Base64.encode(a);
+            AES aes = SecureUtil.aes(aesKey.getBytes());
+            String aesPasswd = aes.encryptHex(user.getPassword());
+            user.setPassword(aesPasswd);
+
+            user.setUpdateTime(new Date());
+            updateById(user);
+            return SaResult.ok("修改成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
 
 }
 

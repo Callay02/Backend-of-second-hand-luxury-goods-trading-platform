@@ -1,5 +1,6 @@
 package icu.callay.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -303,6 +304,24 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
         catch (Exception e){
             return SaResult.error(e.getMessage());
         }
+    }
+
+    @Override
+    public SaResult createOrderFormBySid(OrderForm orderForm) {
+        try {
+            orderForm.setState(1);
+            orderForm.setCreateTime(new Date());
+            //下架商品
+            goodsMapper.update(new UpdateWrapper<Goods>().eq("id",orderForm.getGid()).set("state",0));
+            //创建订单
+            save(orderForm);
+
+            return SaResult.ok("购买成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+
     }
 }
 

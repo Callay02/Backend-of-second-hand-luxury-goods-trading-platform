@@ -23,6 +23,7 @@ public class OrderFormController {
     @Autowired
     private OrderFormService orderFormService;
 
+    //普通用户创建订单（购买）
     @PostMapping("createOrderForm")
     public SaResult createOrderForm(@RequestBody List<OrderForm> orderFormList){
         return orderFormService.createOrderForm(orderFormList);
@@ -72,6 +73,12 @@ public class OrderFormController {
     @PostMapping("updateShippedOrderFormById")
     public SaResult updateShippedOrderFormById(@RequestBody OrderForm orderForm){
         return orderFormService.updateShippedOrderFormById(orderForm);
+    }
+
+    //销售员购买商品
+    @PostMapping("createOrderFormBySid")
+    public SaResult createOrderFormBySid(@RequestBody OrderForm orderForm){
+        return orderFormService.createOrderFormBySid(orderForm);
     }
 }
 

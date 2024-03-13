@@ -31,6 +31,8 @@ public interface OrderFormService extends IService<OrderForm> {
     SaResult delivery(OrderForm orderForm);
 
     SaResult updateShippedOrderFormById(OrderForm orderForm);
+
+    SaResult createOrderFormBySid(OrderForm orderForm);
 }
 
 

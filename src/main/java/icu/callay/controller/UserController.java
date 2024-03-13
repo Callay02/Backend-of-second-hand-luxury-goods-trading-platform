@@ -79,5 +79,11 @@ public class UserController {
     public SaResult deleteUserById(@RequestBody User user){
         return userService.deleteUserById(user);
     }
+
+    //用户修改个人信息
+    @PostMapping("updateMyUserInfoById")
+    public SaResult updateMyUserInfoById(@RequestBody User user){
+        return userService.updateMyUserInfoById(user);
+    }
 }
 

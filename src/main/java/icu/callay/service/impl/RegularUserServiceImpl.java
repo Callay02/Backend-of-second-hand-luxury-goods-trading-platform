@@ -41,8 +41,6 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
         }catch (Exception e){
             return SaResult.data(regularUserVo).setMsg("请填写个人信息");
         }
-
-
     }
 
     @Override

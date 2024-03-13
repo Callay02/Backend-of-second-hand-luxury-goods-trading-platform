@@ -23,6 +23,8 @@ public interface UserService extends IService<User> {
     SaResult getUserPageByType(int type, int page, int rows);
 
     SaResult deleteUserById(User user);
+
+    SaResult updateMyUserInfoById(User user);
 }
 
 
