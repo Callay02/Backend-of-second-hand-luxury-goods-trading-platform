@@ -44,4 +44,5 @@ public class OrderFormVo {
     private String img;
 
     private Integer fineness;
+
 }

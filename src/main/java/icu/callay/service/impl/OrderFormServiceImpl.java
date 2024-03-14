@@ -53,6 +53,9 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     @Autowired
     private UserMapper userMapper;
 
+    @Autowired
+    private SalespersonUserMapper salespersonUserMapper;
+
     @Override
     public SaResult createOrderForm(List<OrderForm> orderFormList) {
         //查询用户余额
@@ -111,6 +114,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
 
                 orderFormVo.setId(orderForm.getId());
                 //System.out.println("========"+orderFormVo.getId());
+                orderFormVo.setAddress(orderForm.getAddress());
 
                 orderFormList.add(orderFormVo);
 
@@ -132,9 +136,14 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
                 removeById(id);
                 //修改商品状态
                 goodsMapper.update(new UpdateWrapper<Goods>().eq("id",goods.getId()).set("state",1));
+
+                //销售员取消订单
+                if(regularUserMapper.selectCount(new UpdateWrapper<RegularUser>().eq("id",uid))==0){
+                    return SaResult.ok("订单取消成功");
+                }
                 //退款
                 regularUserMapper.update(new UpdateWrapper<RegularUser>().eq("id",uid).set("money",regularUserMapper.selectById(uid).getMoney()+goods.getPrice()));
-                return SaResult.ok("订单取消成功，费用已转入余额");
+                return SaResult.ok("订单取消成功");
             }
             return SaResult.error("用户不匹配");
         }catch (Exception e){
@@ -245,9 +254,17 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             OrderFormVo orderFormVo = new OrderFormVo();
             BeanUtils.copyProperties(orderForm,orderFormVo);
 
-            //用户信息获取
-            RegularUser regularUser = regularUserMapper.selectById(orderForm.getUid());
-            BeanUtils.copyProperties(regularUser,orderFormVo);
+            //普通用户信息获取
+            if(regularUserMapper.selectCount(new QueryWrapper<RegularUser>().eq("id",orderForm.getUid()))!=0){
+                RegularUser regularUser = regularUserMapper.selectById(orderForm.getUid());
+                BeanUtils.copyProperties(regularUser,orderFormVo);
+            }
+            //销售员用户信息获取
+            else if (salespersonUserMapper.selectCount(new QueryWrapper<SalespersonUser>().eq("id",orderForm.getUid()))!=0) {
+                SalespersonUser salespersonUser = salespersonUserMapper.selectById(orderForm.getUid());
+                orderFormVo.setPhone(salespersonUser.getPhone());
+            }
+
             User user = userMapper.selectById(orderForm.getUid());
             BeanUtils.copyProperties(user,orderFormVo);
 
@@ -309,7 +326,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     @Override
     public SaResult createOrderFormBySid(OrderForm orderForm) {
         try {
-            orderForm.setState(1);
+            orderForm.setState(0);
             orderForm.setCreateTime(new Date());
             //下架商品
             goodsMapper.update(new UpdateWrapper<Goods>().eq("id",orderForm.getGid()).set("state",0));
@@ -323,6 +340,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
         }
 
     }
+
 }
 
 
