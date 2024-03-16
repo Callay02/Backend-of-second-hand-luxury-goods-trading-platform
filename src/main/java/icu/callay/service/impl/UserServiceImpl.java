@@ -49,24 +49,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     public SaResult userLogin(User user) {
-        QueryWrapper<User> wrapper = new QueryWrapper<>();
-        wrapper.eq("name",user.getName()).eq("type",user.getType());
-        List<User> list = userMapper.selectList(wrapper);
-        User selectUser = list.get(0);
+        try {
+            QueryWrapper<User> wrapper = new QueryWrapper<>();
+            wrapper.eq("name",user.getName()).eq("type",user.getType());
+            List<User> list = userMapper.selectList(wrapper);
+            User selectUser = list.get(0);
 
-        //AES解密密码
-        String a = selectUser.getIdCard();
-        String aesKey = Base64.encode(a);
-        AES aes = SecureUtil.aes(aesKey.getBytes());
-        String encryptHex = selectUser.getPassword();
-        String password = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
+            //AES解密密码
+            String a = selectUser.getIdCard();
+            String aesKey = Base64.encode(a);
+            AES aes = SecureUtil.aes(aesKey.getBytes());
+            String encryptHex = selectUser.getPassword();
+            String password = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
 
-        if(password.equals(user.getPassword())) {
-            StpUtil.login(selectUser.getId());
-            return SaResult.data(StpUtil.getTokenInfo());
+            if(password.equals(user.getPassword())) {
+                StpUtil.login(selectUser.getId());
+                return SaResult.data(StpUtil.getTokenInfo());
+            }
+            else
+                return SaResult.error();
         }
-        else
-            return SaResult.error();
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+
     }
 
     @Override
