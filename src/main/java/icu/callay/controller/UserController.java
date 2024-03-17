@@ -70,6 +70,7 @@ public class UserController {
         return userService.getUserInfo(id,pwd);
     }
 
+    //管理员根据类型获取用户信息
     @GetMapping("getUserPageByType")
     public SaResult getUserPageByType(@RequestParam("type")int type,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return userService.getUserPageByType(type,page,rows);

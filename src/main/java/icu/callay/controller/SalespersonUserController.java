@@ -31,5 +31,6 @@ public class SalespersonUserController {
     public SaResult updateUserInfoById(@RequestBody SalespersonUser salespersonUser){
         return salespersonUserService.updateUserInfoById(salespersonUser);
     }
+
 }
 

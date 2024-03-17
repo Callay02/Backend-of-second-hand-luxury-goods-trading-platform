@@ -15,6 +15,7 @@ public interface SalespersonUserService extends IService<SalespersonUser> {
     SaResult getUserInfoById();
 
     SaResult updateUserInfoById(SalespersonUser salespersonUser);
+
 }
 
 

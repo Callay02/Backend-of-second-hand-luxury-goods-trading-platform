@@ -14,14 +14,18 @@ import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import cn.hutool.extra.mail.MailUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import icu.callay.entity.RegularUser;
+import icu.callay.entity.SalespersonUser;
 import icu.callay.entity.User;
 import icu.callay.mapper.RegularUserMapper;
+import icu.callay.mapper.SalespersonUserMapper;
 import icu.callay.mapper.UserMapper;
 import icu.callay.service.UserService;
 import icu.callay.vo.RegularUserVo;
+import icu.callay.vo.SalespersonUserVo;
 import icu.callay.vo.UserPageVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +51,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Autowired
     private RegularUserMapper regularUserMapper;
 
+    @Autowired
+    private SalespersonUserMapper salespersonUserMapper;
+
     @Override
     public SaResult userLogin(User user) {
         try {
@@ -63,11 +70,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             String password = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
 
             if(password.equals(user.getPassword())) {
+                if(selectUser.getIsDeleted()==1)
+                    return SaResult.error("该账号已注销");
                 StpUtil.login(selectUser.getId());
                 return SaResult.data(StpUtil.getTokenInfo());
             }
             else
-                return SaResult.error();
+                return SaResult.error("账号或密码错误");
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());
@@ -89,8 +98,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                     user.setPassword(aesPasswd);
 
                     user.setCreateTime(new Date());
+                    user.setIsDeleted(0);
 
                     userMapper.insert(user);
+                    //普通用户注册
                     if(user.getType()==0){
                         RegularUser regularUser = new RegularUser();
                         regularUser.setId(user.getId());
@@ -99,6 +110,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                         regularUser.setMoney((double) 0);
                         regularUser.setPhone("");
                         regularUserMapper.insert(regularUser);
+                    }
+                    //销售员注册
+                    else if (user.getType()==1) {
+                        SalespersonUser salespersonUser = new SalespersonUser();
+                        salespersonUser.setId(String.valueOf(user.getId()));
+                        salespersonUser.setPhone("");
+                        salespersonUser.setUpdateTime(new Date());
+                        salespersonUser.setMoney((double) 0);
+                        salespersonUserMapper.insert(salespersonUser);
                     }
                     return SaResult.data(user);
                 }
@@ -153,7 +173,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public SaResult getUserPageByType(int type, int page, int rows) {
         try {
             Page<User> userPage = new Page<>();
-            userMapper.selectPage(userPage,new QueryWrapper<User>().eq("type",type));
+            QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+            userQueryWrapper.eq("type",type);
+            userQueryWrapper.eq("is_deleted",0);
+            userMapper.selectPage(userPage,userQueryWrapper);
 
             //普通用户
             if(type==0){
@@ -179,15 +202,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 userUserPageVo.setTotal(userPage.getTotal());
                 return SaResult.data(userUserPageVo);
             }
-            //TODO
+            //销售员
             else if(type==1){
-                return SaResult.ok("销售员");
+                List<SalespersonUserVo> salespersonUserVoList = new ArrayList<>();
+                userPage.getRecords().forEach(user -> {
+                    SalespersonUserVo salespersonUserVo = new SalespersonUserVo();
 
+                    BeanUtils.copyProperties(user,salespersonUserVo);
+                    SalespersonUser salespersonUser = salespersonUserMapper.selectById(user.getId());
+                    BeanUtils.copyProperties(salespersonUser,salespersonUserVo);
+
+                    salespersonUserVoList.add(salespersonUserVo);
+                });
+                UserPageVo<SalespersonUserVo> salespersonUserVoUserPageVo = new UserPageVo<>();
+                salespersonUserVoUserPageVo.setUserVoList(salespersonUserVoList);
+                salespersonUserVoUserPageVo.setTotal(userPage.getTotal());
+                return SaResult.data(salespersonUserVoUserPageVo);
             }
-            //TODO
-            else if(type==2){
-                return SaResult.ok("鉴定师");
-            }
+            //管理员
             else if(type==3){
                 UserPageVo<User> userUserPageVo = new UserPageVo<>();
                 userUserPageVo.setUserVoList(userPage.getRecords());
@@ -205,13 +237,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public SaResult deleteUserById(User user) {
         try {
-            //普通用户
-            if(user.getType()==0){
-                removeById(user.getId());
-                regularUserMapper.deleteById(user.getId());
-                return SaResult.ok("删除成功");
-            }
-            return SaResult.error("删除失败");
+            update(new UpdateWrapper<User>().eq("id",user.getId()).set("is_deleted",1));
+            return SaResult.ok("删除成功");
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());

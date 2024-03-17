@@ -1,6 +1,8 @@
 package icu.callay.entity;
 
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,7 @@ public class SalespersonUser implements Serializable {
 
     private Double money;
 
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
     private Date updateTime;
 
 }
