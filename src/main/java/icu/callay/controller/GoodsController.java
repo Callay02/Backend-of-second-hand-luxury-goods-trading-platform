@@ -49,16 +49,19 @@ public class GoodsController {
         return goodsService.getGoodsById(id);
     }
 
+    //根据商品出售状态获取商品信息
     @GetMapping("getGoodsPageByState")
     public SaResult getGoodsPage(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return goodsService.getGoodsPageByState(state,page,rows);
     }
 
+    //添加商品
     @PostMapping("addGoods")
     public SaResult addGoods(@RequestBody Goods goods){
         return goodsService.addGoods(goods);
     }
 
+    //管理员删除商品
     @PostMapping("deleteGoodsById")
     public SaResult deleteGoodsById(@RequestBody Goods goods){
         return goodsService.deleteGoodsById(goods);
@@ -69,12 +72,13 @@ public class GoodsController {
         return goodsService.updateGoods(goods);
     }
 
-    //未封装
+    //未封装(在管理员更新商品信息时用到)
     @GetMapping("getGoodsByIdNoVo")
     public SaResult getGoodsByIdNoVo(@RequestParam Long id){
         return goodsService.getGoodsByIdNoVo(id);
     }
 
+    //根据商品id更新商品信息
     @PostMapping("updateGoodsById")
     public SaResult updateGoodsById(@RequestBody Goods goods){
         return goodsService.updateGoodsById(goods);
