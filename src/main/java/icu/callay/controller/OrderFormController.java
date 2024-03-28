@@ -61,7 +61,6 @@ public class OrderFormController {
 
     @GetMapping("getOrderFormPageByState")
     public SaResult getOrderFormPageByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
-        System.out.println(state);
         return orderFormService.getOrderFormPageByState(state,page,rows);
     }
 

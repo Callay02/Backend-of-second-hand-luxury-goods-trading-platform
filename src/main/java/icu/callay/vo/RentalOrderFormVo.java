@@ -11,6 +11,8 @@ public class RentalOrderFormVo {
 
     private String uid;
 
+    private String name;
+
     private String gid;
 
     private Integer logisticsNumber;
@@ -30,6 +32,8 @@ public class RentalOrderFormVo {
     private String img;
 
     private Integer fineness;
+
+    private String phone;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
     private Date createTime;

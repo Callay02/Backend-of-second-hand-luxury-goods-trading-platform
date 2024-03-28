@@ -17,6 +17,12 @@ public interface RentalOrderFormService extends IService<RentalOrderForm> {
     SaResult createOrderFormByGid(String gid);
 
     SaResult cancelOrderById(String id);
+
+    SaResult getOrderFormPageByState(int state, int page, int rows);
+
+    SaResult adminCancelOrderById(String id);
+
+    SaResult delivery(RentalOrderForm rentalOrderForm);
 }
 
 
