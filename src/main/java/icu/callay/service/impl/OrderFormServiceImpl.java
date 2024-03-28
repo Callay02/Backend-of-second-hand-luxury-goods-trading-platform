@@ -88,7 +88,6 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
 
     @Override
     public SaResult getToBeShippedById(int id) {
-
         QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
         orderFormQueryWrapper.eq("uid",id).and(wrapper->{
             wrapper.eq("state",0);
@@ -153,7 +152,6 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
 
     @Override
     public SaResult getShippedById(Long id) {
-
         QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
         orderFormQueryWrapper.eq("uid",id).and(wrapper->{
             wrapper.eq("state",1);

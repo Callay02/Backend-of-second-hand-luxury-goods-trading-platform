@@ -24,6 +24,9 @@ public interface RentalGoodsService extends IService<RentalGoods> {
     SaResult deleteGoodsById(RentalGoods rentalGoods);
 
     SaResult getGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo);
+
+    SaResult getGoodsById(String id);
+
 }
 
 

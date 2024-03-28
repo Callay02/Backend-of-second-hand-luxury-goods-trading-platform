@@ -58,5 +58,12 @@ public class RentalGoodsController {
     public SaResult getGoodsPageByBrandAndTypeAndInfo(@RequestBody SearchGoodsVo searchGoodsVo){
         return rentalGoodsService.getGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
     }
+
+    //封装后输出
+    @GetMapping("getGoodsById")
+    public SaResult getGoodsById(@RequestParam("id")String id){
+        return rentalGoodsService.getGoodsById(id);
+    }
+
 }
 

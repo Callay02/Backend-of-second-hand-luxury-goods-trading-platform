@@ -29,7 +29,7 @@ public class OrderFormController {
         return orderFormService.createOrderForm(orderFormList);
     }
 
-    //用户Id
+    //根据用户id获取待发货信息
     @GetMapping("getToBeShippedById")
     public SaResult getToBeShippedById(@RequestParam("id")int id){
         return orderFormService.getToBeShippedById(id);

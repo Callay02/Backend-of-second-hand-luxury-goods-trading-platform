@@ -1,16 +1,13 @@
 package icu.callay.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import icu.callay.entity.Goods;
-import icu.callay.entity.GoodsType;
-import icu.callay.mapper.GoodsBrandMapper;
-import icu.callay.mapper.GoodsTypeMapper;
-import icu.callay.mapper.RentalGoodsMapper;
-import icu.callay.entity.RentalGoods;
+import icu.callay.entity.*;
+import icu.callay.mapper.*;
 import icu.callay.service.RentalGoodsService;
 import icu.callay.vo.*;
 import org.springframework.beans.BeanUtils;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * (RentalGoods)表服务实现类
@@ -30,41 +28,68 @@ import java.util.List;
 @Service("rentalGoodsService")
 public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, RentalGoods> implements RentalGoodsService {
 
-    @Autowired
+
     private RentalGoodsMapper rentalGoodsMapper;
-
-    @Autowired
     private GoodsBrandMapper goodsBrandMapper;
+    private GoodsTypeMapper goodsTypeMapper;
+    private RegularUserMapper regularUserMapper;
+    private RentalOrderFormMapper rentalOrderFormMapper;
 
     @Autowired
-    private GoodsTypeMapper goodsTypeMapper;
+    public void RentalGoodsMapper(RentalGoodsMapper rentalGoodsMapper){
+        this.rentalGoodsMapper=rentalGoodsMapper;
+    }
+
+    @Autowired
+    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
+        this.goodsBrandMapper=goodsBrandMapper;
+    }
+
+    @Autowired
+    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
+        this.goodsTypeMapper=goodsTypeMapper;
+    }
+
+    @Autowired
+    public void RegularUserMapper(RegularUserMapper regularUserMapper){
+        this.regularUserMapper=regularUserMapper;
+    }
+
+    @Autowired void  RentalOrderFormMapper(RentalOrderFormMapper rentalOrderFormMapper){
+        this.rentalOrderFormMapper=rentalOrderFormMapper;
+    }
 
     @Override
     public SaResult getGoodsPageByState(String state,int page, int rows) {
-        Page<RentalGoods> rentalGoodsPage = new Page<>(page,rows);
-        if(state==""){
-            rentalGoodsMapper.selectPage(rentalGoodsPage,new QueryWrapper<RentalGoods>());
+        try {
+            Page<RentalGoods> rentalGoodsPage = new Page<>(page,rows);
+            if(Objects.equals(state, "")){
+                rentalGoodsMapper.selectPage(rentalGoodsPage,new QueryWrapper<>());
+            }
+            else{
+                rentalGoodsMapper.selectPage(rentalGoodsPage,new QueryWrapper<RentalGoods>().eq("state",state));
+            }
+
+            List<RentalGoodsVo> goodsVoList = new ArrayList<>();
+            rentalGoodsPage.getRecords().forEach(goods -> {
+                RentalGoodsVo goodsVo = new RentalGoodsVo();
+                BeanUtils.copyProperties(goods,goodsVo);
+
+                goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+                QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
+                goodsTypeQueryWrapper.eq("type",goods.getType());
+                goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
+                goodsVoList.add(goodsVo);
+            });
+            PageVo<RentalGoodsVo> rentalGoodsVoPageVo = new PageVo<>();
+            rentalGoodsVoPageVo.setData(goodsVoList);
+            rentalGoodsVoPageVo.setTotal(rentalGoodsPage.getTotal());
+
+            return SaResult.data(rentalGoodsVoPageVo);
         }
-        else{
-            rentalGoodsMapper.selectPage(rentalGoodsPage,new QueryWrapper<RentalGoods>().eq("state",state));
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
         }
-
-        List<RentalGoodsVo> goodsVoList = new ArrayList<>();
-        rentalGoodsPage.getRecords().forEach(goods -> {
-            RentalGoodsVo goodsVo = new RentalGoodsVo();
-            BeanUtils.copyProperties(goods,goodsVo);
-
-            goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
-            QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
-            goodsTypeQueryWrapper.eq("type",goods.getType());
-            goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
-            goodsVoList.add(goodsVo);
-        });
-        PageVo<RentalGoodsVo> rentalGoodsVoPageVo = new PageVo<>();
-        rentalGoodsVoPageVo.setData(goodsVoList);
-        rentalGoodsVoPageVo.setTotal(rentalGoodsPage.getTotal());
-
-        return SaResult.data(rentalGoodsVoPageVo);
     }
 
     @Override
@@ -150,6 +175,24 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
             return SaResult.error(e.getMessage());
         }
     }
+
+    @Override
+    public SaResult getGoodsById(String id) {
+        try {
+            RentalGoods goods = getById(id);
+            RentalGoodsVo goodsVo = new RentalGoodsVo();
+            BeanUtils.copyProperties(goods,goodsVo);
+
+            goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+            QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
+            goodsTypeQueryWrapper.eq("type",goods.getType());
+            goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
+            return SaResult.data(goodsVo);
+        }catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
 }
 
 
