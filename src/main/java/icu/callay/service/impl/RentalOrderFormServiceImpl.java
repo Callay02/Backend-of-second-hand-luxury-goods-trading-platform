@@ -15,9 +15,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.*;
+import java.util.*;
 
 /**
  * (RentalOrderForm)表服务实现类
@@ -70,9 +69,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
         try {
             String uid = (String) StpUtil.getLoginId();
             QueryWrapper<RentalOrderForm> orderFormQueryWrapper = new QueryWrapper<>();
-            orderFormQueryWrapper.eq("uid", uid).and(wrapper -> {
-                wrapper.eq("state", state);
-            });
+            orderFormQueryWrapper.eq("uid", uid).and(wrapper -> wrapper.eq("state", state));
             List<RentalOrderFormVo> orderFormList = new ArrayList<>();
             rentalOrderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
                 RentalOrderFormVo orderFormVo = new RentalOrderFormVo();
@@ -95,6 +92,31 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                 orderFormVo.setAddress(orderForm.getAddress());
                 orderFormVo.setDeliveryTime(orderForm.getDeliveryTime());
                 orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
+                orderFormVo.setDeliveryTime(orderForm.getDeliveryTime());
+                orderFormVo.setUid(orderForm.getUid());
+                orderFormVo.setUpdateTime(orderForm.getUpdateTime());
+
+                orderFormVo.setBeginTime(orderForm.getBeginTime());
+                orderFormVo.setEndTime(orderForm.getEndTime());
+
+                //计算租赁时间和总租金
+                if(state==2){
+                    Date now = new Date();
+                    Date beginTime = orderForm.getBeginTime();
+                    Instant nowInstant = now.toInstant();
+                    Instant beginTimeInstant = beginTime.toInstant();
+                    ZoneId zoneId = ZoneId.systemDefault();
+
+                    LocalDateTime localDateTimeNow = nowInstant.atZone(zoneId).toLocalDateTime();
+                    LocalDateTime localDateTimeBeginTime = beginTimeInstant.atZone(zoneId).toLocalDateTime();
+
+                    Duration duration =Duration.between(localDateTimeBeginTime,localDateTimeNow);
+                    int day = (int) duration.toDays();
+                    Double rentTotal = day*goods.getRent();
+                    update(new UpdateWrapper<RentalOrderForm>().eq("id",orderForm.getId()).set("day",day).set("rent_total",rentTotal).set("update_time",new Date()));
+                    orderFormVo.setDay(day);
+                    orderFormVo.setRentTotal(rentTotal);
+                }
 
                 orderFormList.add(orderFormVo);
 
@@ -141,9 +163,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
         try {
             RentalOrderForm orderForm = getById(id);
             String uid = (String) StpUtil.getLoginId();
-            if (count(new QueryWrapper<RentalOrderForm>().eq("id", id).and(wrapper -> {
-                wrapper.eq("uid", uid);
-            })) == 1) {
+            if (count(new QueryWrapper<RentalOrderForm>().eq("id", id).and(wrapper -> wrapper.eq("uid", uid))) == 1) {
                 RentalGoods goods = rentalGoodsMapper.selectById(orderForm.getGid());
                 //删除订单
                 removeById(id);
@@ -255,6 +275,23 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                 return SaResult.ok("更新成功");
             }
             return SaResult.ok("订单状态错误");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult signById(String id) {
+        try {
+            String uid = (String) StpUtil.getLoginId();
+            if(Objects.equals(getById(id).getUid(), uid)){
+                UpdateWrapper<RentalOrderForm> rentalOrderFormUpdateWrapper = new UpdateWrapper<>();
+                rentalOrderFormUpdateWrapper.eq("id",id).set("state",2).set("begin_time",new Date()).set("update_time",new Date());
+                update(rentalOrderFormUpdateWrapper);
+                return SaResult.ok("签收成功");
+            }
+            return SaResult.error("用户不匹配");
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());
