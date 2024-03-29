@@ -93,6 +93,8 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
 
                 orderFormVo.setId(orderForm.getId());
                 orderFormVo.setAddress(orderForm.getAddress());
+                orderFormVo.setDeliveryTime(orderForm.getDeliveryTime());
+                orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
 
                 orderFormList.add(orderFormVo);
 
@@ -188,6 +190,8 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                 orderFormVo.setState(orderForm.getState());
                 orderFormVo.setAddress(orderForm.getAddress());
                 orderFormVo.setUpdateTime(orderForm.getUpdateTime());
+                orderFormVo.setDeliveryTime(new Date());
+                orderFormVo.setDeliveryTime(orderForm.getDeliveryTime());
 
                 orderFormVoList.add(orderFormVo);
             });
@@ -229,10 +233,28 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             if(orderForm1.getState()==0){
                 rentalOrderForm.setState(1);
                 rentalOrderForm.setUpdateTime(new Date());
+                rentalOrderForm.setDeliveryTime(new Date());
                 update(rentalOrderForm,new UpdateWrapper<RentalOrderForm>().eq("id",rentalOrderForm.getId()));
                 return SaResult.ok("发货成功");
             }
             return SaResult.error("商品已发货");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult updateShippedOrderFormById(RentalOrderForm orderForm) {
+        try {
+            RentalOrderForm orderForm1 = getById(orderForm.getId());
+            if(orderForm1.getState()==1){
+                orderForm.setDeliveryTime(new Date());
+                orderForm1.setUpdateTime(new Date());
+                update(orderForm,new UpdateWrapper<RentalOrderForm>().eq("id",orderForm.getId()));
+                return SaResult.ok("更新成功");
+            }
+            return SaResult.ok("订单状态错误");
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());

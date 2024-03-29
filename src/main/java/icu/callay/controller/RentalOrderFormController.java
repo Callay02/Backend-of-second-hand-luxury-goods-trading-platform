@@ -3,6 +3,7 @@ package icu.callay.controller;
 
 
 import cn.dev33.satoken.util.SaResult;
+import icu.callay.entity.OrderForm;
 import icu.callay.entity.RentalOrderForm;
 import icu.callay.service.RentalOrderFormService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +60,12 @@ public class RentalOrderFormController {
     @PostMapping("delivery")
     public SaResult delivery(@RequestBody RentalOrderForm rentalOrderForm){
         return rentalOrderFormService.delivery(rentalOrderForm);
+    }
+
+    //管理员更新已发货订单信息
+    @PostMapping("updateShippedOrderFormById")
+    public SaResult updateShippedOrderFormById(@RequestBody RentalOrderForm orderForm){
+        return rentalOrderFormService.updateShippedOrderFormById(orderForm);
     }
 }
 

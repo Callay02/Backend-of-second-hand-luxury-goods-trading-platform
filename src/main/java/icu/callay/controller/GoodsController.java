@@ -51,7 +51,7 @@ public class GoodsController {
 
     //根据商品出售状态获取商品信息
     @GetMapping("getGoodsPageByState")
-    public SaResult getGoodsPage(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
+    public SaResult getGoodsPage(@RequestParam("state")String state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return goodsService.getGoodsPageByState(state,page,rows);
     }
 

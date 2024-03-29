@@ -40,6 +40,8 @@ public class RentalOrderForm implements Serializable {
     private Date updateTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss", timezone = "GMT+8")
+    private Date deliveryTime;
+
     private String address;
 
 }

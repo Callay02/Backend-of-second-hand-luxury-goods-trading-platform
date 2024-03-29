@@ -23,6 +23,8 @@ public interface RentalOrderFormService extends IService<RentalOrderForm> {
     SaResult adminCancelOrderById(String id);
 
     SaResult delivery(RentalOrderForm rentalOrderForm);
+
+    SaResult updateShippedOrderFormById(RentalOrderForm orderForm);
 }
 
 

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * (Goods)表服务实现类
@@ -123,10 +124,13 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
-    public SaResult getGoodsPageByState(int state,int page, int rows) {
+    public SaResult getGoodsPageByState(String state,int page, int rows) {
         Page<Goods> goodsPage = new Page<>(page,rows);
-        goodsMapper.selectPage(goodsPage,new QueryWrapper<Goods>().eq("state",state));
-
+        QueryWrapper<Goods> queryWrapper =new QueryWrapper<>();
+        if(!Objects.equals(state, "")){
+            queryWrapper.eq("state",state);
+        }
+        goodsMapper.selectPage(goodsPage,queryWrapper);
         List<GoodsVo> goodsVoList = new ArrayList<>();
         goodsPage.getRecords().forEach(goods -> {
             GoodsVo goodsVo = new GoodsVo();

@@ -70,6 +70,8 @@ public class OrderFormController {
         return orderFormService.delivery(orderForm);
     }
 
+
+    //管理员更新已发货订单信息
     @PostMapping("updateShippedOrderFormById")
     public SaResult updateShippedOrderFormById(@RequestBody OrderForm orderForm){
         return orderFormService.updateShippedOrderFormById(orderForm);
