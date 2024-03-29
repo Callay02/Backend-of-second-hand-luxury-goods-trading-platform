@@ -113,6 +113,9 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                     Duration duration =Duration.between(localDateTimeBeginTime,localDateTimeNow);
                     int day = (int) duration.toDays();
                     Double rentTotal = day*goods.getRent();
+                    //判断是否超出，超出则租金总价为押金
+                    if(rentTotal>=goods.getDeposit())
+                        rentTotal=goods.getDeposit();
                     update(new UpdateWrapper<RentalOrderForm>().eq("id",orderForm.getId()).set("day",day).set("rent_total",rentTotal).set("update_time",new Date()));
                     orderFormVo.setDay(day);
                     orderFormVo.setRentTotal(rentTotal);
@@ -213,6 +216,28 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                 orderFormVo.setDeliveryTime(new Date());
                 orderFormVo.setDeliveryTime(orderForm.getDeliveryTime());
 
+                //计算租赁时间和总租金
+                if(state==2){
+                    Date now = new Date();
+                    Date beginTime = orderForm.getBeginTime();
+                    Instant nowInstant = now.toInstant();
+                    Instant beginTimeInstant = beginTime.toInstant();
+                    ZoneId zoneId = ZoneId.systemDefault();
+
+                    LocalDateTime localDateTimeNow = nowInstant.atZone(zoneId).toLocalDateTime();
+                    LocalDateTime localDateTimeBeginTime = beginTimeInstant.atZone(zoneId).toLocalDateTime();
+
+                    Duration duration =Duration.between(localDateTimeBeginTime,localDateTimeNow);
+                    int day = (int) duration.toDays();
+                    Double rentTotal = day*goods.getRent();
+                    //判断是否超出，超出则租金总价为押金
+                    if(rentTotal>=goods.getDeposit())
+                        rentTotal=goods.getDeposit();
+                    update(new UpdateWrapper<RentalOrderForm>().eq("id",orderForm.getId()).set("day",day).set("rent_total",rentTotal).set("update_time",new Date()));
+                    orderFormVo.setDay(day);
+                    orderFormVo.setRentTotal(rentTotal);
+                }
+
                 orderFormVoList.add(orderFormVo);
             });
 
@@ -296,6 +321,11 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
         catch (Exception e){
             return SaResult.error(e.getMessage());
         }
+    }
+
+    @Override
+    public SaResult userReturn(String id) {
+        return null;
     }
 
 }

@@ -72,5 +72,11 @@ public class RentalOrderFormController {
     public SaResult signById(@RequestParam("id")String id){
         return rentalOrderFormService.signById(id);
     }
+
+    //用户退回
+    @GetMapping("userReturn")
+    public SaResult userReturn(@RequestParam("id")String id){
+        return rentalOrderFormService.userReturn(id);
+    }
 }
 
