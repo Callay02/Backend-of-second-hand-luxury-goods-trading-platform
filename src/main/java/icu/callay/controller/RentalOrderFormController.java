@@ -74,9 +74,16 @@ public class RentalOrderFormController {
     }
 
     //用户退回
-    @GetMapping("userReturn")
-    public SaResult userReturn(@RequestParam("id")String id){
-        return rentalOrderFormService.userReturn(id);
+    @PostMapping("userReturn")
+    public SaResult userReturn(@RequestBody RentalOrderForm rentalOrderForm){
+        return rentalOrderFormService.userReturn(rentalOrderForm);
     }
+
+    //管理员签收并结算
+    @GetMapping("adminSignAndSettleById")
+    public SaResult adminSignAndSettleById(@RequestParam("id")String id){
+        return rentalOrderFormService.adminSignAndSettleById(id);
+    }
+
 }
 

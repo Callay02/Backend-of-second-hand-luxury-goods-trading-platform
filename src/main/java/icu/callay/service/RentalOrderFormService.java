@@ -28,7 +28,9 @@ public interface RentalOrderFormService extends IService<RentalOrderForm> {
 
     SaResult signById(String id);
 
-    SaResult userReturn(String id);
+    SaResult userReturn(RentalOrderForm rentalOrderForm);
+
+    SaResult adminSignAndSettleById(String id);
 }
 
 

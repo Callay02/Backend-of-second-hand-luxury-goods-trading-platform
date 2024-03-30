@@ -120,6 +120,8 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                     orderFormVo.setDay(day);
                     orderFormVo.setRentTotal(rentTotal);
                 }
+                orderFormVo.setDay(orderForm.getDay());
+                orderFormVo.setRentTotal(orderForm.getRentTotal());
 
                 orderFormList.add(orderFormVo);
 
@@ -190,6 +192,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
 
             List<RentalOrderFormVo> orderFormVoList = new ArrayList<>();
             orderFormPage.getRecords().forEach(orderForm -> {
+
                 RentalOrderFormVo orderFormVo = new RentalOrderFormVo();
                 BeanUtils.copyProperties(orderForm,orderFormVo);
 
@@ -324,8 +327,65 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
     }
 
     @Override
-    public SaResult userReturn(String id) {
-        return null;
+    public SaResult userReturn(RentalOrderForm rentalOrderForm) {
+        try {
+            if(rentalOrderForm.getUid().equals(StpUtil.getLoginId())){
+                RentalGoods rentalGoods = rentalGoodsMapper.selectById(rentalOrderForm.getGid());
+                Date now = new Date();
+                Date beginTime = rentalOrderForm.getBeginTime();
+                Instant nowInstant = now.toInstant();
+                Instant beginTimeInstant = beginTime.toInstant();
+                ZoneId zoneId = ZoneId.systemDefault();
+
+                LocalDateTime localDateTimeNow = nowInstant.atZone(zoneId).toLocalDateTime();
+                LocalDateTime localDateTimeBeginTime = beginTimeInstant.atZone(zoneId).toLocalDateTime();
+
+                Duration duration =Duration.between(localDateTimeBeginTime,localDateTimeNow);
+                int day = (int) duration.toDays();
+                Double rentTotal = day*rentalGoods.getRent();
+                //判断是否超出，超出则租金总价为押金
+                if(rentTotal>=rentalGoods.getDeposit())
+                    rentTotal=rentalGoods.getDeposit();
+                UpdateWrapper<RentalOrderForm> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("id",rentalOrderForm.getId())
+                        .set("day",day)
+                        .set("rent_total",rentTotal)
+                        .set("end_time",new Date())
+                        .set("state",3)
+                        .set("logistics_number",rentalOrderForm.getLogisticsNumber())
+                        .set("update_time",new Date());
+                update(updateWrapper);
+                return SaResult.ok("退回成功");
+            }
+            return SaResult.error("用户不匹配");
+        }catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult adminSignAndSettleById(String id) {
+        try {
+            RentalOrderForm rentalOrderForm = getById(id);
+            //关闭订单
+            UpdateWrapper<RentalOrderForm> rentalOrderFormUpdateWrapper = new UpdateWrapper<>();
+            rentalOrderFormUpdateWrapper.eq("id",id)
+                    .set("state",4)
+                    .set("update_time",new Date());
+            update(rentalOrderFormUpdateWrapper);
+
+            //重新上架
+            rentalGoodsMapper.update(new UpdateWrapper<RentalGoods>().eq("id",rentalOrderForm.getGid()).set("state",1));
+
+            //结算
+            Double money = regularUserMapper.selectById(rentalOrderForm.getUid()).getMoney();
+            regularUserMapper.update(new UpdateWrapper<RegularUser>().eq("id",rentalOrderForm.getUid()).set("money",money+rentalOrderForm.getRentTotal()));
+            return SaResult.ok("结算成功");
+
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
     }
 
 }
