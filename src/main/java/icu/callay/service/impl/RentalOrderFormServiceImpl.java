@@ -197,6 +197,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
 
             List<RentalOrderFormVo> orderFormVoList = new ArrayList<>();
             orderFormPage.getRecords().forEach(orderForm -> {
+
                 RentalOrderFormVo orderFormVo = new RentalOrderFormVo();
                 BeanUtils.copyProperties(orderForm,orderFormVo);
 
