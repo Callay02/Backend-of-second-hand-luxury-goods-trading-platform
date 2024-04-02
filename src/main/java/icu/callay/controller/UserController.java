@@ -26,12 +26,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("hello")
-    public String hello(){
-        return "hello";
-    }
-
-
     //登录
     @PostMapping("login")
     public SaResult login(@RequestBody User user){
