@@ -7,11 +7,7 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.IdcardUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.asymmetric.KeyType;
-import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.symmetric.AES;
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import cn.hutool.extra.mail.MailUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -29,11 +25,10 @@ import icu.callay.vo.SalespersonUserVo;
 import icu.callay.vo.UserPageVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.security.PublicKey;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 /**
@@ -262,6 +257,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             user.setUpdateTime(new Date());
             updateById(user);
             return SaResult.ok("修改成功");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult adminGetUserNumberByType(String type) {
+        try {
+            Date now = new Date();
+            Instant nowInstant = now.toInstant();
+            ZoneId zoneId = ZoneId.systemDefault();
+            LocalDateTime localDateTimeNow = nowInstant.atZone(zoneId).toLocalDateTime();
+            int year = localDateTimeNow.getYear();
+            int month = localDateTimeNow.getMonth().getValue();
+
+            Date lastMonth = new Date(year-1900,month-1,1);
+
+            return SaResult.data(count(new QueryWrapper<User>().eq("type",type).ge("create_time",lastMonth)));
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());

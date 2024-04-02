@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import icu.callay.entity.Goods;
 import icu.callay.entity.RegularUser;
-import icu.callay.entity.User;
 import icu.callay.mapper.*;
 import icu.callay.entity.PurchaseOrderForm;
 import icu.callay.service.PurchaseOrderFormService;
@@ -34,9 +33,6 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
 
     @Autowired
     private PurchaseOrderFormMapper purchaseOrderFormMapper;
-
-    @Autowired
-    private PurchaseOrderFormStateMapper purchaseOrderFormStateMapper;
 
     @Autowired
     private GoodsTypeMapper goodsTypeMapper;
@@ -309,9 +305,16 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
     @Override
     public SaResult getPageByIdAndState(int state, int page, int rows) {
         try {
+            String uid = (String) StpUtil.getLoginId();
             Page<PurchaseOrderForm> purchaseOrderFormPage = new Page<>(page,rows);
-            purchaseOrderFormMapper.selectPage(purchaseOrderFormPage,new QueryWrapper<PurchaseOrderForm>().eq("uid",StpUtil.getLoginId()).and(wrappr->{wrappr.eq("state",state);}));
-            //System.out.println(purchaseOrderFormPage.getRecords());
+            QueryWrapper<PurchaseOrderForm> purchaseOrderFormQueryWrapper = new QueryWrapper<>();
+            if(state==7){
+                purchaseOrderFormQueryWrapper.eq("state",7).or().eq("state",8);
+            }
+            else{
+                purchaseOrderFormQueryWrapper.eq("uid",uid).eq("state",state);
+            }
+            purchaseOrderFormMapper.selectPage(purchaseOrderFormPage,purchaseOrderFormQueryWrapper);
             List<PurchaseOrderFormVo> purchaseOrderFormVoList = new ArrayList<>();
 
             purchaseOrderFormPage.getRecords().forEach(purchaseOrderForm -> {

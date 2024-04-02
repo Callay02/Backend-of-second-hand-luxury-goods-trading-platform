@@ -54,5 +54,7 @@ public class RentalOrderForm implements Serializable {
 
     private Double rentTotal;
 
+    private String remark;
+
 }
 

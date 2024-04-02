@@ -65,39 +65,46 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
     }
 
     @Override
-    public SaResult userGetOrderFormByState(int state) {
+    public SaResult userGetOrderFormByState(int state,int page,int rows) {
         try {
             String uid = (String) StpUtil.getLoginId();
             QueryWrapper<RentalOrderForm> orderFormQueryWrapper = new QueryWrapper<>();
             orderFormQueryWrapper.eq("uid", uid).and(wrapper -> wrapper.eq("state", state));
             List<RentalOrderFormVo> orderFormList = new ArrayList<>();
+            //以分页的形式放回已结算信息
+            if(state==4){
+                Page<RentalOrderForm> rentalOrderFormPage = new Page<>(page,rows);
+                rentalOrderFormMapper.selectPage(rentalOrderFormPage,orderFormQueryWrapper);
+                rentalOrderFormPage.getRecords().forEach(orderForm->{
+                    RentalOrderFormVo orderFormVo = new RentalOrderFormVo();
+
+                    RentalGoods goods = rentalGoodsMapper.selectById(orderForm.getGid());
+                    BeanUtils.copyProperties(goods,orderFormVo);
+
+                    orderFormVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+                    orderFormVo.setTypeName(goodsTypeMapper.selectOne(new QueryWrapper<GoodsType>().eq("type", goods.getType())).getName());
+
+                    BeanUtils.copyProperties(orderForm,orderFormVo);
+
+                    orderFormList.add(orderFormVo);
+                });
+
+                PageVo<RentalOrderFormVo> pageVo = new PageVo<>();
+                pageVo.setData(orderFormList);
+                pageVo.setTotal(rentalOrderFormPage.getTotal());
+                return SaResult.data(pageVo);
+            }
+
             rentalOrderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
                 RentalOrderFormVo orderFormVo = new RentalOrderFormVo();
+
                 RentalGoods goods = rentalGoodsMapper.selectById(orderForm.getGid());
-
-
-                orderFormVo.setGid(orderForm.getGid());
-                orderFormVo.setImg(goods.getImg());
-                orderFormVo.setInfo(goods.getInfo());
-                orderFormVo.setFineness(goods.getFineness());
+                BeanUtils.copyProperties(goods,orderFormVo);
 
                 orderFormVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
                 orderFormVo.setTypeName(goodsTypeMapper.selectOne(new QueryWrapper<GoodsType>().eq("type", goods.getType())).getName());
 
-                orderFormVo.setDeposit(goods.getDeposit());
-                orderFormVo.setRent(goods.getRent());
-                orderFormVo.setCreateTime(orderForm.getCreateTime());
-
-                orderFormVo.setId(orderForm.getId());
-                orderFormVo.setAddress(orderForm.getAddress());
-                orderFormVo.setDeliveryTime(orderForm.getDeliveryTime());
-                orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
-                orderFormVo.setDeliveryTime(orderForm.getDeliveryTime());
-                orderFormVo.setUid(orderForm.getUid());
-                orderFormVo.setUpdateTime(orderForm.getUpdateTime());
-
-                orderFormVo.setBeginTime(orderForm.getBeginTime());
-                orderFormVo.setEndTime(orderForm.getEndTime());
+                BeanUtils.copyProperties(orderForm,orderFormVo);
 
                 //计算租赁时间和总租金
                 if(state==2){
@@ -324,8 +331,81 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
     }
 
     @Override
-    public SaResult userReturn(String id) {
-        return null;
+    public SaResult userReturn(RentalOrderForm rentalOrderForm) {
+        try {
+            if(rentalOrderForm.getUid().equals(StpUtil.getLoginId())){
+                RentalGoods rentalGoods = rentalGoodsMapper.selectById(rentalOrderForm.getGid());
+                Date now = new Date();
+                Date beginTime = rentalOrderForm.getBeginTime();
+                Instant nowInstant = now.toInstant();
+                Instant beginTimeInstant = beginTime.toInstant();
+                ZoneId zoneId = ZoneId.systemDefault();
+
+                LocalDateTime localDateTimeNow = nowInstant.atZone(zoneId).toLocalDateTime();
+                LocalDateTime localDateTimeBeginTime = beginTimeInstant.atZone(zoneId).toLocalDateTime();
+
+                Duration duration =Duration.between(localDateTimeBeginTime,localDateTimeNow);
+                int day = (int) duration.toDays();
+                Double rentTotal = day*rentalGoods.getRent();
+                //判断是否超出，超出则租金总价为押金
+                if(rentTotal>=rentalGoods.getDeposit())
+                    rentTotal=rentalGoods.getDeposit();
+                UpdateWrapper<RentalOrderForm> updateWrapper = new UpdateWrapper<>();
+                updateWrapper.eq("id",rentalOrderForm.getId())
+                        .set("day",day)
+                        .set("rent_total",rentTotal)
+                        .set("end_time",new Date())
+                        .set("state",3)
+                        .set("logistics_number",rentalOrderForm.getLogisticsNumber())
+                        .set("update_time",new Date());
+                update(updateWrapper);
+                return SaResult.ok("退回成功");
+            }
+            return SaResult.error("用户不匹配");
+        }catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult userOverdueSettlement(String id) {
+        try {
+            String uid = (String) StpUtil.getLoginId();
+            RentalOrderForm rentalOrderForm = getById(id);
+            if(Objects.equals(rentalOrderForm.getUid(), uid)){
+                update(new UpdateWrapper<RentalOrderForm>().eq("id",id).set("state",4).set("remark","超时结算").set("update_time",new Date()));
+                return SaResult.ok("结算成功");
+            }
+            return SaResult.error("用户不匹配");
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    public SaResult adminSignAndSettleById(String id) {
+        try {
+            RentalOrderForm rentalOrderForm = getById(id);
+            //关闭订单
+            UpdateWrapper<RentalOrderForm> rentalOrderFormUpdateWrapper = new UpdateWrapper<>();
+            rentalOrderFormUpdateWrapper.eq("id",id)
+                    .set("state",4)
+                    .set("update_time",new Date());
+            update(rentalOrderFormUpdateWrapper);
+
+            //重新上架
+            rentalGoodsMapper.update(new UpdateWrapper<RentalGoods>().eq("id",rentalOrderForm.getGid()).set("state",1));
+
+            //结算
+            Double money = regularUserMapper.selectById(rentalOrderForm.getUid()).getMoney();
+            regularUserMapper.update(new UpdateWrapper<RegularUser>().eq("id",rentalOrderForm.getUid()).set("money",money+rentalOrderForm.getRentTotal()));
+            return SaResult.ok("结算成功");
+
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
     }
 
 }

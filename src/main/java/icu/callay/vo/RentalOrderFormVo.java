@@ -57,4 +57,6 @@ public class RentalOrderFormVo {
 
     private Double rentTotal;
 
+    private String remark;
+
 }

@@ -12,7 +12,7 @@ import icu.callay.entity.RentalOrderForm;
  */
 public interface RentalOrderFormService extends IService<RentalOrderForm> {
 
-    SaResult userGetOrderFormByState(int state);
+    SaResult userGetOrderFormByState(int state,int page,int rows);
 
     SaResult createOrderFormByGid(String gid);
 
@@ -28,7 +28,11 @@ public interface RentalOrderFormService extends IService<RentalOrderForm> {
 
     SaResult signById(String id);
 
-    SaResult userReturn(String id);
+    SaResult userReturn(RentalOrderForm rentalOrderForm);
+
+    SaResult userOverdueSettlement(String id);
+
+    SaResult adminSignAndSettleById(String id);
 }
 
 

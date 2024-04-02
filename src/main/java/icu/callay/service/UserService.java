@@ -25,6 +25,8 @@ public interface UserService extends IService<User> {
     SaResult deleteUserById(User user);
 
     SaResult updateMyUserInfoById(User user);
+
+    SaResult adminGetUserNumberByType(String type);
 }
 
 

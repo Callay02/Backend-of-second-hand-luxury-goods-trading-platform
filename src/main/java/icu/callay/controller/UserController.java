@@ -51,7 +51,6 @@ public class UserController {
     //注册
     @PostMapping("register")
     public SaResult register(@RequestBody User user){
-        //System.out.println(user);
         return userService.userRegister(user);
     }
 
@@ -85,6 +84,12 @@ public class UserController {
     @PostMapping("updateMyUserInfoById")
     public SaResult updateMyUserInfoById(@RequestBody User user){
         return userService.updateMyUserInfoById(user);
+    }
+
+    //获取用户数量
+    @GetMapping("adminGetUserNumberByType")
+    public SaResult adminGetUserNumberByType(@RequestParam("type")String type){
+        return userService.adminGetUserNumberByType(type);
     }
 }
 

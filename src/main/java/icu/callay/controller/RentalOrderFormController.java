@@ -26,9 +26,10 @@ public class RentalOrderFormController {
     }
 
     //用户获取订单信息
+    //结算订单信息已分页形式返回
     @GetMapping("userGetOrderFormByState")
-    public SaResult userGetOrderFormByState(@RequestParam("state")int state){
-        return rentalOrderFormService.userGetOrderFormByState(state);
+    public SaResult userGetOrderFormByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return rentalOrderFormService.userGetOrderFormByState(state,page,rows);
     }
 
     //普通用户根据商品id租赁商品
@@ -74,9 +75,21 @@ public class RentalOrderFormController {
     }
 
     //用户退回
-    @GetMapping("userReturn")
-    public SaResult userReturn(@RequestParam("id")String id){
-        return rentalOrderFormService.userReturn(id);
+    @PostMapping("userReturn")
+    public SaResult userReturn(@RequestBody RentalOrderForm rentalOrderForm){
+        return rentalOrderFormService.userReturn(rentalOrderForm);
+    }
+
+    //用户超时结算
+    @GetMapping("userOverdueSettlementById")
+    public SaResult userOverdueSettlement(@RequestParam("id")String id){
+        return rentalOrderFormService.userOverdueSettlement(id);
+    }
+
+    //管理员签收并结算
+    @GetMapping("adminSignAndSettleById")
+    public SaResult adminSignAndSettleById(@RequestParam("id")String id){
+        return rentalOrderFormService.adminSignAndSettleById(id);
     }
 }
 
