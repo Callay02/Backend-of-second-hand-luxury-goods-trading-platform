@@ -40,6 +40,7 @@ public class MyConfigure implements WebMvcConfigurer {
                 .excludePathPatterns("/user/hello")
                 .excludePathPatterns("/user/register")
                 .excludePathPatterns("/user/getcode")
+                .excludePathPatterns("/user/userResetPassword")
                 .order(1000);
     }
 }

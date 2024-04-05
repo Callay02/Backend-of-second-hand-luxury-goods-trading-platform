@@ -181,6 +181,47 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
         }
     }
 
+    @Override
+    public SaResult adminGetGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo) {
+        try{
+            QueryWrapper<RentalGoods> goodsQueryWrapper = new QueryWrapper<>();
+            if(!searchGoodsVo.getBrand().equals("未选择")){
+                goodsQueryWrapper.eq("brand",searchGoodsVo.getBrand());
+            }
+            if(!searchGoodsVo.getType().equals("未选择")){
+                goodsQueryWrapper.eq("type",searchGoodsVo.getType());
+            }
+            if (!searchGoodsVo.getInfo().isEmpty()){
+                goodsQueryWrapper.like("info",searchGoodsVo.getInfo());
+            }
+            if(!searchGoodsVo.getId().isEmpty()){
+                goodsQueryWrapper.eq("id",searchGoodsVo.getId());
+            }
+            Page<RentalGoods> goodsPage = new Page<>(searchGoodsVo.getPage(),searchGoodsVo.getRows());
+            rentalGoodsMapper.selectPage(goodsPage,goodsQueryWrapper);
+
+            List<RentalGoodsVo> goodsVoList = new ArrayList<>();
+            goodsPage.getRecords().forEach(goods -> {
+                RentalGoodsVo goodsVo = new RentalGoodsVo();
+                BeanUtils.copyProperties(goods,goodsVo);
+
+                goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+                QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
+                goodsTypeQueryWrapper.eq("type",goods.getType());
+                goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
+                goodsVoList.add(goodsVo);
+            });
+            PageVo<RentalGoodsVo> goodsPageVo =new PageVo<>();
+            goodsPageVo.setData(goodsVoList);
+            goodsPageVo.setTotal(goodsPage.getTotal());
+
+            return SaResult.data(goodsPageVo);
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
 }
 
 

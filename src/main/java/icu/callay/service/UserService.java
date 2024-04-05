@@ -17,7 +17,7 @@ public interface UserService extends IService<User> {
 
     SaResult userRegister(UserRegisterVo userRegisterVo);
 
-    SaResult getCode(String email);
+    SaResult getCode(String email,String type);
 
     SaResult getUserInfo(Long id,String pwd);
 
@@ -30,6 +30,8 @@ public interface UserService extends IService<User> {
     SaResult adminGetUserNumberByType(String type);
 
     SaResult adminAddUser(User user);
+
+    SaResult userResetPassword(UserRegisterVo user);
 }
 
 

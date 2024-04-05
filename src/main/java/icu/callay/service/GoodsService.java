@@ -37,6 +37,8 @@ public interface GoodsService extends IService<Goods> {
     SaResult updateGoodsById(Goods goods);
 
     SaResult getGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo);
+
+    SaResult adminGetGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo);
 }
 
 

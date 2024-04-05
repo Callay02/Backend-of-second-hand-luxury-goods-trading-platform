@@ -9,4 +9,5 @@ public class SearchGoodsVo {
     private String info;
     private int page;
     private int rows;
+    private String id;
 }

@@ -85,14 +85,15 @@ public class UserController {
 
     /**
      * @param email:
+     * @param type:
      * @return SaResult
      * @author Callay
-     * &#064;description  生成验证码
-     * &#064;date  2024/4/5 13:25
+     * &#064;description 生成验证码
+     * &#064;2024/4/5 17:19
      */
     @GetMapping  ("getcode")
-    public SaResult getCode(@RequestParam(name = "email") String email){
-        return userService.getCode(email);
+    public SaResult getCode(@RequestParam(name = "email") String email,@RequestParam("type")String type){
+        return userService.getCode(email,type);
     }
 
     /**
@@ -168,6 +169,11 @@ public class UserController {
     @GetMapping("adminGetUserNumberByType")
     public SaResult adminGetUserNumberByType(@RequestParam("type")String type){
         return userService.adminGetUserNumberByType(type);
+    }
+
+    @PostMapping("userResetPassword")
+    public SaResult userResetPassword(@RequestBody UserRegisterVo user){
+        return userService.userResetPassword(user);
     }
 }
 

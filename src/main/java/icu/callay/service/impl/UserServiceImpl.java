@@ -97,7 +97,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public SaResult userRegister(UserRegisterVo userRegisterVo) {
         try {
-            if(Objects.equals(userRegisterVo.getVerificationCode(), stringRedisTemplate.opsForValue().get(userRegisterVo.getEmail() + "_verificationCode"))){
+            if(Objects.equals(userRegisterVo.getVerificationCode(), stringRedisTemplate.opsForValue().get(userRegisterVo.getEmail() + "_register"))){
                 if( IdcardUtil.isValidCard(userRegisterVo.getIdCard())){
                     QueryWrapper<User> wrapperName = new QueryWrapper<User>().eq("name",userRegisterVo.getName());
                     if(userMapper.selectCount(wrapperName)<1 ){
@@ -152,11 +152,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
     @Override
-    public SaResult getCode(String email) {
+    public SaResult getCode(String email,String type) {
         String verificationCode = RandomUtil.randomString(4);
         try {
-            stringRedisTemplate.opsForValue().set(email+"_verificationCode",verificationCode,10, TimeUnit.MINUTES);
-            MailUtil.send(email, "二手奢侈品交易平台注册验证码", "<h1>您的验证码："+verificationCode+"</h1>", false);
+            stringRedisTemplate.opsForValue().set(email+"_"+type,verificationCode,5, TimeUnit.MINUTES);
+            MailUtil.send(email, "二手奢侈品交易平台", "<h1>您的验证码为："+verificationCode+"</h1>", false);
             return SaResult.ok("验证码已发送至"+email);
         }
         catch (Exception e){
@@ -340,6 +340,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         }else
             return SaResult.error("身份证错误");
+    }
+
+    @Override
+    public SaResult userResetPassword(UserRegisterVo user){
+        try {
+            QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("name",user.getName()).eq("email",user.getEmail()).eq("is_deleted",0);
+
+            //判断用户是否存在
+            if(userMapper.selectCount(queryWrapper)==1){
+                //验证验证码
+                if(Objects.equals(stringRedisTemplate.opsForValue().get(user.getEmail() + "_resetPassword"), user.getVerificationCode())){
+                    String password = RandomUtil.randomString(12);
+
+                    //AES加密密码
+                    String a = userMapper.selectOne(queryWrapper).getIdCard();
+                    String aesKey = Base64.encode(a);
+                    AES aes = SecureUtil.aes(aesKey.getBytes());
+                    String aesPasswd = aes.encryptHex(password);
+
+                    update(new UpdateWrapper<User>().eq("name",user.getName()).set("password",aesPasswd));
+                    MailUtil.send(user.getEmail(), "二手奢侈品交易平台", "<h1>您的密码已重置："+password+"</h1>", false);
+                    return SaResult.ok("您的密码已重置，新密码已发送至邮箱，请注意查收");
+                }else{
+                    return SaResult.error("验证码错误");
+                }
+            }else{
+                SaResult.error("用户不存在");
+            }
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+        return null;
     }
 
 

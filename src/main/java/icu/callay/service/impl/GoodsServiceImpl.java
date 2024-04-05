@@ -255,6 +255,47 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         }
     }
 
+    @Override
+    public SaResult adminGetGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo) {
+        try{
+            QueryWrapper<Goods> goodsQueryWrapper = new QueryWrapper<>();
+            if(!searchGoodsVo.getBrand().equals("未选择")){
+                goodsQueryWrapper.eq("brand",searchGoodsVo.getBrand());
+            }
+            if(!searchGoodsVo.getType().equals("未选择")){
+                goodsQueryWrapper.eq("type",searchGoodsVo.getType());
+            }
+            if (!searchGoodsVo.getInfo().isEmpty()){
+                goodsQueryWrapper.like("info",searchGoodsVo.getInfo());
+            }
+            if(!searchGoodsVo.getId().isEmpty()){
+                goodsQueryWrapper.eq("id",searchGoodsVo.getId());
+            }
+            Page<Goods> goodsPage = new Page<>(searchGoodsVo.getPage(),searchGoodsVo.getRows());
+            goodsMapper.selectPage(goodsPage,goodsQueryWrapper);
+
+            List<GoodsVo> goodsVoList = new ArrayList<>();
+            goodsPage.getRecords().forEach(goods -> {
+                GoodsVo goodsVo = new GoodsVo();
+                BeanUtils.copyProperties(goods,goodsVo);
+
+                goodsVo.setBrandName(goodsBrandMapper.selectById(goods.getBrand()).getName());
+                QueryWrapper<GoodsType> goodsTypeQueryWrapper = new QueryWrapper<>();
+                goodsTypeQueryWrapper.eq("type",goods.getType());
+                goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
+                goodsVoList.add(goodsVo);
+            });
+            GoodsPageVo goodsPageVo = new GoodsPageVo();
+            goodsPageVo.setGoodsVoList(goodsVoList);
+            goodsPageVo.setTotal(goodsPage.getTotal());
+
+            return SaResult.data(goodsPageVo);
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
 }
 
 

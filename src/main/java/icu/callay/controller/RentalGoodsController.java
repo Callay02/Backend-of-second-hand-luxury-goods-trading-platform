@@ -111,5 +111,17 @@ public class RentalGoodsController {
         return rentalGoodsService.getGoodsById(id);
     }
 
+    /**
+     * @param searchGoodsVo:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员根据商品id、品牌、类型、详情分页查找商品
+     * &#064;2024/4/5 16:39
+     */
+    @PostMapping("adminGetGoodsPageByBrandAndTypeAndInfo")
+    public SaResult adminGetGoodsPageByBrandAndTypeAndInfo(@RequestBody SearchGoodsVo searchGoodsVo){
+        return rentalGoodsService.adminGetGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
+    }
+
 }
 

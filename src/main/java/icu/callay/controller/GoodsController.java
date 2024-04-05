@@ -166,5 +166,17 @@ public class GoodsController {
     public SaResult getGoodsPageByBrandAndTypeAndInfo(@RequestBody SearchGoodsVo searchGoodsVo){
         return goodsService.getGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
     }
+
+    /**
+     * @param searchGoodsVo:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员根据id、品牌、类型、详情分页查找商品(可选条件查询)
+     * &#064;2024/4/5 16:23
+     */
+    @PostMapping("adminGetGoodsPageByBrandAndTypeAndInfo")
+    public SaResult adminGetGoodsPageByBrandAndTypeAndInfo(@RequestBody SearchGoodsVo searchGoodsVo){
+        return goodsService.adminGetGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
+    }
 }
 
