@@ -171,6 +171,13 @@ public class UserController {
         return userService.adminGetUserNumberByType(type);
     }
 
+    /**
+     * @param user:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 用户重置密码
+     * &#064;2024/4/5 17:59
+     */
     @PostMapping("userResetPassword")
     public SaResult userResetPassword(@RequestBody UserRegisterVo user){
         return userService.userResetPassword(user);
