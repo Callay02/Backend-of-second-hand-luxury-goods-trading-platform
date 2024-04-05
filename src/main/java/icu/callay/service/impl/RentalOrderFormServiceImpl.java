@@ -33,36 +33,31 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
     private GoodsTypeMapper goodsTypeMapper;
     private RegularUserMapper regularUserMapper;
     private UserMapper userMapper;
-
     @Autowired
     public void RentalOrderFormMapper(RentalOrderFormMapper rentalOrderFormMapper) {
         this.rentalOrderFormMapper = rentalOrderFormMapper;
     }
-
     @Autowired
     public void RentalGoodsMapper(RentalGoodsMapper rentalGoodsMapper) {
         this.rentalGoodsMapper = rentalGoodsMapper;
     }
-
     @Autowired
     public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper) {
         this.goodsBrandMapper = goodsBrandMapper;
     }
-
     @Autowired
     public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper) {
         this.goodsTypeMapper = goodsTypeMapper;
     }
-
     @Autowired
     public void RegularUserMapper(RegularUserMapper regularUserMapper) {
         this.regularUserMapper = regularUserMapper;
     }
-
     @Autowired
     public void UserMapper(UserMapper userMapper){
         this.userMapper=userMapper;
     }
+
 
     @Override
     public SaResult userGetOrderFormByState(int state,int page,int rows) {
@@ -173,7 +168,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
         try {
             RentalOrderForm orderForm = getById(id);
             String uid = (String) StpUtil.getLoginId();
-            if (count(new QueryWrapper<RentalOrderForm>().eq("id", id).and(wrapper -> wrapper.eq("uid", uid))) == 1) {
+            if (count(new QueryWrapper<RentalOrderForm>().eq("id", id).and(wrapper -> wrapper.eq("uid", uid))) == 1 && orderForm.getState()==0) {
                 RentalGoods goods = rentalGoodsMapper.selectById(orderForm.getGid());
                 //删除订单
                 removeById(id);

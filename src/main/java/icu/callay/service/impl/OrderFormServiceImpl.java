@@ -1,6 +1,5 @@
 package icu.callay.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -10,8 +9,6 @@ import icu.callay.entity.*;
 import icu.callay.mapper.*;
 import icu.callay.service.OrderFormService;
 import icu.callay.service.ShoppingCartService;
-import icu.callay.vo.GoodsPageVo;
-import icu.callay.vo.GoodsVo;
 import icu.callay.vo.OrderFormPageVo;
 import icu.callay.vo.OrderFormVo;
 import org.springframework.beans.BeanUtils;
@@ -32,29 +29,47 @@ import java.util.Objects;
 @Service("orderFormService")
 public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm> implements OrderFormService {
 
-    @Autowired
     private OrderFormMapper orderFormMapper;
-
-    @Autowired
     private GoodsMapper goodsMapper;
-
-    @Autowired
     private RegularUserMapper regularUserMapper;
-
-    @Autowired
     private GoodsBrandMapper goodsBrandMapper;
-
-    @Autowired
     private GoodsTypeMapper goodsTypeMapper;
-
-    @Autowired
     private ShoppingCartService shoppingCartService;
-
-    @Autowired
     private UserMapper userMapper;
-
-    @Autowired
     private SalespersonUserMapper salespersonUserMapper;
+    @Autowired
+    public void OrderFormMapper(OrderFormMapper orderFormMapper){
+        this.orderFormMapper=orderFormMapper;
+    }
+    @Autowired
+    public void GoodsMapper(GoodsMapper goodsMapper){
+        this.goodsMapper=goodsMapper;
+    }
+    @Autowired
+    public void RegularUserMapper(RegularUserMapper regularUserMapper){
+        this.regularUserMapper=regularUserMapper;
+    }
+    @Autowired
+    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
+        this.goodsBrandMapper=goodsBrandMapper;
+    }
+    @Autowired
+    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
+        this.goodsTypeMapper=goodsTypeMapper;
+    }
+    @Autowired
+    public void ShoppingCartService(ShoppingCartService shoppingCartService){
+        this.shoppingCartService=shoppingCartService;
+    }
+    @Autowired
+    public void UserMapper(UserMapper userMapper){
+        this.userMapper=userMapper;
+    }
+    @Autowired
+    public void SalespersonUserMapper(SalespersonUserMapper salespersonUserMapper){
+        this.salespersonUserMapper=salespersonUserMapper;
+    }
+
 
     @Override
     public SaResult createOrderForm(List<OrderForm> orderFormList) {
@@ -95,7 +110,6 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
         try{
             List<OrderFormVo> orderFormList = new ArrayList<>();
             orderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
-                //System.out.println(orderForm.getId());
                 OrderFormVo orderFormVo = new OrderFormVo();
                 Goods goods = goodsMapper.selectById(orderForm.getGid());
 
@@ -129,7 +143,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     public SaResult cancelOrderById(Long id,Long uid) {
         try {
             OrderForm orderForm = getOne(new QueryWrapper<OrderForm>().eq("id",id));
-            if(count(new QueryWrapper<OrderForm>().eq("id",id).and(wrapper->{wrapper.eq("uid",uid);}))==1){
+            if(count(new QueryWrapper<OrderForm>().eq("id",id).and(wrapper->{wrapper.eq("uid",uid);}))==1 && orderForm.getState()==0){
                 Goods goods = goodsMapper.selectById(orderForm.getGid());
                 //删除订单
                 removeById(id);
@@ -159,7 +173,6 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
         try{
             List<OrderFormVo> orderFormList = new ArrayList<>();
             orderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
-                //System.out.println(orderForm.getId());
                 OrderFormVo orderFormVo = new OrderFormVo();
                 Goods goods = goodsMapper.selectById(orderForm.getGid());
 

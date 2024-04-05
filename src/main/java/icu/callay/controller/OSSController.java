@@ -9,6 +9,7 @@ import com.aliyun.oss.model.PolicyConditions;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -18,6 +19,12 @@ import java.util.Map;
 @RequestMapping("/oss")
 public class OSSController {
 
+    /**
+     * @return SaResult
+     * @author Callay
+     * &#064;description 后端签名
+     * &#064;2024/4/5 14:28
+     */
     @RequestMapping("/policy")
     public SaResult policy(){
         String accessId ="LTAI5tDqLBMKXMws6CkuGZNh";
@@ -39,7 +46,7 @@ public class OSSController {
             policyConds.addConditionItem(MatchMode.StartWith, PolicyConditions.COND_KEY, dir);
 
             String postPolicy = ossClient.generatePostPolicy(expiration, policyConds);
-            byte[] binaryData = postPolicy.getBytes("utf-8");
+            byte[] binaryData = postPolicy.getBytes(StandardCharsets.UTF_8);
             //String accessId = credentialsProvider.getCredentials().getAccessKeyId();
             String encodedPolicy = BinaryUtil.toBase64String(binaryData);
             String postSignature = ossClient.calculatePostSignature(postPolicy);

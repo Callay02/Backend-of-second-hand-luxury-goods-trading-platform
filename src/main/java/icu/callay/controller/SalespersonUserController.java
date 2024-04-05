@@ -18,15 +18,31 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("salespersonUser")
 public class SalespersonUserController {
 
-    @Autowired
     private SalespersonUserService salespersonUserService;
+    @Autowired
+    public void SalespersonUserService(SalespersonUserService salespersonUserService){
+        this.salespersonUserService=salespersonUserService;
+    }
 
-    //销售员根据id获取销售员信息
+    /**
+     * @param :
+     * @return SaResult
+     * @author Callay
+     * &#064;description 销售员根据id获取销售员信息
+     * &#064;2024/4/5 14:51
+     */
     @GetMapping("getUserInfoById")
     public SaResult getUserInfoById(){
         return salespersonUserService.getUserInfoById();
     }
 
+    /**
+     * @param salespersonUser:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 根据用户id更新用户信息
+     * &#064;2024/4/5 14:51
+     */
     @PostMapping("updateUserInfoById")
     public SaResult updateUserInfoById(@RequestBody SalespersonUser salespersonUser){
         return salespersonUserService.updateUserInfoById(salespersonUser);

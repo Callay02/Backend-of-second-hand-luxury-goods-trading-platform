@@ -25,68 +25,138 @@ public class RentalOrderFormController {
         this.rentalOrderFormService = rentalOrderFormService;
     }
 
-    //用户获取订单信息
-    //结算订单信息已分页形式返回
+
+    /**
+     * @param state:
+     * @param page:
+     * @param rows:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 用户根据订单状态分页查询订单信息
+     * &#064;2024/4/5 14:47
+     */
     @GetMapping("userGetOrderFormByState")
     public SaResult userGetOrderFormByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return rentalOrderFormService.userGetOrderFormByState(state,page,rows);
     }
 
-    //普通用户根据商品id租赁商品
+    /**
+     * @param gid:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 普通用户根据商品id租赁商品(创建订单)
+     * &#064;2024/4/5 14:48
+     */
     @GetMapping("createOrderFormByGid")
     public SaResult createOrderFormByGid(@RequestParam("gid")String gid){
         return rentalOrderFormService.createOrderFormByGid(gid);
     }
 
-    //普通用户根据订单id取消订单
+    /**
+     * @param id:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 普通用户根据订单id取消订单
+     * &#064;2024/4/5 14:48
+     */
     @GetMapping("cancelOrderById")
     public SaResult cancelOrderById(@RequestParam("id")String id){
         return rentalOrderFormService.cancelOrderById(id);
     }
 
-    //管理员根据订单状态获取订单信息
+    /**
+     * @param state:
+     * @param page:
+     * @param rows:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员根据订单状态分页查询订单信息
+     * &#064;2024/4/5 14:49
+     */
     @GetMapping("getOrderFormPageByState")
     public SaResult getOrderFormPageByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return rentalOrderFormService.getOrderFormPageByState(state,page,rows);
     }
 
-    //管理员根据id取消订单
+    /**
+     * @param id:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员根据id取消订单
+     * &#064;2024/4/5 14:49
+     */
     @GetMapping("adminCancelOrderById")
     public SaResult adminCancelOrderById(@RequestParam("id")String id){
         return rentalOrderFormService.adminCancelOrderById(id);
     }
 
-    //管理员发货
+    /**
+     * @param rentalOrderForm:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员发货
+     * &#064;2024/4/5 14:49
+     */
     @PostMapping("delivery")
     public SaResult delivery(@RequestBody RentalOrderForm rentalOrderForm){
         return rentalOrderFormService.delivery(rentalOrderForm);
     }
 
-    //管理员更新已发货订单信息
+    /**
+     * @param orderForm:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员根据商品id更新已发货订单信息
+     * &#064;2024/4/5 14:50
+     */
     @PostMapping("updateShippedOrderFormById")
     public SaResult updateShippedOrderFormById(@RequestBody RentalOrderForm orderForm){
         return rentalOrderFormService.updateShippedOrderFormById(orderForm);
     }
 
-    //签收
+    /**
+     * @param id:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 普通用户签收
+     * &#064;2024/4/5 14:50
+     */
     @GetMapping("signById")
     public SaResult signById(@RequestParam("id")String id){
         return rentalOrderFormService.signById(id);
     }
 
-    //用户退回
+    /**
+     * @param rentalOrderForm:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 用户退回
+     * &#064;2024/4/5 14:50
+     */
     @PostMapping("userReturn")
     public SaResult userReturn(@RequestBody RentalOrderForm rentalOrderForm){
         return rentalOrderFormService.userReturn(rentalOrderForm);
     }
 
-    //用户超时结算
+    /**
+     * @param id:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 用户超时结算
+     * &#064;2024/4/5 14:50
+     */
     @GetMapping("userOverdueSettlementById")
     public SaResult userOverdueSettlement(@RequestParam("id")String id){
         return rentalOrderFormService.userOverdueSettlement(id);
     }
 
-    //管理员签收并结算
+    /**
+     * @param id:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员签收并结算
+     * &#064;2024/4/5 14:50
+     */
     @GetMapping("adminSignAndSettleById")
     public SaResult adminSignAndSettleById(@RequestParam("id")String id){
         return rentalOrderFormService.adminSignAndSettleById(id);

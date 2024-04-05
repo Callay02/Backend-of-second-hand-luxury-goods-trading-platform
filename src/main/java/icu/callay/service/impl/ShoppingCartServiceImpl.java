@@ -29,17 +29,27 @@ import java.util.List;
 @Service("shoppingCartService")
 public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, ShoppingCart> implements ShoppingCartService {
 
-    @Autowired
     private ShoppingCartMapper shoppingCartMapper;
-
-    @Autowired
     private GoodsMapper goodsMapper;
-
-    @Autowired
     private GoodsBrandMapper goodsBrandMapper;
-
-    @Autowired
     private GoodsTypeMapper goodsTypeMapper;
+    @Autowired
+    public void ShoppingCartMapper(ShoppingCartMapper shoppingCartMapper){
+        this.shoppingCartMapper=shoppingCartMapper;
+    }
+    @Autowired
+    public void GoodsMapper(GoodsMapper goodsMapper){
+        this.goodsMapper=goodsMapper;
+    }
+    @Autowired
+    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
+        this.goodsBrandMapper=goodsBrandMapper;
+    }
+    @Autowired
+    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
+        this.goodsTypeMapper=goodsTypeMapper;
+    }
+
 
     @Override
     public SaResult addToShoppingCart(ShoppingCart shoppingCart) {

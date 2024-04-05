@@ -21,30 +21,68 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("goodsBrand")
 public class GoodsBrandController {
 
-    @Autowired
     private GoodsBrandService goodsBrandService;
 
-    //获取品牌信息
+    @Autowired
+    public void GoodsBrandService(GoodsBrandService goodsBrandService){
+        this.goodsBrandService=goodsBrandService;
+    }
+
+    /**
+     * @return SaResult
+     * @author Callay
+     * &#064;description 获取品牌信息
+     * &#064;2024/4/5 14:01
+     */
     @GetMapping("getGoodsBrand")
     public SaResult getGoodsBrand(){
         return goodsBrandService.getGoodsBrand();
     }
 
+    /**
+     * @param page:
+     * @param rows:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 分页获取品牌信息
+     * &#064;2024/4/5 14:02
+     */
     @GetMapping("getGoodsBrandPage")
     public SaResult getGoodsBrandPage(@RequestParam("page") int page,@RequestParam("rows") int rows){
         return goodsBrandService.getGoodsBrandPage(page,rows);
     }
 
+    /**
+     * @param goodsBrand:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 添加品牌
+     * &#064;2024/4/5 14:02
+     */
     @PostMapping("addBrand")
     public SaResult addBrand(@RequestBody GoodsBrand goodsBrand){
         return goodsBrandService.addBrand(goodsBrand);
     }
 
+    /**
+     * @param goodsBrand:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 更加品牌id删除品牌
+     * &#064;2024/4/5 14:02
+     */
     @PostMapping("deleteBrandById")
     public SaResult deleteBrandById(@RequestBody GoodsBrand goodsBrand){
         return goodsBrandService.deleteBrandById(goodsBrand);
     }
 
+    /**
+     * @param goodsBrand:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 更新品牌信息
+     * &#064;2024/4/5 14:02
+     */
     @PostMapping("updateBrand")
     public SaResult updateBrand(@RequestBody GoodsBrand goodsBrand){
         return goodsBrandService.updateBrand(goodsBrand);

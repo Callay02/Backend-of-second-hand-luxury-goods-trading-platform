@@ -3,9 +3,7 @@ package icu.callay.service.impl;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import icu.callay.entity.User;
 import icu.callay.mapper.RegularUserMapper;
 import icu.callay.entity.RegularUser;
 import icu.callay.mapper.UserMapper;
@@ -15,9 +13,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * (RegularUser)表服务实现类
@@ -28,8 +24,12 @@ import java.util.List;
 @Service("regularUserService")
 public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, RegularUser> implements RegularUserService {
 
-    @Autowired
     private UserMapper userMapper;
+    @Autowired
+    public void UserMapper(UserMapper userMapper){
+        this.userMapper=userMapper;
+    }
+
 
     @Override
     public SaResult getUserInfoById(int id) {

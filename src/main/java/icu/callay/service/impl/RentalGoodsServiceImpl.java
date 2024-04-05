@@ -1,6 +1,5 @@
 package icu.callay.service.impl;
 
-import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -32,9 +31,6 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
     private RentalGoodsMapper rentalGoodsMapper;
     private GoodsBrandMapper goodsBrandMapper;
     private GoodsTypeMapper goodsTypeMapper;
-    private RegularUserMapper regularUserMapper;
-    private RentalOrderFormMapper rentalOrderFormMapper;
-
     @Autowired
     public void RentalGoodsMapper(RentalGoodsMapper rentalGoodsMapper){
         this.rentalGoodsMapper=rentalGoodsMapper;
@@ -49,15 +45,7 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
     public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
         this.goodsTypeMapper=goodsTypeMapper;
     }
-
-    @Autowired
-    public void RegularUserMapper(RegularUserMapper regularUserMapper){
-        this.regularUserMapper=regularUserMapper;
-    }
-
-    @Autowired void  RentalOrderFormMapper(RentalOrderFormMapper rentalOrderFormMapper){
-        this.rentalOrderFormMapper=rentalOrderFormMapper;
-    }
+    
 
     @Override
     public SaResult getGoodsPageByState(String state,int page, int rows) {

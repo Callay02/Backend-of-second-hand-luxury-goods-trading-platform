@@ -31,20 +31,32 @@ import java.util.List;
 @Service("purchaseOrderFormService")
 public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormMapper, PurchaseOrderForm> implements PurchaseOrderFormService {
 
-    @Autowired
     private PurchaseOrderFormMapper purchaseOrderFormMapper;
-
-    @Autowired
     private GoodsTypeMapper goodsTypeMapper;
-
-    @Autowired
     private GoodsBrandMapper goodsBrandMapper;
-
-    @Autowired
     private RegularUserMapper regularUserMapper;
-
-    @Autowired
     private GoodsMapper goodsMapper;
+    @Autowired
+    public void PurchaseOrderFormMapper(PurchaseOrderFormMapper purchaseOrderFormMapper){
+        this.purchaseOrderFormMapper=purchaseOrderFormMapper;
+    }
+    @Autowired
+    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
+        this.goodsTypeMapper=goodsTypeMapper;
+    }
+    @Autowired
+    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
+        this.goodsBrandMapper=goodsBrandMapper;
+    }
+    @Autowired
+    public void RegularUserMapper(RegularUserMapper regularUserMapper){
+        this.regularUserMapper=regularUserMapper;
+    }
+    @Autowired
+    public void GoodsMapper(GoodsMapper goodsMapper){
+        this.goodsMapper=goodsMapper;
+    }
+
 
     @Override
     public SaResult createOrderForm(PurchaseOrderForm purchaseOrderForm) {

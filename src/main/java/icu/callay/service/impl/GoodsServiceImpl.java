@@ -33,12 +33,21 @@ import java.util.Objects;
 @Service("goodsService")
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements GoodsService {
 
-    @Autowired
     private GoodsMapper goodsMapper;
-    @Autowired
     private GoodsBrandMapper goodsBrandMapper;
-    @Autowired
     private GoodsTypeMapper goodsTypeMapper;
+    @Autowired
+    public void GoodsMapper(GoodsMapper goodsMapper){
+        this.goodsMapper=goodsMapper;
+    }
+    @Autowired
+    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
+        this.goodsBrandMapper=goodsBrandMapper;
+    }
+    @Autowired
+    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
+        this.goodsTypeMapper=goodsTypeMapper;
+    }
 
     @Override
     public SaResult getRandomGoodsInfo() {
