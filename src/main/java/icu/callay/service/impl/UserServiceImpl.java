@@ -23,13 +23,16 @@ import icu.callay.service.UserService;
 import icu.callay.vo.RegularUserVo;
 import icu.callay.vo.SalespersonUserVo;
 import icu.callay.vo.UserPageVo;
+import icu.callay.vo.UserRegisterVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * (User)表服务实现类
@@ -40,14 +43,27 @@ import java.util.*;
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    @Autowired
     private UserMapper userMapper;
-
-    @Autowired
     private RegularUserMapper regularUserMapper;
-
-    @Autowired
     private SalespersonUserMapper salespersonUserMapper;
+    private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    public void UserMapper(UserMapper userMapper){
+        this.userMapper=userMapper;
+    }
+    @Autowired
+    public void RegularUserMapper(RegularUserMapper regularUserMapper){
+        this.regularUserMapper=regularUserMapper;
+    }
+    @Autowired
+    public void SalespersonUserMapper(SalespersonUserMapper salespersonUserMapper){
+        this.salespersonUserMapper=salespersonUserMapper;
+    }
+    @Autowired
+    public void StringRedisTemplate(StringRedisTemplate stringRedisTemplate){
+        this.stringRedisTemplate=stringRedisTemplate;
+    }
+
 
     @Override
     public SaResult userLogin(User user) {
@@ -78,71 +94,75 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
     }
-
     @Override
-    public SaResult userRegister(User user) {
-        if( IdcardUtil.isValidCard(user.getIdCard())){
-            QueryWrapper<User> wrapperName = new QueryWrapper<User>().eq("name",user.getName());
-            if(userMapper.selectCount(wrapperName)<1 ){
-                try {
-                    //AES加密密码
-                    String a = user.getIdCard();
-                    String aesKey = Base64.encode(a);
-                    AES aes = SecureUtil.aes(aesKey.getBytes());
-                    String aesPasswd = aes.encryptHex(user.getPassword());
-                    user.setPassword(aesPasswd);
+    public SaResult userRegister(UserRegisterVo userRegisterVo) {
+        try {
+            if(Objects.equals(userRegisterVo.getVerificationCode(), stringRedisTemplate.opsForValue().get(userRegisterVo.getEmail() + "_verificationCode"))){
+                if( IdcardUtil.isValidCard(userRegisterVo.getIdCard())){
+                    QueryWrapper<User> wrapperName = new QueryWrapper<User>().eq("name",userRegisterVo.getName());
+                    if(userMapper.selectCount(wrapperName)<1 ){
+                        try {
+                            //AES加密密码
+                            String a = userRegisterVo.getIdCard();
+                            String aesKey = Base64.encode(a);
+                            AES aes = SecureUtil.aes(aesKey.getBytes());
+                            String aesPasswd = aes.encryptHex(userRegisterVo.getPassword());
+                            userRegisterVo.setPassword(aesPasswd);
 
-                    user.setCreateTime(new Date());
-                    user.setIsDeleted(0);
+                            userRegisterVo.setCreateTime(new Date());
+                            userRegisterVo.setIsDeleted(0);
 
-                    userMapper.insert(user);
-                    //普通用户注册
-                    if(user.getType()==0){
-                        RegularUser regularUser = new RegularUser();
-                        regularUser.setId(user.getId());
-                        regularUser.setUpdateTime(user.getCreateTime());
-                        regularUser.setAddress("");
-                        regularUser.setMoney((double) 0);
-                        regularUser.setPhone("");
-                        regularUserMapper.insert(regularUser);
-                    }
-                    //销售员注册
-                    else if (user.getType()==1) {
-                        SalespersonUser salespersonUser = new SalespersonUser();
-                        salespersonUser.setId(String.valueOf(user.getId()));
-                        salespersonUser.setPhone("");
-                        salespersonUser.setUpdateTime(new Date());
-                        salespersonUser.setMoney((double) 0);
-                        salespersonUserMapper.insert(salespersonUser);
-                    }
-                    return SaResult.data(user);
-                }
-                catch (Exception e){
-                    return SaResult.error(e.getMessage());
-                }
+                            User user = new User();
+                            BeanUtils.copyProperties(userRegisterVo,user);
+                            userMapper.insert(user);
+                            //普通用户注册
+                            if(user.getType()==0){
+                                RegularUser regularUser = new RegularUser();
+                                regularUser.setId(user.getId());
+                                regularUser.setUpdateTime(user.getCreateTime());
+                                regularUser.setAddress("");
+                                regularUser.setMoney((double) 0);
+                                regularUser.setPhone("");
+                                regularUserMapper.insert(regularUser);
+                            }
+                            //销售员注册
+                            else if (user.getType()==1) {
+                                SalespersonUser salespersonUser = new SalespersonUser();
+                                salespersonUser.setId(String.valueOf(user.getId()));
+                                salespersonUser.setPhone("");
+                                salespersonUser.setUpdateTime(new Date());
+                                salespersonUser.setMoney((double) 0);
+                                salespersonUserMapper.insert(salespersonUser);
+                            }
+
+                            stringRedisTemplate.opsForValue().getAndDelete(user.getEmail()+"_verificationCode");
+                            return SaResult.ok("注册成功");
+                        }
+                        catch (Exception e){
+                            return SaResult.error(e.getMessage());
+                        }
+                    }else
+                        return SaResult.error("用户已存在");
+                }else
+                    return SaResult.error("身份证错误");
             }else
-                return SaResult.error("用户已存在");
-
-        }else
-            return SaResult.error("身份证错误");
-
+                return SaResult.error("验证码错误");
+        }catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
     }
-
-    //生成验证码并发送
     @Override
     public SaResult getCode(String email) {
         String verificationCode = RandomUtil.randomString(4);
-        //System.out.println(verificationCode);
         try {
-            //System.out.println(email);
+            stringRedisTemplate.opsForValue().set(email+"_verificationCode",verificationCode,10, TimeUnit.MINUTES);
             MailUtil.send(email, "二手奢侈品交易平台注册验证码", "<h1>您的验证码："+verificationCode+"</h1>", false);
-            return SaResult.data(verificationCode);
+            return SaResult.ok("验证码已发送至"+email);
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());
         }
     }
-
     @Override
     public SaResult getUserInfo(Long id,String pwd) {
         User user = getById(id);
@@ -154,16 +174,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         String encryptHex = user.getPassword();
         String password = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
 
-        //System.out.println(password);
-        //System.out.println(pwd);
         if(password.equals(pwd)){
             return SaResult.data(user);
         }
         return SaResult.error();
 
     }
-
-
     @Override
     public SaResult getUserPageByType(int type, int page, int rows) {
         try {
@@ -228,7 +244,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
     }
-
     @Override
     public SaResult deleteUserById(User user) {
         try {
@@ -239,7 +254,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return SaResult.error(e.getMessage());
         }
     }
-
     @Override
     public SaResult updateMyUserInfoById(User user) {
         try {
@@ -262,7 +276,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return SaResult.error(e.getMessage());
         }
     }
-
     @Override
     public SaResult adminGetUserNumberByType(String type) {
         try {
@@ -280,6 +293,53 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         catch (Exception e){
             return SaResult.error(e.getMessage());
         }
+    }
+    @Override
+    public SaResult adminAddUser(User user) {
+        if( IdcardUtil.isValidCard(user.getIdCard())){
+            QueryWrapper<User> wrapperName = new QueryWrapper<User>().eq("name",user.getName());
+            if(userMapper.selectCount(wrapperName)<1 ){
+                try {
+                    //AES加密密码
+                    String a = user.getIdCard();
+                    String aesKey = Base64.encode(a);
+                    AES aes = SecureUtil.aes(aesKey.getBytes());
+                    String aesPasswd = aes.encryptHex(user.getPassword());
+                    user.setPassword(aesPasswd);
+
+                    user.setCreateTime(new Date());
+                    user.setIsDeleted(0);
+
+                    userMapper.insert(user);
+                    //普通用户注册
+                    if(user.getType()==0){
+                        RegularUser regularUser = new RegularUser();
+                        regularUser.setId(user.getId());
+                        regularUser.setUpdateTime(user.getCreateTime());
+                        regularUser.setAddress("");
+                        regularUser.setMoney((double) 0);
+                        regularUser.setPhone("");
+                        regularUserMapper.insert(regularUser);
+                    }
+                    //销售员注册
+                    else if (user.getType()==1) {
+                        SalespersonUser salespersonUser = new SalespersonUser();
+                        salespersonUser.setId(String.valueOf(user.getId()));
+                        salespersonUser.setPhone("");
+                        salespersonUser.setUpdateTime(new Date());
+                        salespersonUser.setMoney((double) 0);
+                        salespersonUserMapper.insert(salespersonUser);
+                    }
+                    return SaResult.data(user);
+                }
+                catch (Exception e){
+                    return SaResult.error(e.getMessage());
+                }
+            }else
+                return SaResult.error("用户已存在");
+
+        }else
+            return SaResult.error("身份证错误");
     }
 
 

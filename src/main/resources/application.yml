@@ -7,6 +7,17 @@ spring:
     username: root
     password: sjl020804
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 192.168.5.150
+      port: 6379
+      password: sjl020804
+      database: 0
+      lettuce:
+        pool:
+          max-idle: 16
+          max-active: 32
+          min-idle: 8
 
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
 sa-token:
