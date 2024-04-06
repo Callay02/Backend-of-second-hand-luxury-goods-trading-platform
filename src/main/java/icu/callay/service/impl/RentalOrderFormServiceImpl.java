@@ -14,6 +14,7 @@ import icu.callay.vo.RentalOrderFormVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
 import java.util.*;
@@ -60,6 +61,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult userGetOrderFormByState(int state,int page,int rows) {
         try {
             String uid = (String) StpUtil.getLoginId();
@@ -128,11 +130,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             });
             return SaResult.data(orderFormList);
         } catch (Exception e) {
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取商品信息失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult createOrderFormByGid(String gid) {
         try {
             String uid = (String) StpUtil.getLoginId();
@@ -159,11 +162,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                 return SaResult.error("商品已被其它用户租赁");
             }
         } catch (Exception e) {
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("创建订单失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult cancelOrderById(String id) {
         try {
             RentalOrderForm orderForm = getById(id);
@@ -180,11 +184,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             }
             return SaResult.error("用户不匹配");
         } catch (Exception e) {
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("取消订单失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getOrderFormPageByState(int state, int page, int rows) {
         try {
             Page<RentalOrderForm> orderFormPage = new Page<>(page,rows);
@@ -251,11 +256,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             return SaResult.data(orderFormPageVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取订单信息失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult adminCancelOrderById(String id) {
         try {
             RentalOrderForm orderForm = getById(id);
@@ -270,11 +276,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             return SaResult.ok("订单取消成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("订单取消失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult delivery(RentalOrderForm rentalOrderForm) {
         try {
             RentalOrderForm orderForm1 = getById(rentalOrderForm.getId());
@@ -288,11 +295,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             return SaResult.error("商品已发货");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("发货失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateShippedOrderFormById(RentalOrderForm orderForm) {
         try {
             RentalOrderForm orderForm1 = getById(orderForm.getId());
@@ -302,14 +310,15 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                 update(orderForm,new UpdateWrapper<RentalOrderForm>().eq("id",orderForm.getId()));
                 return SaResult.ok("更新成功");
             }
-            return SaResult.ok("订单状态错误");
+            return SaResult.error("订单状态错误");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult signById(String id) {
         try {
             String uid = (String) StpUtil.getLoginId();
@@ -322,11 +331,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             return SaResult.error("用户不匹配");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("签收失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult userReturn(RentalOrderForm rentalOrderForm) {
         try {
             if(rentalOrderForm.getUid().equals(StpUtil.getLoginId())){
@@ -359,11 +369,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             }
             return SaResult.error("用户不匹配");
         }catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("退回失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult userOverdueSettlement(String id) {
         try {
             String uid = (String) StpUtil.getLoginId();
@@ -375,11 +386,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             return SaResult.error("用户不匹配");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("结算失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult adminSignAndSettleById(String id) {
         try {
             RentalOrderForm rentalOrderForm = getById(id);
@@ -400,7 +412,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
 
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("结算失败");
         }
     }
 

@@ -14,6 +14,7 @@ import icu.callay.vo.OrderFormVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -72,16 +73,18 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult createOrderForm(List<OrderForm> orderFormList) {
-        //查询用户余额
-        Double userMoney = regularUserMapper.selectById(orderFormList.get(0).getUid()).getMoney();
-        Double totalPrice = orderFormList.stream().mapToDouble(orderForm ->goodsMapper.selectById(orderForm.getGid()).getPrice()).sum();
-        //用户余额大于商品总值
-        if(userMoney>=totalPrice){
-            orderFormList.forEach(orderForm -> {
-                orderForm.setCreateTime(new Date());
-                Long uid = orderForm.getUid();
-                Long gid = orderForm.getGid();
+        try {
+            //查询用户余额
+            Double userMoney = regularUserMapper.selectById(orderFormList.get(0).getUid()).getMoney();
+            Double totalPrice = orderFormList.stream().mapToDouble(orderForm ->goodsMapper.selectById(orderForm.getGid()).getPrice()).sum();
+            //用户余额大于商品总值
+            if(userMoney>=totalPrice){
+                orderFormList.forEach(orderForm -> {
+                    orderForm.setCreateTime(new Date());
+                    Long uid = orderForm.getUid();
+                    Long gid = orderForm.getGid();
                     //判断是否已被其它用户购买
                     if(count(new QueryWrapper<OrderForm>()
                             .eq("gid",gid)
@@ -95,19 +98,24 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
                         //删除购物车物品
                         shoppingCartService.deleteShoppingCartById(uid,gid);
                     }
-            });
-            return SaResult.ok();
+                });
+                return SaResult.ok();
+            }
+            return SaResult.error("余额不足");
         }
-        return SaResult.error("余额不足");
+        catch (Exception e){
+            throw new RuntimeException("创建失败");
+        }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getToBeShippedById(int id) {
-        QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
-        orderFormQueryWrapper.eq("uid",id).and(wrapper->{
-            wrapper.eq("state",0);
-        });
         try{
+            QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
+            orderFormQueryWrapper.eq("uid",id).and(wrapper->{
+                wrapper.eq("state",0);
+            });
             List<OrderFormVo> orderFormList = new ArrayList<>();
             orderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
                 OrderFormVo orderFormVo = new OrderFormVo();
@@ -126,7 +134,6 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
                 orderFormVo.setCreateTime(orderForm.getCreateTime());
 
                 orderFormVo.setId(orderForm.getId());
-                //System.out.println("========"+orderFormVo.getId());
                 orderFormVo.setAddress(orderForm.getAddress());
 
                 orderFormList.add(orderFormVo);
@@ -135,11 +142,12 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             return SaResult.data(orderFormList);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult cancelOrderById(Long id,Long uid) {
         try {
             OrderForm orderForm = getOne(new QueryWrapper<OrderForm>().eq("id",id));
@@ -160,17 +168,18 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             }
             return SaResult.error("用户不匹配");
         }catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("取消失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getShippedById(Long id) {
-        QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
-        orderFormQueryWrapper.eq("uid",id).and(wrapper->{
-            wrapper.eq("state",1);
-        });
         try{
+            QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
+            orderFormQueryWrapper.eq("uid",id).and(wrapper->{
+                wrapper.eq("state",1);
+            });
             List<OrderFormVo> orderFormList = new ArrayList<>();
             orderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
                 OrderFormVo orderFormVo = new OrderFormVo();
@@ -190,7 +199,6 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
 
                 orderFormVo.setId(orderForm.getId());
                 orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
-                //System.out.println("========"+orderFormVo.getId());
                 orderFormVo.setAddress(orderForm.getAddress());
 
                 orderFormList.add(orderFormVo);
@@ -199,20 +207,20 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             return SaResult.data(orderFormList);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getSignedById(Long id) {
-        QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
-        orderFormQueryWrapper.eq("uid",id).and(wrapper->{
-            wrapper.eq("state",2);
-        });
         try{
+            QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
+            orderFormQueryWrapper.eq("uid",id).and(wrapper->{
+                wrapper.eq("state",2);
+            });
             List<OrderFormVo> orderFormList = new ArrayList<>();
             orderFormMapper.selectList(orderFormQueryWrapper).forEach(orderForm -> {
-                //System.out.println(orderForm.getId());
                 OrderFormVo orderFormVo = new OrderFormVo();
                 Goods goods = goodsMapper.selectById(orderForm.getGid());
 
@@ -230,7 +238,6 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
 
                 orderFormVo.setId(orderForm.getId());
                 orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
-                //System.out.println("========"+orderFormVo.getId());
                 orderFormVo.setAddress(orderForm.getAddress());
 
                 orderFormList.add(orderFormVo);
@@ -239,11 +246,12 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             return SaResult.data(orderFormList);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult Sign(OrderForm orderForm) {
         try {
             if(Objects.equals(getById(orderForm.getId()).getUid(), orderForm.getUid())) {
@@ -253,57 +261,64 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             return SaResult.error("ID不匹配");
         }
         catch (Exception e){
-            return SaResult.error();
+            throw new RuntimeException("签收失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getOrderFormPageByState(int state, int page, int rows) {
-        Page<OrderForm> orderFormPage = new Page<>(page,rows);
-        orderFormMapper.selectPage(orderFormPage,new QueryWrapper<OrderForm>().eq("state",state));
+        try {
+            Page<OrderForm> orderFormPage = new Page<>(page,rows);
+            orderFormMapper.selectPage(orderFormPage,new QueryWrapper<OrderForm>().eq("state",state));
 
-        List<OrderFormVo> orderFormVoList = new ArrayList<>();
-        orderFormPage.getRecords().forEach(orderForm -> {
-            OrderFormVo orderFormVo = new OrderFormVo();
-            BeanUtils.copyProperties(orderForm,orderFormVo);
+            List<OrderFormVo> orderFormVoList = new ArrayList<>();
+            orderFormPage.getRecords().forEach(orderForm -> {
+                OrderFormVo orderFormVo = new OrderFormVo();
+                BeanUtils.copyProperties(orderForm,orderFormVo);
 
-            //普通用户信息获取
-            if(regularUserMapper.selectCount(new QueryWrapper<RegularUser>().eq("id",orderForm.getUid()))!=0){
-                RegularUser regularUser = regularUserMapper.selectById(orderForm.getUid());
-                BeanUtils.copyProperties(regularUser,orderFormVo);
-            }
-            //销售员用户信息获取
-            else if (salespersonUserMapper.selectCount(new QueryWrapper<SalespersonUser>().eq("id",orderForm.getUid()))!=0) {
-                SalespersonUser salespersonUser = salespersonUserMapper.selectById(orderForm.getUid());
-                orderFormVo.setPhone(salespersonUser.getPhone());
-            }
+                //普通用户信息获取
+                if(regularUserMapper.selectCount(new QueryWrapper<RegularUser>().eq("id",orderForm.getUid()))!=0){
+                    RegularUser regularUser = regularUserMapper.selectById(orderForm.getUid());
+                    BeanUtils.copyProperties(regularUser,orderFormVo);
+                }
+                //销售员用户信息获取
+                else if (salespersonUserMapper.selectCount(new QueryWrapper<SalespersonUser>().eq("id",orderForm.getUid()))!=0) {
+                    SalespersonUser salespersonUser = salespersonUserMapper.selectById(orderForm.getUid());
+                    orderFormVo.setPhone(salespersonUser.getPhone());
+                }
 
-            User user = userMapper.selectById(orderForm.getUid());
-            BeanUtils.copyProperties(user,orderFormVo);
+                User user = userMapper.selectById(orderForm.getUid());
+                BeanUtils.copyProperties(user,orderFormVo);
 
-            //商品信息获取
-            Goods goods = goodsMapper.selectById(orderForm.getGid());
-            BeanUtils.copyProperties(goods,orderFormVo);
-            GoodsType goodsType = goodsTypeMapper.selectOne(new QueryWrapper<GoodsType>().eq("type",goods.getType()));
-            orderFormVo.setTypeName(goodsType.getName());
-            GoodsBrand goodsBrand = goodsBrandMapper.selectById(goods.getBrand());
-            orderFormVo.setBrandName(goodsBrand.getName());
+                //商品信息获取
+                Goods goods = goodsMapper.selectById(orderForm.getGid());
+                BeanUtils.copyProperties(goods,orderFormVo);
+                GoodsType goodsType = goodsTypeMapper.selectOne(new QueryWrapper<GoodsType>().eq("type",goods.getType()));
+                orderFormVo.setTypeName(goodsType.getName());
+                GoodsBrand goodsBrand = goodsBrandMapper.selectById(goods.getBrand());
+                orderFormVo.setBrandName(goodsBrand.getName());
 
-            orderFormVo.setId(orderForm.getId());
-            orderFormVo.setState(orderForm.getState());
-            orderFormVo.setAddress(orderForm.getAddress());
+                orderFormVo.setId(orderForm.getId());
+                orderFormVo.setState(orderForm.getState());
+                orderFormVo.setAddress(orderForm.getAddress());
 
-            orderFormVoList.add(orderFormVo);
-        });
+                orderFormVoList.add(orderFormVo);
+            });
 
-        OrderFormPageVo orderFormPageVo = new OrderFormPageVo();
-        orderFormPageVo.setOrderFormVoList(orderFormVoList);
-        orderFormPageVo.setTotal(orderFormPage.getTotal());
+            OrderFormPageVo orderFormPageVo = new OrderFormPageVo();
+            orderFormPageVo.setOrderFormVoList(orderFormVoList);
+            orderFormPageVo.setTotal(orderFormPage.getTotal());
 
-        return SaResult.data(orderFormPageVo);
+            return SaResult.data(orderFormPageVo);
+        }
+        catch (Exception e){
+            throw new RuntimeException("订单获取失败");
+        }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult delivery(OrderForm orderForm) {
         try {
             OrderForm orderForm1 = getById(orderForm.getId());
@@ -316,11 +331,12 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             return SaResult.error("商品已发货");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("商品发货失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateShippedOrderFormById(OrderForm orderForm) {
         try {
             OrderForm orderForm1 = getById(orderForm.getId());
@@ -332,11 +348,12 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             return SaResult.ok("订单状态错误");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("订单更新失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult createOrderFormBySid(OrderForm orderForm) {
         try {
             orderForm.setState(0);
@@ -349,7 +366,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             return SaResult.ok("购买成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("订单创建失败");
         }
 
     }

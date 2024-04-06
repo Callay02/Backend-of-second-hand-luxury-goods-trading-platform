@@ -28,6 +28,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -66,6 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult userLogin(User user) {
         try {
             QueryWrapper<User> wrapper = new QueryWrapper<>();
@@ -90,11 +93,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 return SaResult.error("账号或密码错误");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("登录出错，请重试");
         }
 
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult userRegister(UserRegisterVo userRegisterVo) {
         try {
             if(Objects.equals(userRegisterVo.getVerificationCode(), stringRedisTemplate.opsForValue().get(userRegisterVo.getEmail() + "_register"))){
@@ -148,10 +153,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             }else
                 return SaResult.error("验证码错误");
         }catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("注册失败");
         }
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getCode(String email,String type) {
         String verificationCode = RandomUtil.randomString(4);
         try {
@@ -160,27 +167,36 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return SaResult.ok("验证码已发送至"+email);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("验证码生成失败");
         }
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getUserInfo(Long id,String pwd) {
-        User user = getById(id);
+        try {
+            User user = getById(id);
 
-        //AES解密密码
-        String a = user.getIdCard();
-        String aesKey = Base64.encode(a);
-        AES aes = SecureUtil.aes(aesKey.getBytes());
-        String encryptHex = user.getPassword();
-        String password = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
+            //AES解密密码
+            String a = user.getIdCard();
+            String aesKey = Base64.encode(a);
+            AES aes = SecureUtil.aes(aesKey.getBytes());
+            String encryptHex = user.getPassword();
+            String password = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
 
-        if(password.equals(pwd)){
-            return SaResult.data(user);
+            if(password.equals(pwd)){
+                return SaResult.data(user);
+            }
+            return SaResult.error();
         }
-        return SaResult.error();
+        catch (Exception e){
+            throw new RuntimeException("用户信息获取失败");
+        }
 
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getUserPageByType(int type, int page, int rows) {
         try {
             Page<User> userPage = new Page<>();
@@ -240,21 +256,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return SaResult.error("查找失败");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取用户信息失败");
         }
 
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult deleteUserById(User user) {
         try {
             update(new UpdateWrapper<User>().eq("id",user.getId()).set("is_deleted",1));
             return SaResult.ok("删除成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("删除失败");
         }
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateMyUserInfoById(User user) {
         try {
             String id = (String) StpUtil.getLoginId();
@@ -273,10 +293,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return SaResult.ok("修改成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult adminGetUserNumberByType(String type) {
         try {
             Date now = new Date();
@@ -291,58 +313,66 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             return SaResult.data(count(new QueryWrapper<User>().eq("type",type).ge("create_time",lastMonth)));
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取失败");
         }
     }
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult adminAddUser(User user) {
-        if( IdcardUtil.isValidCard(user.getIdCard())){
-            QueryWrapper<User> wrapperName = new QueryWrapper<User>().eq("name",user.getName());
-            if(userMapper.selectCount(wrapperName)<1 ){
-                try {
-                    //AES加密密码
-                    String a = user.getIdCard();
-                    String aesKey = Base64.encode(a);
-                    AES aes = SecureUtil.aes(aesKey.getBytes());
-                    String aesPasswd = aes.encryptHex(user.getPassword());
-                    user.setPassword(aesPasswd);
+        try {
+            if( IdcardUtil.isValidCard(user.getIdCard())){
+                QueryWrapper<User> wrapperName = new QueryWrapper<User>().eq("name",user.getName());
+                if(userMapper.selectCount(wrapperName)<1 ){
+                    try {
+                        //AES加密密码
+                        String a = user.getIdCard();
+                        String aesKey = Base64.encode(a);
+                        AES aes = SecureUtil.aes(aesKey.getBytes());
+                        String aesPasswd = aes.encryptHex(user.getPassword());
+                        user.setPassword(aesPasswd);
 
-                    user.setCreateTime(new Date());
-                    user.setIsDeleted(0);
+                        user.setCreateTime(new Date());
+                        user.setIsDeleted(0);
 
-                    userMapper.insert(user);
-                    //普通用户注册
-                    if(user.getType()==0){
-                        RegularUser regularUser = new RegularUser();
-                        regularUser.setId(user.getId());
-                        regularUser.setUpdateTime(user.getCreateTime());
-                        regularUser.setAddress("");
-                        regularUser.setMoney((double) 0);
-                        regularUser.setPhone("");
-                        regularUserMapper.insert(regularUser);
+                        userMapper.insert(user);
+                        //普通用户注册
+                        if(user.getType()==0){
+                            RegularUser regularUser = new RegularUser();
+                            regularUser.setId(user.getId());
+                            regularUser.setUpdateTime(user.getCreateTime());
+                            regularUser.setAddress("");
+                            regularUser.setMoney((double) 0);
+                            regularUser.setPhone("");
+                            regularUserMapper.insert(regularUser);
+                        }
+                        //销售员注册
+                        else if (user.getType()==1) {
+                            SalespersonUser salespersonUser = new SalespersonUser();
+                            salespersonUser.setId(String.valueOf(user.getId()));
+                            salespersonUser.setPhone("");
+                            salespersonUser.setUpdateTime(new Date());
+                            salespersonUser.setMoney((double) 0);
+                            salespersonUserMapper.insert(salespersonUser);
+                        }
+                        return SaResult.data(user);
                     }
-                    //销售员注册
-                    else if (user.getType()==1) {
-                        SalespersonUser salespersonUser = new SalespersonUser();
-                        salespersonUser.setId(String.valueOf(user.getId()));
-                        salespersonUser.setPhone("");
-                        salespersonUser.setUpdateTime(new Date());
-                        salespersonUser.setMoney((double) 0);
-                        salespersonUserMapper.insert(salespersonUser);
+                    catch (Exception e){
+                        return SaResult.error(e.getMessage());
                     }
-                    return SaResult.data(user);
-                }
-                catch (Exception e){
-                    return SaResult.error(e.getMessage());
-                }
+                }else
+                    return SaResult.error("用户已存在");
+
             }else
-                return SaResult.error("用户已存在");
-
-        }else
-            return SaResult.error("身份证错误");
+                return SaResult.error("身份证错误");
+        }
+        catch (Exception e){
+            throw new RuntimeException("添加失败");
+        }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult userResetPassword(UserRegisterVo user){
         try {
             QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -362,18 +392,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
                     update(new UpdateWrapper<User>().eq("name",user.getName()).set("password",aesPasswd));
                     MailUtil.send(user.getEmail(), "二手奢侈品交易平台", "<h1>您的密码已重置："+password+"</h1>", false);
+                    stringRedisTemplate.opsForValue().getAndDelete(user.getEmail() + "_resetPassword");
                     return SaResult.ok("您的密码已重置，新密码已发送至邮箱，请注意查收");
                 }else{
                     return SaResult.error("验证码错误");
                 }
             }else{
-                SaResult.error("用户不存在");
+                return SaResult.error("用户不存在");
             }
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("重置失败");
         }
-        return null;
     }
 
 

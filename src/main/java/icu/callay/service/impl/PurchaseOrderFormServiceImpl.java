@@ -17,6 +17,7 @@ import icu.callay.vo.PurchaseOrderFormVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +60,7 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult createOrderForm(PurchaseOrderForm purchaseOrderForm) {
         try {
             purchaseOrderForm.setCreateTime(new Date());
@@ -68,11 +70,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok("创建成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("创建订单失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getPurchaseOrderFormPageByStateAndUid(int state,int page,int rows) {
         try {
             String uid = (String) StpUtil.getLoginId();
@@ -98,11 +101,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.data(purchaseOrderFormPageVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取订单失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getPurchaseOrderFormPageByState(int state, int page, int rows) {
         try {
             Page<PurchaseOrderForm> purchaseOrderFormPage = new Page<>(page,rows);
@@ -128,11 +132,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.data(purchaseOrderFormPageVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取订单失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updatePurchaseOrderFormSateById(Long id) {
         try {
             PurchaseOrderForm purchaseOrderForm = getById(id);
@@ -142,22 +147,24 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok("签收成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("签收失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getPurchaseOrderFormById(Long id) {
         try {
             PurchaseOrderForm purchaseOrderForm = getById(id);
             return SaResult.data(purchaseOrderForm);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取订单失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateStateSet2ById(Long id) {
         try {
             PurchaseOrderForm purchaseOrderForm = getById(id);
@@ -168,11 +175,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok();
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getPurchaseOrderFormPageByApid(String apid,int page,int rows) {
         try {
             if(apid==null)
@@ -198,11 +206,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.data(purchaseOrderFormPageVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取订单失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateStateSet3ById(PurchaseOrderForm purchaseOrderForm) {
         try {
             purchaseOrderForm.setApid((String) StpUtil.getLoginId());
@@ -212,11 +221,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok("审核通过");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateStateSet4ByIdAndUid(Long id) {
         try {
             String uid = (String) StpUtil.getLoginId();
@@ -228,11 +238,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok();
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateStateSet5ById(PurchaseOrderForm purchaseOrderForm) {
         try {
             purchaseOrderForm.setState(5);
@@ -241,11 +252,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok("退货成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("退货失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult userConfirmsSale(Long id) {
         try {
             PurchaseOrderForm purchaseOrderForm = getById(id);
@@ -260,11 +272,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok("出售成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("出售失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updatePurchaseOrderFormById(PurchaseOrderForm purchaseOrderForm) {
         try {
             purchaseOrderForm.setUpdateTime(new Date());
@@ -272,11 +285,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok("修改成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult productListingById(Long id) {
         try {
             PurchaseOrderForm purchaseOrderForm = getById(id);
@@ -299,22 +313,24 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok("上架成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("上架失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateStateSet6ById(Long id) {
         try {
             update(new UpdateWrapper<PurchaseOrderForm>().eq("id",id).set("state",6));
             return SaResult.ok("签收成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("签收失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getPageByIdAndState(int state, int page, int rows) {
         try {
             String uid = (String) StpUtil.getLoginId();
@@ -345,7 +361,7 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.data(purchaseOrderFormPageVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取订单失败");
         }
     }
 }

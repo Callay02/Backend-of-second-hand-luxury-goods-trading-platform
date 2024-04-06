@@ -12,6 +12,7 @@ import icu.callay.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,6 +49,7 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
     
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getGoodsPageByState(String state,int page, int rows) {
         try {
             Page<RentalGoods> rentalGoodsPage = new Page<>(page,rows);
@@ -76,11 +78,12 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
             return SaResult.data(rentalGoodsVoPageVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取租赁商品信息失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult addGoods(RentalGoods rentalGoods) {
         try {
             rentalGoods.setState(1);
@@ -89,43 +92,47 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
             return SaResult.ok("添加成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("添加租赁商品失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getGoodsByIdNoVo(String id) {
         try {
             return SaResult.data(getById(id));
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取商品信息失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateGoodsById(RentalGoods rentalGoods) {
         try {
             update(rentalGoods,new UpdateWrapper<RentalGoods>().eq("id",rentalGoods.getId()));
             return SaResult.ok("更新成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult deleteGoodsById(RentalGoods rentalGoods) {
         try {
             remove(new QueryWrapper<RentalGoods>().eq("id",rentalGoods.getId()));
             return SaResult.ok("删除成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("删除失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo) {
         try{
             QueryWrapper<RentalGoods> goodsQueryWrapper = new QueryWrapper<>();
@@ -160,11 +167,12 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
             return SaResult.data(goodsPageVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("查找商品信息失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getGoodsById(String id) {
         try {
             RentalGoods goods = getById(id);
@@ -177,11 +185,12 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
             goodsVo.setTypeName(goodsTypeMapper.selectOne(goodsTypeQueryWrapper).getName());
             return SaResult.data(goodsVo);
         }catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取商品信息失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult adminGetGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo) {
         try{
             QueryWrapper<RentalGoods> goodsQueryWrapper = new QueryWrapper<>();
@@ -218,7 +227,7 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
             return SaResult.data(goodsPageVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("查找商品信息失败");
         }
     }
 

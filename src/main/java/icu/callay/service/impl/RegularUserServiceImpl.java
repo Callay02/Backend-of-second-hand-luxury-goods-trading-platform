@@ -12,6 +12,7 @@ import icu.callay.vo.RegularUserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -32,6 +33,7 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getUserInfoById(int id) {
         RegularUserVo regularUserVo = new RegularUserVo();
         BeanUtils.copyProperties(userMapper.selectById(id),regularUserVo);
@@ -39,13 +41,13 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
             BeanUtils.copyProperties(getById(id),regularUserVo);
             return SaResult.data(regularUserVo);
         }catch (Exception e){
-            return SaResult.data(regularUserVo).setMsg("请填写个人信息");
+            throw new RuntimeException("请填写个人信息");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateUserInfoById(RegularUser regularUser) {
-        //System.out.println(regularUser);
         regularUser.setUpdateTime(new Date());
         regularUser.setMoney(null);
         try {
@@ -58,11 +60,12 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
             }
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult recharge(RegularUser regularUser) {
         try {
             Double money = getById(regularUser.getId()).getMoney();
@@ -70,7 +73,7 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
             return SaResult.ok("充值成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("充值失败");
         }
     }
 

@@ -17,6 +17,7 @@ import icu.callay.vo.SalespersonUserVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -38,6 +39,7 @@ public class SalespersonUserServiceImpl extends ServiceImpl<SalespersonUserMappe
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult getUserInfoById() {
         SalespersonUserVo salespersonUserVo = new SalespersonUserVo();
         try {
@@ -64,12 +66,13 @@ public class SalespersonUserServiceImpl extends ServiceImpl<SalespersonUserMappe
             return SaResult.ok().setMsg("请填写个人信息").setData(salespersonUserVo);
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("获取用户信息失败");
         }
 
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public SaResult updateUserInfoById(SalespersonUser salespersonUser) {
         try {
             String id = (String) StpUtil.getLoginId();
@@ -83,7 +86,7 @@ public class SalespersonUserServiceImpl extends ServiceImpl<SalespersonUserMappe
             return SaResult.ok("更新成功");
         }
         catch (Exception e){
-            return SaResult.error(e.getMessage());
+            throw new RuntimeException("更新失败");
         }
     }
 
