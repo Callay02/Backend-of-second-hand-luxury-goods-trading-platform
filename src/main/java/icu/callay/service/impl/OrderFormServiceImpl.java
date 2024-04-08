@@ -255,7 +255,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     public SaResult Sign(OrderForm orderForm) {
         try {
             if(Objects.equals(getById(orderForm.getId()).getUid(), orderForm.getUid())) {
-                update(new UpdateWrapper<OrderForm>().eq("id", orderForm.getId()).set("state", 2));
+                update(new UpdateWrapper<OrderForm>().eq("id", orderForm.getId()).set("state", 2).set("salesperson_settle",0));
                 return SaResult.ok();
             }
             return SaResult.error("ID不匹配");
@@ -369,6 +369,65 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             throw new RuntimeException("订单创建失败");
         }
 
+    }
+
+    @Override
+    public SaResult adminGetSalespersonOrderFormByisSettleAndSid(String sid,int state,String isSettle,int page,int rows) {
+        try {
+            Page<OrderForm> orderFormPage = new Page<>(page,rows);
+            QueryWrapper<OrderForm> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("uid",sid).eq("state",state);
+            if(isSettle!=null){
+                queryWrapper.eq("salesperson_settle",isSettle);
+            }
+            orderFormMapper.selectPage(orderFormPage,queryWrapper);
+
+            List<OrderFormVo> orderFormVoList = new ArrayList<>();
+            orderFormPage.getRecords().forEach(orderForm -> {
+                OrderFormVo orderFormVo = new OrderFormVo();
+                BeanUtils.copyProperties(orderForm,orderFormVo);
+
+                //商品信息获取
+                Goods goods = goodsMapper.selectById(orderForm.getGid());
+                BeanUtils.copyProperties(goods,orderFormVo);
+                GoodsType goodsType = goodsTypeMapper.selectOne(new QueryWrapper<GoodsType>().eq("type",goods.getType()));
+                orderFormVo.setTypeName(goodsType.getName());
+                GoodsBrand goodsBrand = goodsBrandMapper.selectById(goods.getBrand());
+                orderFormVo.setBrandName(goodsBrand.getName());
+
+                orderFormVo.setId(orderForm.getId());
+                orderFormVo.setState(orderForm.getState());
+                orderFormVo.setAddress(orderForm.getAddress());
+
+                orderFormVoList.add(orderFormVo);
+            });
+            OrderFormPageVo orderFormPageVo = new OrderFormPageVo();
+            orderFormPageVo.setOrderFormVoList(orderFormVoList);
+            orderFormPageVo.setTotal(orderFormPage.getTotal());
+
+            return SaResult.data(orderFormPageVo);
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SaResult settleSalespersonOrderFormByid(String id) {
+        try {
+            OrderForm orderForm = getById(id);
+            //将要更新的金额
+            double money = salespersonUserMapper.selectById(orderForm.getUid()).getMoney()+goodsMapper.selectById(orderForm.getGid()).getPrice()*0.02;
+            //结算
+            salespersonUserMapper.update(new UpdateWrapper<SalespersonUser>().eq("id",orderForm.getUid()).set("money",money));
+            //更新订单结算状态
+            update(new UpdateWrapper<OrderForm>().eq("id",id).set("salesperson_settle",1));
+            return SaResult.ok("订单"+id+"结算成功");
+        }
+        catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
 }

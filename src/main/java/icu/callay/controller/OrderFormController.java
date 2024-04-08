@@ -149,5 +149,33 @@ public class OrderFormController {
         return orderFormService.createOrderFormBySid(orderForm);
     }
 
+    /**
+     * @param sid:
+     * @param state:
+     * @param isSettle:
+     * @param page:
+     * @param rows:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员根据是否结算、销售员id、订单状态分页查找订单信息
+     * &#064;2024/4/8 13:55
+     */
+    @GetMapping("adminGetSalespersonOrderFormPageByisSettleAndSidAndState")
+    public SaResult adminGetSalespersonOrderFormByisSettleAndSid(@RequestParam("sid")String sid,@RequestParam("state")int state,@RequestParam("isSettle")String isSettle,@RequestParam("page")int page,@RequestParam("rows")int rows){
+        return orderFormService.adminGetSalespersonOrderFormByisSettleAndSid(sid,state,isSettle,page,rows);
+    }
+
+    /**
+     * @param id:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 根据订单id结算销售员订单
+     * &#064;2024/4/8 15:14
+     */
+    @GetMapping("settleSalespersonOrderFormByid")
+    public SaResult settleSalespersonOrderFormByid(@RequestParam("id")String id){
+        return orderFormService.settleSalespersonOrderFormByid(id);
+    }
+
 }
 

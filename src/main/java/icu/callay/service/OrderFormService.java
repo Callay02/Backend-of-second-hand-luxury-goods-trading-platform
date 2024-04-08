@@ -34,6 +34,9 @@ public interface OrderFormService extends IService<OrderForm> {
 
     SaResult createOrderFormBySid(OrderForm orderForm);
 
+    SaResult adminGetSalespersonOrderFormByisSettleAndSid(String sid,int state, String isSettle,int page,int rows);
+
+    SaResult settleSalespersonOrderFormByid(String id);
 }
 
 

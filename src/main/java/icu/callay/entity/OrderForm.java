@@ -44,5 +44,6 @@ public class OrderForm implements Serializable {
 
     private String address;
 
+    private Integer salespersonSettle;
 }
 
