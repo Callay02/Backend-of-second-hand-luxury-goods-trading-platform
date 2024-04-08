@@ -336,11 +336,12 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             String uid = (String) StpUtil.getLoginId();
             Page<PurchaseOrderForm> purchaseOrderFormPage = new Page<>(page,rows);
             QueryWrapper<PurchaseOrderForm> purchaseOrderFormQueryWrapper = new QueryWrapper<>();
+            purchaseOrderFormQueryWrapper.eq("uid",uid);
             if(state==7){
-                purchaseOrderFormQueryWrapper.eq("state",7).or().eq("state",8);
+                purchaseOrderFormQueryWrapper.and(wrapper -> wrapper.eq("state",7).or().eq("state",8));
             }
             else{
-                purchaseOrderFormQueryWrapper.eq("uid",uid).eq("state",state);
+                purchaseOrderFormQueryWrapper.eq("state",state);
             }
             purchaseOrderFormMapper.selectPage(purchaseOrderFormPage,purchaseOrderFormQueryWrapper);
             List<PurchaseOrderFormVo> purchaseOrderFormVoList = new ArrayList<>();
