@@ -28,20 +28,20 @@ public class MyConfigure implements WebMvcConfigurer {
 
 
         //跨域
-        registry.addInterceptor(getCorsInterceptor())
-                .addPathPatterns("/**")
-                .order(0);
+        //registry.addInterceptor(getCorsInterceptor())
+        //        .addPathPatterns("/**")
+        //        .order(0);
 
         // 注册 Sa-Token 拦截器，校验规则为 StpUtil.checkLogin() 登录校验。
         registry.addInterceptor(new SaInterceptor(handle -> StpUtil.checkLogin()))
                 .addPathPatterns("/**")
-                .excludePathPatterns("/test")
+                .excludePathPatterns("/alipay/notify")
                 .excludePathPatterns("/user/login")
                 .excludePathPatterns("/user/logout")
                 .excludePathPatterns("/user/hello")
                 .excludePathPatterns("/user/register")
                 .excludePathPatterns("/user/getcode")
                 .excludePathPatterns("/user/userResetPassword")
-                .order(1000);
+                .order(0);
     }
 }

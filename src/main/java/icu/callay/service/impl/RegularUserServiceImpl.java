@@ -69,7 +69,7 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
     public SaResult recharge(RegularUser regularUser) {
         try {
             Double money = getById(regularUser.getId()).getMoney();
-            update(new UpdateWrapper<RegularUser>().eq("id",regularUser.getId()).set("money",money+regularUser.getMoney()));
+            update(new UpdateWrapper<RegularUser>().eq("id",regularUser.getId()).set("money",money+regularUser.getMoney()).set("update_time",new Date()));
             return SaResult.ok("充值成功");
         }
         catch (Exception e){
