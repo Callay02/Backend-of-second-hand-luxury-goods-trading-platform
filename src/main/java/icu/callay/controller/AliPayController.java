@@ -7,7 +7,9 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import icu.callay.configure.AliPayConfig;
+import icu.callay.entity.PlatformRevenueFlowForm;
 import icu.callay.entity.RegularUser;
+import icu.callay.service.PlatformRevenueFlowFormService;
 import icu.callay.service.RegularUserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +41,12 @@ import java.util.Objects;
 public class AliPayController {
 
     private RegularUserService regularUserService;
+    private PlatformRevenueFlowFormService platformRevenueFlowFormService;
 
+    @Autowired
+    public void PlatformRevenueFlowFormService(PlatformRevenueFlowFormService platformRevenueFlowFormService){
+        this.platformRevenueFlowFormService=platformRevenueFlowFormService;
+    }
     @Autowired
     public void RegularUserService(RegularUserService regularUserService){
         this.regularUserService=regularUserService;
@@ -109,19 +116,32 @@ public class AliPayController {
 
                 String tradeNo = params.get("out_trade_no");
                 //String gmtPayment=params.get("gmt_payment");
-                //String alipayTradeNo=params.get("trade_no");
+                String alipayTradeNo=params.get("trade_no");
                 String buyerPayAmount = params.get("buyer_pay_amount");
-                //充值类型订单
-                if(Objects.equals(params.get("subject"), "充值")){
-                    String id = tradeNo.split("_")[1];
-                    log.info("用户id："+id);
-                    RegularUser regularUser = regularUserService.getById(id);
-                    Double total_money = regularUser.getMoney();
-                    regularUser.setMoney(Double.valueOf(buyerPayAmount));
-                    regularUserService.recharge(regularUser);
-                    total_money+=Double.parseDouble(buyerPayAmount);
 
-                    log.info("充值后余额："+total_money);
+                try {
+                    //充值类型订单
+                    if(Objects.equals(params.get("subject"), "充值")){
+                        String id = tradeNo.split("_")[1];
+                        log.info("用户id："+id);
+                        RegularUser regularUser = regularUserService.getById(id);
+                        Double total_money = regularUser.getMoney();
+                        regularUser.setMoney(Double.valueOf(buyerPayAmount));
+                        regularUserService.recharge(regularUser);
+                        total_money+=Double.parseDouble(buyerPayAmount);
+                        log.info("充值后余额："+total_money);
+                    }
+                    PlatformRevenueFlowForm platformRevenueFlowForm = new PlatformRevenueFlowForm();
+                    platformRevenueFlowForm.setUserId(tradeNo.split("_")[1]);
+                    platformRevenueFlowForm.setSubject(params.get("subject"));
+                    platformRevenueFlowForm.setTradeNo(alipayTradeNo);
+                    platformRevenueFlowForm.setTotalAmount(params.get("total_amount"));
+                    platformRevenueFlowForm.setOutTradeNo(tradeNo);
+                    platformRevenueFlowForm.setUpdateTime(new Date());
+                    platformRevenueFlowForm.setSource("支付宝");
+                    platformRevenueFlowFormService.save(platformRevenueFlowForm);
+                }catch (Exception e){
+                    throw new RuntimeException("充值失败");
                 }
 
             }

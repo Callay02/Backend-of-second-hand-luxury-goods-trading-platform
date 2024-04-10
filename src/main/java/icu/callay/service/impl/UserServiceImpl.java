@@ -199,7 +199,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Transactional(rollbackFor = Exception.class)
     public SaResult getUserPageByType(int type, int page, int rows) {
         try {
-            Page<User> userPage = new Page<>();
+            Page<User> userPage = new Page<>(page,rows);
             QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
             userQueryWrapper.eq("type",type);
             userQueryWrapper.eq("is_deleted",0);
@@ -250,7 +250,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             else if(type==3){
                 UserPageVo<User> userUserPageVo = new UserPageVo<>();
                 userUserPageVo.setUserVoList(userPage.getRecords());
-                userUserPageVo.setTotal(userUserPageVo.getTotal());
+                userUserPageVo.setTotal(userPage.getTotal());
                 return SaResult.data(userUserPageVo);
             }
             return SaResult.error("查找失败");
