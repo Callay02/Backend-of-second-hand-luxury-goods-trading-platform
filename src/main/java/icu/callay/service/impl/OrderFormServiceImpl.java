@@ -159,7 +159,8 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
                 goodsMapper.update(new UpdateWrapper<Goods>().eq("id",goods.getId()).set("state",1));
 
                 //销售员取消订单
-                if(regularUserMapper.selectCount(new UpdateWrapper<RegularUser>().eq("id",uid))==0){
+                if(userMapper.selectById(uid).getType()==1){
+                    salespersonUserMapper.update(new UpdateWrapper<SalespersonUser>().eq("id",uid).set("money",salespersonUserMapper.selectById(uid).getMoney()+goods.getPrice()));
                     return SaResult.ok("订单取消成功");
                 }
                 //退款

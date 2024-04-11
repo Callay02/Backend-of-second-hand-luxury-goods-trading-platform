@@ -6,25 +6,33 @@ import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import icu.callay.configure.AliPayConfig;
+import icu.callay.entity.Goods;
+import icu.callay.entity.OrderForm;
 import icu.callay.entity.PlatformRevenueFlowForm;
 import icu.callay.entity.RegularUser;
+import icu.callay.service.GoodsService;
+import icu.callay.service.OrderFormService;
 import icu.callay.service.PlatformRevenueFlowFormService;
 import icu.callay.service.RegularUserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * &#064;projectName:    springboot
@@ -38,19 +46,14 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/alipay")
 @Slf4j
+@RequiredArgsConstructor
 public class AliPayController {
 
-    private RegularUserService regularUserService;
-    private PlatformRevenueFlowFormService platformRevenueFlowFormService;
-
-    @Autowired
-    public void PlatformRevenueFlowFormService(PlatformRevenueFlowFormService platformRevenueFlowFormService){
-        this.platformRevenueFlowFormService=platformRevenueFlowFormService;
-    }
-    @Autowired
-    public void RegularUserService(RegularUserService regularUserService){
-        this.regularUserService=regularUserService;
-    }
+    private final RegularUserService regularUserService;
+    private final PlatformRevenueFlowFormService platformRevenueFlowFormService;
+    private final OrderFormService orderFormService;
+    private final GoodsService goodsService;
+    private final StringRedisTemplate stringRedisTemplate;
 
     private static final String GETWAY_URL = "https://openapi-sandbox.dl.alipaydev.com/gateway.do";
     private static final String FORMAT="JSON";
@@ -59,6 +62,39 @@ public class AliPayController {
 
     @Resource
     private AliPayConfig aliPayConfig;
+
+    @GetMapping("/buy")
+    public void buy(String uid,String gid,String address,HttpServletResponse httpResponse) throws IOException {
+
+
+        //创建Client，通用SDK提供的Client，负责调用支付宝的API
+        AlipayClient alipayClient = new DefaultAlipayClient(GETWAY_URL, aliPayConfig.getAppId(), aliPayConfig.getAppPrivateKey(),FORMAT,CHARSET,aliPayConfig.getAlipayPublicKey(),SIGN_TYPE);
+        //创建request并设置request参数
+        AlipayTradePagePayRequest request = new AlipayTradePagePayRequest();
+        request.setNotifyUrl(aliPayConfig.getNotifyUrl());
+        JSONObject bizContent = new JSONObject();
+
+        long now = new Date().getTime();
+        bizContent.set("out_trade_no","buy_"+uid+"_"+now);//订单编号
+        stringRedisTemplate.opsForValue().set("buy_"+uid+"_"+now,gid+"_"+address,10, TimeUnit.MINUTES);
+
+        bizContent.set("total_amount",goodsService.getById(gid).getPrice());//订单总金额
+        bizContent.set("subject","购买商品");//支付名称
+        bizContent.set("product_code","FAST_INSTANT_TRADE_PAY");//固定配置
+        request.setBizContent(bizContent.toString());
+        request.setReturnUrl("http://localhost:8080/#/pay/success");
+        //执行请求，拿到响应的结果，返回给浏览器
+        String form = "";
+        try {
+            form = alipayClient.pageExecute(request).getBody();//调用SDK生成表单
+        }catch (AlipayApiException e){
+            e.printStackTrace();
+        }
+        httpResponse.setContentType("text/html;charset="+CHARSET);
+        httpResponse.getWriter().write(form);//直接将完整的表单html输出到页面
+        httpResponse.getWriter().flush();
+        httpResponse.getWriter().close();
+    }
 
     @GetMapping("/recharge")
     public void recharge(String id,String money, HttpServletResponse httpResponse) throws Exception{
@@ -89,6 +125,7 @@ public class AliPayController {
     }
 
     @PostMapping("/notify")
+    @Transactional(rollbackFor = Exception.class)
     public void payNotify(HttpServletRequest request) throws AlipayApiException {
         if(request.getParameter("trade_status").equals("TRADE_SUCCESS")){
             log.info("============ 支付宝异步回调 ============");
@@ -118,18 +155,29 @@ public class AliPayController {
                 //String gmtPayment=params.get("gmt_payment");
                 String alipayTradeNo=params.get("trade_no");
                 String buyerPayAmount = params.get("buyer_pay_amount");
-
+                String uid = tradeNo.split("_")[1];
+                log.info("用户id："+uid);
                 try {
                     //充值类型订单
                     if(Objects.equals(params.get("subject"), "充值")){
-                        String id = tradeNo.split("_")[1];
-                        log.info("用户id："+id);
-                        RegularUser regularUser = regularUserService.getById(id);
+                        RegularUser regularUser = regularUserService.getById(uid);
                         Double total_money = regularUser.getMoney();
                         regularUser.setMoney(Double.valueOf(buyerPayAmount));
                         regularUserService.recharge(regularUser);
                         total_money+=Double.parseDouble(buyerPayAmount);
                         log.info("充值后余额："+total_money);
+                    }
+                    else if(Objects.equals(params.get("subject"), "购买商品")){
+                        String gidAndAddr = stringRedisTemplate.opsForValue().get(tradeNo);
+                        OrderForm orderForm = new OrderForm();
+                        orderForm.setUid(Long.valueOf(uid));
+                        orderForm.setGid(Long.valueOf(gidAndAddr.split("_")[0]));
+                        orderForm.setAddress(gidAndAddr.split("_")[1]);
+                        orderForm.setState(0);
+                        orderForm.setCreateTime(new Date());
+                        goodsService.update(new UpdateWrapper<Goods>().eq("id",orderForm.getGid()).set("state",0));
+                        orderFormService.save(orderForm);
+                        log.info("购买成功");
                     }
                     PlatformRevenueFlowForm platformRevenueFlowForm = new PlatformRevenueFlowForm();
                     platformRevenueFlowForm.setUserId(tradeNo.split("_")[1]);
@@ -141,7 +189,7 @@ public class AliPayController {
                     platformRevenueFlowForm.setSource("支付宝");
                     platformRevenueFlowFormService.save(platformRevenueFlowForm);
                 }catch (Exception e){
-                    throw new RuntimeException("充值失败");
+                    throw new RuntimeException("交易失败");
                 }
 
             }

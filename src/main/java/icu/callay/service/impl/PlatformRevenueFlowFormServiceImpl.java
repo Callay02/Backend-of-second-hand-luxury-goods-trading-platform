@@ -37,7 +37,7 @@ public class PlatformRevenueFlowFormServiceImpl extends ServiceImpl<PlatformReve
             if(!Objects.equals(from, "")){
                 queryWrapper.eq("from",from);
             }
-            platformRevenueFlowFormMapper.selectPage(platformRevenueFlowFormPage,queryWrapper);
+            platformRevenueFlowFormMapper.selectPage(platformRevenueFlowFormPage,queryWrapper.orderByDesc("update_time"));
             PageVo<PlatformRevenueFlowForm> pageVo = new PageVo<>();
             pageVo.setData(platformRevenueFlowFormPage.getRecords());
             pageVo.setTotal(platformRevenueFlowFormPage.getTotal());
