@@ -11,6 +11,7 @@ import icu.callay.mapper.*;
 import icu.callay.service.RentalOrderFormService;
 import icu.callay.vo.PageVo;
 import icu.callay.vo.RentalOrderFormVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,38 +27,15 @@ import java.util.*;
  * @since 2024-03-26 18:09:36
  */
 @Service("rentalOrderFormService")
+@RequiredArgsConstructor
 public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMapper, RentalOrderForm> implements RentalOrderFormService {
 
-    private RentalOrderFormMapper rentalOrderFormMapper;
-    private RentalGoodsMapper rentalGoodsMapper;
-    private GoodsBrandMapper goodsBrandMapper;
-    private GoodsTypeMapper goodsTypeMapper;
-    private RegularUserMapper regularUserMapper;
-    private UserMapper userMapper;
-    @Autowired
-    public void RentalOrderFormMapper(RentalOrderFormMapper rentalOrderFormMapper) {
-        this.rentalOrderFormMapper = rentalOrderFormMapper;
-    }
-    @Autowired
-    public void RentalGoodsMapper(RentalGoodsMapper rentalGoodsMapper) {
-        this.rentalGoodsMapper = rentalGoodsMapper;
-    }
-    @Autowired
-    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper) {
-        this.goodsBrandMapper = goodsBrandMapper;
-    }
-    @Autowired
-    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper) {
-        this.goodsTypeMapper = goodsTypeMapper;
-    }
-    @Autowired
-    public void RegularUserMapper(RegularUserMapper regularUserMapper) {
-        this.regularUserMapper = regularUserMapper;
-    }
-    @Autowired
-    public void UserMapper(UserMapper userMapper){
-        this.userMapper=userMapper;
-    }
+    private final RentalOrderFormMapper rentalOrderFormMapper;
+    private final RentalGoodsMapper rentalGoodsMapper;
+    private final GoodsBrandMapper goodsBrandMapper;
+    private final GoodsTypeMapper goodsTypeMapper;
+    private final RegularUserMapper regularUserMapper;
+    private final UserMapper userMapper;
 
 
     @Override

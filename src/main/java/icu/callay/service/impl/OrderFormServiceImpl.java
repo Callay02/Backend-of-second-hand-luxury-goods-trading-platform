@@ -11,15 +11,15 @@ import icu.callay.service.OrderFormService;
 import icu.callay.service.ShoppingCartService;
 import icu.callay.vo.OrderFormPageVo;
 import icu.callay.vo.OrderFormVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.logging.SimpleFormatter;
 
 /**
  * (OrderForm)表服务实现类
@@ -28,48 +28,17 @@ import java.util.Objects;
  * @since 2024-02-08 22:59:10
  */
 @Service("orderFormService")
+@RequiredArgsConstructor
 public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm> implements OrderFormService {
 
-    private OrderFormMapper orderFormMapper;
-    private GoodsMapper goodsMapper;
-    private RegularUserMapper regularUserMapper;
-    private GoodsBrandMapper goodsBrandMapper;
-    private GoodsTypeMapper goodsTypeMapper;
-    private ShoppingCartService shoppingCartService;
-    private UserMapper userMapper;
-    private SalespersonUserMapper salespersonUserMapper;
-    @Autowired
-    public void OrderFormMapper(OrderFormMapper orderFormMapper){
-        this.orderFormMapper=orderFormMapper;
-    }
-    @Autowired
-    public void GoodsMapper(GoodsMapper goodsMapper){
-        this.goodsMapper=goodsMapper;
-    }
-    @Autowired
-    public void RegularUserMapper(RegularUserMapper regularUserMapper){
-        this.regularUserMapper=regularUserMapper;
-    }
-    @Autowired
-    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
-        this.goodsBrandMapper=goodsBrandMapper;
-    }
-    @Autowired
-    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
-        this.goodsTypeMapper=goodsTypeMapper;
-    }
-    @Autowired
-    public void ShoppingCartService(ShoppingCartService shoppingCartService){
-        this.shoppingCartService=shoppingCartService;
-    }
-    @Autowired
-    public void UserMapper(UserMapper userMapper){
-        this.userMapper=userMapper;
-    }
-    @Autowired
-    public void SalespersonUserMapper(SalespersonUserMapper salespersonUserMapper){
-        this.salespersonUserMapper=salespersonUserMapper;
-    }
+    private final OrderFormMapper orderFormMapper;
+    private final GoodsMapper goodsMapper;
+    private final RegularUserMapper regularUserMapper;
+    private final GoodsBrandMapper goodsBrandMapper;
+    private final GoodsTypeMapper goodsTypeMapper;
+    private final ShoppingCartService shoppingCartService;
+    private final UserMapper userMapper;
+    private final SalespersonUserMapper salespersonUserMapper;
 
 
     @Override
@@ -428,6 +397,29 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
         }
         catch (Exception e){
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @Override
+    //TODO
+    public SaResult GetSalesVolume(String beginTime, String endTime) {
+        try {
+            if(Objects.equals(beginTime, "null") && Objects.equals(endTime, "null")){
+                SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+                Calendar currentMonth = Calendar.getInstance();
+                currentMonth.setTime(new Date());
+
+                QueryWrapper<OrderForm> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("state",2).ge("create_time",sdt.format(currentMonth));
+
+                System.out.println(orderFormMapper.selectList(queryWrapper));
+
+            }
+            return SaResult.ok();
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
         }
     }
 

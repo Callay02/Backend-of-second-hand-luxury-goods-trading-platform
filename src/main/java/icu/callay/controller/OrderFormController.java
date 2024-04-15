@@ -5,6 +5,7 @@ package icu.callay.controller;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.OrderForm;
 import icu.callay.service.OrderFormService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +19,11 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("orderForm")
+@RequiredArgsConstructor
 public class OrderFormController {
 
-    private OrderFormService orderFormService;
-    @Autowired
-    public void OrderFormService(OrderFormService orderFormService){
-        this.orderFormService=orderFormService;
-    }
+    private final OrderFormService orderFormService;
+
 
     /**
      * @param orderFormList:
@@ -177,5 +176,9 @@ public class OrderFormController {
         return orderFormService.settleSalespersonOrderFormByid(id);
     }
 
+    @GetMapping("GetSalesVolume")
+    public SaResult GetSalesVolume(String beginTime,String endTime){
+        return orderFormService.GetSalesVolume(beginTime,endTime);
+    }
 }
 
