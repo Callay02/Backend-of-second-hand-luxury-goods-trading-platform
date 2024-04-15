@@ -176,9 +176,17 @@ public class OrderFormController {
         return orderFormService.settleSalespersonOrderFormByid(id);
     }
 
-    @GetMapping("GetSalesVolume")
-    public SaResult GetSalesVolume(String beginTime,String endTime){
-        return orderFormService.GetSalesVolume(beginTime,endTime);
+    /**
+     * @param beginTime:
+     * @param endTime:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 根据时间范围获取销量信息
+     * &#064;2024/4/16 0:16
+     */
+    @GetMapping("getSalesVolume")
+    public SaResult getSalesVolume(String beginTime,String endTime){
+        return orderFormService.getSalesVolume(beginTime,endTime);
     }
 }
 

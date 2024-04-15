@@ -3,14 +3,14 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://frp-bar.top:23306/spdb
+    url: jdbc:mysql://192.168.1.5:3306/spdb
     username: root
     password: sjl020804
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
-      host: frp-end.top
-      port: 14636
+      host: 192.168.1.5
+      port: 6379
       password: sjl020804
       database: 0
       lettuce:

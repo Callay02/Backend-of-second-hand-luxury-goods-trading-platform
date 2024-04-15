@@ -38,7 +38,7 @@ public interface OrderFormService extends IService<OrderForm> {
 
     SaResult settleSalespersonOrderFormByid(String id);
 
-    SaResult GetSalesVolume(String beginTime, String endTime);
+    SaResult getSalesVolume(String beginTime, String endTime);
 }
 
 

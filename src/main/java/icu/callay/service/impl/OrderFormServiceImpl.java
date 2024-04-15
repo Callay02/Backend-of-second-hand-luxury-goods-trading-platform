@@ -13,13 +13,12 @@ import icu.callay.vo.OrderFormPageVo;
 import icu.callay.vo.OrderFormVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.SimpleFormatter;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * (OrderForm)表服务实现类
@@ -39,6 +38,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     private final ShoppingCartService shoppingCartService;
     private final UserMapper userMapper;
     private final SalespersonUserMapper salespersonUserMapper;
+    private final RentalOrderFormMapper rentalOrderFormMapper;
 
 
     @Override
@@ -401,22 +401,45 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     }
 
     @Override
-    //TODO
-    public SaResult GetSalesVolume(String beginTime, String endTime) {
+    public SaResult getSalesVolume(String beginTime, String endTime) {
         try {
-            if(Objects.equals(beginTime, "null") && Objects.equals(endTime, "null")){
-                SimpleDateFormat sdt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            Long lbt = Long.valueOf(beginTime);
+            Long let = Long.valueOf(endTime);
 
-                Calendar currentMonth = Calendar.getInstance();
-                currentMonth.setTime(new Date());
+            //购买订单销量获取
+            QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
+            orderFormQueryWrapper.eq("state",2).ge("create_time",sdf.format(lbt)).lt("create_time",sdf.format(let));
+            AtomicReference<Double> orderFormTotalAmount= new AtomicReference<>(0.0);
 
-                QueryWrapper<OrderForm> queryWrapper = new QueryWrapper<>();
-                queryWrapper.eq("state",2).ge("create_time",sdt.format(currentMonth));
+            List<OrderForm> orderFormList =orderFormMapper.selectList(orderFormQueryWrapper);
+            int orderFormCount = orderFormList.size();
+            orderFormList.forEach(orderForm -> {
+                orderFormTotalAmount.updateAndGet(v -> v + goodsMapper.selectById(orderForm.getGid()).getPrice());
+            });
 
-                System.out.println(orderFormMapper.selectList(queryWrapper));
+            //租赁订单销量获取
+            QueryWrapper<RentalOrderForm> rentalOrderFormQueryWrapper = new QueryWrapper<>();
+            rentalOrderFormQueryWrapper.eq("state",4).ge("create_time",sdf.format(lbt)).lt("create_time",sdf.format(let));
 
-            }
-            return SaResult.ok();
+            AtomicReference<Double> rentalOrderFormTotalAmount= new AtomicReference<>(0.0);
+            List<RentalOrderForm> rentalOrderFormList = rentalOrderFormMapper.selectList(rentalOrderFormQueryWrapper);
+            int rentalOrderFormCount = rentalOrderFormList.size();
+            rentalOrderFormList.forEach(rentalOrderForm -> {
+                rentalOrderFormTotalAmount.updateAndGet(v -> v + rentalOrderForm.getRentTotal());
+            });
+            List<Map<String,String>> mapList = new ArrayList<>();
+            Map<String,String> map1 = new HashMap<>();
+            map1.put("value", String.valueOf(orderFormTotalAmount));
+            map1.put("name","出售商品"+"("+orderFormCount+"件)");
+
+            Map<String,String> map2 = new HashMap<>();
+            map2.put("value",String.valueOf(rentalOrderFormTotalAmount));
+            map2.put("name","租赁商品"+"("+rentalOrderFormCount+"件)");
+
+            mapList.add(map1);
+            mapList.add(map2);
+            return SaResult.data(mapList);
         }
         catch (Exception e){
             return SaResult.error(e.getMessage());
