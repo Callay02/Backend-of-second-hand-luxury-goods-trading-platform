@@ -48,6 +48,7 @@ public class Goods implements Serializable {
     private Integer state;
 
     private String apid;
+    private String antiCounterfeitingCode;
 
 }
 

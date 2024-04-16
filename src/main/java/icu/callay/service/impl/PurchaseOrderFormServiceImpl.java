@@ -14,8 +14,8 @@ import icu.callay.service.PurchaseOrderFormService;
 import icu.callay.vo.PageVo;
 import icu.callay.vo.PurchaseOrderFormPageVo;
 import icu.callay.vo.PurchaseOrderFormVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,33 +30,14 @@ import java.util.List;
  * @since 2024-02-24 03:08:04
  */
 @Service("purchaseOrderFormService")
+@RequiredArgsConstructor
 public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormMapper, PurchaseOrderForm> implements PurchaseOrderFormService {
 
-    private PurchaseOrderFormMapper purchaseOrderFormMapper;
-    private GoodsTypeMapper goodsTypeMapper;
-    private GoodsBrandMapper goodsBrandMapper;
-    private RegularUserMapper regularUserMapper;
-    private GoodsMapper goodsMapper;
-    @Autowired
-    public void PurchaseOrderFormMapper(PurchaseOrderFormMapper purchaseOrderFormMapper){
-        this.purchaseOrderFormMapper=purchaseOrderFormMapper;
-    }
-    @Autowired
-    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
-        this.goodsTypeMapper=goodsTypeMapper;
-    }
-    @Autowired
-    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
-        this.goodsBrandMapper=goodsBrandMapper;
-    }
-    @Autowired
-    public void RegularUserMapper(RegularUserMapper regularUserMapper){
-        this.regularUserMapper=regularUserMapper;
-    }
-    @Autowired
-    public void GoodsMapper(GoodsMapper goodsMapper){
-        this.goodsMapper=goodsMapper;
-    }
+    private final PurchaseOrderFormMapper purchaseOrderFormMapper;
+    private final GoodsTypeMapper goodsTypeMapper;
+    private final GoodsBrandMapper goodsBrandMapper;
+    private final RegularUserMapper regularUserMapper;
+    private final GoodsMapper goodsMapper;
 
 
     @Override
@@ -300,6 +281,7 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             goods.setPrice(purchaseOrderForm.getSellingPrice());
             goods.setUserId(purchaseOrderForm.getUid());
             goods.setState(1);
+            goods.setAntiCounterfeitingCode(purchaseOrderForm.getAntiCounterfeitingCode());
             goods.setAddTime(new Date());
 
             //上架

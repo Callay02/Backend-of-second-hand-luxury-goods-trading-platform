@@ -58,6 +58,7 @@ public class PurchaseOrderForm implements Serializable {
     private Integer fineness;
 
     private String img;
+    private String antiCounterfeitingCode;
 
 }
 

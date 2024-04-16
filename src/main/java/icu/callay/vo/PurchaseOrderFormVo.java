@@ -41,4 +41,5 @@ public class PurchaseOrderFormVo {
     private Integer fineness;
 
     private String img;
+    private String antiCounterfeitingCode;
 }
