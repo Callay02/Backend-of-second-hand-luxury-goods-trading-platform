@@ -420,7 +420,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
 
             //租赁订单销量获取
             QueryWrapper<RentalOrderForm> rentalOrderFormQueryWrapper = new QueryWrapper<>();
-            rentalOrderFormQueryWrapper.eq("state",4).ge("create_time",sdf.format(lbt)).lt("create_time",sdf.format(let));
+            rentalOrderFormQueryWrapper.eq("state",4).ge("update_time",sdf.format(lbt)).lt("update_time",sdf.format(let));
 
             AtomicReference<Double> rentalOrderFormTotalAmount= new AtomicReference<>(0.0);
             List<RentalOrderForm> rentalOrderFormList = rentalOrderFormMapper.selectList(rentalOrderFormQueryWrapper);

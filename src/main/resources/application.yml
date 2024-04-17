@@ -19,7 +19,7 @@ spring:
           max-active: 32
           min-idle: 8
 
-############## Sa-Token 配置 (文档: https://sa-token.cc) ##############
+############## Sa-Token 配置 ##############
 sa-token:
   # token 名称（同时也是 cookie 名称）
   token-name: Satoken
