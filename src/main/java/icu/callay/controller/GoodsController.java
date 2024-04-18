@@ -4,11 +4,10 @@ package icu.callay.controller;
 
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.Goods;
-import icu.callay.entity.GoodsBrand;
 import icu.callay.service.GoodsService;
 import icu.callay.vo.SearchGoodsVo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,15 +21,11 @@ import java.util.List;
 @Slf4j
 @CrossOrigin
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("goods")
 public class GoodsController {
 
-    private GoodsService goodsService;
-
-    @Autowired
-    public void GoodsService(GoodsService goodsService){
-        this.goodsService=goodsService;
-    }
+    private final GoodsService goodsService;
 
     /**
      * @return SaResult

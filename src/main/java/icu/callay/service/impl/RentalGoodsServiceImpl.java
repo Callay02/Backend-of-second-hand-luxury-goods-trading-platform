@@ -9,8 +9,8 @@ import icu.callay.entity.*;
 import icu.callay.mapper.*;
 import icu.callay.service.RentalGoodsService;
 import icu.callay.vo.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,27 +26,14 @@ import java.util.Objects;
  * @since 2024-03-25 19:26:19
  */
 @Service("rentalGoodsService")
+@RequiredArgsConstructor
 public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, RentalGoods> implements RentalGoodsService {
 
 
-    private RentalGoodsMapper rentalGoodsMapper;
-    private GoodsBrandMapper goodsBrandMapper;
-    private GoodsTypeMapper goodsTypeMapper;
-    @Autowired
-    public void RentalGoodsMapper(RentalGoodsMapper rentalGoodsMapper){
-        this.rentalGoodsMapper=rentalGoodsMapper;
-    }
+    private final RentalGoodsMapper rentalGoodsMapper;
+    private final GoodsBrandMapper goodsBrandMapper;
+    private final GoodsTypeMapper goodsTypeMapper;
 
-    @Autowired
-    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
-        this.goodsBrandMapper=goodsBrandMapper;
-    }
-
-    @Autowired
-    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
-        this.goodsTypeMapper=goodsTypeMapper;
-    }
-    
 
     @Override
     @Transactional(rollbackFor = Exception.class)

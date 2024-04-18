@@ -5,7 +5,7 @@ package icu.callay.controller;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.RentalOrderForm;
 import icu.callay.service.RentalOrderFormService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,15 +15,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024-03-26 18:09:36
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("rentalOrderForm")
 public class RentalOrderFormController {
 
-    private RentalOrderFormService rentalOrderFormService;
-
-    @Autowired
-    public void RentalOrderFormService(RentalOrderFormService rentalOrderFormService){
-        this.rentalOrderFormService = rentalOrderFormService;
-    }
+    private final RentalOrderFormService rentalOrderFormService;
 
 
     /**

@@ -9,8 +9,8 @@ import icu.callay.entity.RegularUser;
 import icu.callay.mapper.UserMapper;
 import icu.callay.service.RegularUserService;
 import icu.callay.vo.RegularUserVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +23,10 @@ import java.util.Date;
  * @since 2024-02-07 19:45:58
  */
 @Service("regularUserService")
+@RequiredArgsConstructor
 public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, RegularUser> implements RegularUserService {
 
-    private UserMapper userMapper;
-    @Autowired
-    public void UserMapper(UserMapper userMapper){
-        this.userMapper=userMapper;
-    }
-
+    private final UserMapper userMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

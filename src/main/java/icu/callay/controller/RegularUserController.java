@@ -5,7 +5,7 @@ package icu.callay.controller;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.RegularUser;
 import icu.callay.service.RegularUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,13 +16,11 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("regularUser")
+@RequiredArgsConstructor
 public class RegularUserController {
 
-    private RegularUserService regularUserService;
-    @Autowired
-    public void RegularUserService(RegularUserService regularUserService){
-        this.regularUserService=regularUserService;
-    }
+    private final RegularUserService regularUserService;
+
 
     /**
      * @param id:

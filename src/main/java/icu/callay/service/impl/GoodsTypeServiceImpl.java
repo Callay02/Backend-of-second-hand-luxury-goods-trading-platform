@@ -9,7 +9,7 @@ import icu.callay.mapper.GoodsTypeMapper;
 import icu.callay.entity.GoodsType;
 import icu.callay.service.GoodsTypeService;
 import icu.callay.vo.GoodsTypePageVo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +22,10 @@ import java.util.List;
  * @since 2024-01-30 19:07:47
  */
 @Service("goodsTypeService")
+@RequiredArgsConstructor
 public class GoodsTypeServiceImpl extends ServiceImpl<GoodsTypeMapper, GoodsType> implements GoodsTypeService {
 
-    private GoodsTypeMapper goodsTypeMapper;
-    @Autowired
-    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
-        this.goodsTypeMapper=goodsTypeMapper;
-    }
-
+    private final GoodsTypeMapper goodsTypeMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

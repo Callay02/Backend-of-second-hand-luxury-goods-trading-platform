@@ -5,7 +5,7 @@ package icu.callay.controller;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.PurchaseOrderForm;
 import icu.callay.service.PurchaseOrderFormService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,14 +15,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024-02-24 03:08:04
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("purchaseOrderForm")
 public class PurchaseOrderFormController {
 
-    private PurchaseOrderFormService purchaseOrderFormService;
-    @Autowired
-    public void PurchaseOrderFormService(PurchaseOrderFormService purchaseOrderFormService){
-        this.purchaseOrderFormService=purchaseOrderFormService;
-    }
+    private final PurchaseOrderFormService purchaseOrderFormService;
 
     /**
      * @param purchaseOrderForm:

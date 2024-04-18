@@ -5,7 +5,6 @@ package icu.callay.controller;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.service.PlatformRevenueFlowFormService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**

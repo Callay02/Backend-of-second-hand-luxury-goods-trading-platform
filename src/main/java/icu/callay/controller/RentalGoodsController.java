@@ -6,7 +6,7 @@ import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.RentalGoods;
 import icu.callay.service.RentalGoodsService;
 import icu.callay.vo.SearchGoodsVo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,14 +16,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024-03-25 19:26:19
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("rentalGoods")
 public class RentalGoodsController {
 
-    private RentalGoodsService rentalGoodsService;
-    @Autowired
-    public void RentalGoodsService(RentalGoodsService rentalGoodsService){
-        this.rentalGoodsService=rentalGoodsService;
-    }
+    private final RentalGoodsService rentalGoodsService;
 
     /**
      * @param state:

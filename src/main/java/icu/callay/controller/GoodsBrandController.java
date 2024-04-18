@@ -5,8 +5,8 @@ package icu.callay.controller;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.GoodsBrand;
 import icu.callay.service.GoodsBrandService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -18,15 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @CrossOrigin
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("goodsBrand")
 public class GoodsBrandController {
 
-    private GoodsBrandService goodsBrandService;
-
-    @Autowired
-    public void GoodsBrandService(GoodsBrandService goodsBrandService){
-        this.goodsBrandService=goodsBrandService;
-    }
+    private final GoodsBrandService goodsBrandService;
 
     /**
      * @return SaResult

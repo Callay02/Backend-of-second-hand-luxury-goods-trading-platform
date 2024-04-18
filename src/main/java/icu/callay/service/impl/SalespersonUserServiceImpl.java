@@ -14,8 +14,8 @@ import icu.callay.entity.SalespersonUser;
 import icu.callay.mapper.UserMapper;
 import icu.callay.service.SalespersonUserService;
 import icu.callay.vo.SalespersonUserVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,14 +29,10 @@ import java.util.Date;
  * @since 2024-03-13 15:35:26
  */
 @Service("salespersonUserService")
+@RequiredArgsConstructor
 public class SalespersonUserServiceImpl extends ServiceImpl<SalespersonUserMapper, SalespersonUser> implements SalespersonUserService {
 
-    private UserMapper userMapper;
-    @Autowired
-    public void UserMapper(UserMapper userMapper){
-        this.userMapper=userMapper;
-    }
-
+    private final UserMapper userMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

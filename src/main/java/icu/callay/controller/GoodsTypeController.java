@@ -3,11 +3,10 @@ package icu.callay.controller;
 
 
 import cn.dev33.satoken.util.SaResult;
-import icu.callay.entity.GoodsBrand;
 import icu.callay.entity.GoodsType;
 import icu.callay.service.GoodsTypeService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -19,14 +18,11 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @CrossOrigin
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("goodsType")
 public class GoodsTypeController {
 
-    private GoodsTypeService goodsTypeService;
-    @Autowired
-    public void GoodsTypeService(GoodsTypeService goodsTypeService){
-        this.goodsTypeService=goodsTypeService;
-    }
+    private final GoodsTypeService goodsTypeService;
 
     /**
      * @return SaResult

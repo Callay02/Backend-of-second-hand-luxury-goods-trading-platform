@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  * &#064;package:        icu.callay.controller
  * &#064;className:      TestController
  * &#064;author:     Callay
- * &#064;description:  TODO
+ * &#064;description:  测试控制器
  * &#064;date:    2024/4/6 11:51
  * &#064;version:    1.0
  */
@@ -61,7 +61,7 @@ public class TestController {
 
     @GetMapping("get")
     public SaResult get(@RequestParam("key")String key){
-        return SaResult.data(stringRedisTemplate.opsForValue().get("key"));
+        return SaResult.data(stringRedisTemplate.opsForValue().get(key));
     }
 
     @GetMapping("delete")

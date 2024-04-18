@@ -9,7 +9,7 @@ import icu.callay.mapper.GoodsBrandMapper;
 import icu.callay.entity.GoodsBrand;
 import icu.callay.service.GoodsBrandService;
 import icu.callay.vo.GoodsBrandPageVo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +22,10 @@ import java.util.List;
  * @since 2024-01-30 19:07:20
  */
 @Service("goodsBrandService")
+@RequiredArgsConstructor
 public class GoodsBrandServiceImpl extends ServiceImpl<GoodsBrandMapper, GoodsBrand> implements GoodsBrandService {
 
-    private GoodsBrandMapper goodsBrandMapper;
-    @Autowired
-    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
-        this.goodsBrandMapper=goodsBrandMapper;
-    }
+    private final GoodsBrandMapper goodsBrandMapper;
 
 
     @Override

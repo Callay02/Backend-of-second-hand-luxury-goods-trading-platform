@@ -5,7 +5,7 @@ package icu.callay.controller;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.ShoppingCart;
 import icu.callay.service.ShoppingCartService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,14 +15,11 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024-02-07 11:40:36
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("shoppingCart")
 public class ShoppingCartController {
 
-    private ShoppingCartService shoppingCartService;
-    @Autowired
-    public void ShoppingCartService(ShoppingCartService shoppingCartService){
-        this.shoppingCartService=shoppingCartService;
-    }
+    private final ShoppingCartService shoppingCartService;
 
     /**
      * @param shoppingCart:
@@ -56,7 +53,6 @@ public class ShoppingCartController {
      * &#064;description 根据用户id和商品id删除购物车内商品信息
      * &#064;2024/4/5 14:54
      */
-    //TODO
     @GetMapping("deleteShoppingCartById")
     public SaResult deleteShoppingCartById(@RequestParam("uid")Long uid,@RequestParam("gid")Long gid){
         return shoppingCartService.deleteShoppingCartById(uid,gid);

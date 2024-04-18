@@ -14,8 +14,8 @@ import icu.callay.service.GoodsService;
 import icu.callay.vo.GoodsPageVo;
 import icu.callay.vo.GoodsVo;
 import icu.callay.vo.SearchGoodsVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,23 +31,12 @@ import java.util.Objects;
  * @since 2024-01-30 19:05:04
  */
 @Service("goodsService")
+@RequiredArgsConstructor
 public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements GoodsService {
 
-    private GoodsMapper goodsMapper;
-    private GoodsBrandMapper goodsBrandMapper;
-    private GoodsTypeMapper goodsTypeMapper;
-    @Autowired
-    public void GoodsMapper(GoodsMapper goodsMapper){
-        this.goodsMapper=goodsMapper;
-    }
-    @Autowired
-    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
-        this.goodsBrandMapper=goodsBrandMapper;
-    }
-    @Autowired
-    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
-        this.goodsTypeMapper=goodsTypeMapper;
-    }
+    private final GoodsMapper goodsMapper;
+    private final GoodsBrandMapper goodsBrandMapper;
+    private final GoodsTypeMapper goodsTypeMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

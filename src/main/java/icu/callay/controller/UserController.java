@@ -7,6 +7,7 @@ import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.User;
 import icu.callay.service.UserService;
 import icu.callay.vo.UserRegisterVo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +22,12 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @CrossOrigin
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("user")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    public void UserService(UserService userService){
-        this.userService=userService;
-    }
 
     /**
      * @param user:

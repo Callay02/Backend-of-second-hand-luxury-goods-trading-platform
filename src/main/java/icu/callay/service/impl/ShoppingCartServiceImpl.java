@@ -12,8 +12,8 @@ import icu.callay.mapper.ShoppingCartMapper;
 import icu.callay.entity.ShoppingCart;
 import icu.callay.service.ShoppingCartService;
 import icu.callay.vo.GoodsVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,29 +28,13 @@ import java.util.List;
  * @since 2024-02-07 11:40:36
  */
 @Service("shoppingCartService")
+@RequiredArgsConstructor
 public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, ShoppingCart> implements ShoppingCartService {
 
-    private ShoppingCartMapper shoppingCartMapper;
-    private GoodsMapper goodsMapper;
-    private GoodsBrandMapper goodsBrandMapper;
-    private GoodsTypeMapper goodsTypeMapper;
-    @Autowired
-    public void ShoppingCartMapper(ShoppingCartMapper shoppingCartMapper){
-        this.shoppingCartMapper=shoppingCartMapper;
-    }
-    @Autowired
-    public void GoodsMapper(GoodsMapper goodsMapper){
-        this.goodsMapper=goodsMapper;
-    }
-    @Autowired
-    public void GoodsBrandMapper(GoodsBrandMapper goodsBrandMapper){
-        this.goodsBrandMapper=goodsBrandMapper;
-    }
-    @Autowired
-    public void GoodsTypeMapper(GoodsTypeMapper goodsTypeMapper){
-        this.goodsTypeMapper=goodsTypeMapper;
-    }
-
+    private final ShoppingCartMapper shoppingCartMapper;
+    private final GoodsMapper goodsMapper;
+    private final GoodsBrandMapper goodsBrandMapper;
+    private final GoodsTypeMapper goodsTypeMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

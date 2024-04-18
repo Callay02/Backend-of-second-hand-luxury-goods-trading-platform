@@ -24,8 +24,8 @@ import icu.callay.vo.RegularUserVo;
 import icu.callay.vo.SalespersonUserVo;
 import icu.callay.vo.UserPageVo;
 import icu.callay.vo.UserRegisterVo;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,29 +43,13 @@ import java.util.concurrent.TimeUnit;
  * @since 2024-01-11 23:24:05
  */
 @Service("userService")
+@RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    private UserMapper userMapper;
-    private RegularUserMapper regularUserMapper;
-    private SalespersonUserMapper salespersonUserMapper;
-    private StringRedisTemplate stringRedisTemplate;
-    @Autowired
-    public void UserMapper(UserMapper userMapper){
-        this.userMapper=userMapper;
-    }
-    @Autowired
-    public void RegularUserMapper(RegularUserMapper regularUserMapper){
-        this.regularUserMapper=regularUserMapper;
-    }
-    @Autowired
-    public void SalespersonUserMapper(SalespersonUserMapper salespersonUserMapper){
-        this.salespersonUserMapper=salespersonUserMapper;
-    }
-    @Autowired
-    public void StringRedisTemplate(StringRedisTemplate stringRedisTemplate){
-        this.stringRedisTemplate=stringRedisTemplate;
-    }
-
+    private final UserMapper userMapper;
+    private final RegularUserMapper regularUserMapper;
+    private final SalespersonUserMapper salespersonUserMapper;
+    private final StringRedisTemplate stringRedisTemplate;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

@@ -5,7 +5,7 @@ package icu.callay.controller;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.SalespersonUser;
 import icu.callay.service.SalespersonUserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -15,17 +15,14 @@ import org.springframework.web.bind.annotation.*;
  * @since 2024-03-13 15:35:26
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("salespersonUser")
 public class SalespersonUserController {
 
-    private SalespersonUserService salespersonUserService;
-    @Autowired
-    public void SalespersonUserService(SalespersonUserService salespersonUserService){
-        this.salespersonUserService=salespersonUserService;
-    }
+    private final SalespersonUserService salespersonUserService;
+
 
     /**
-     * @param :
      * @return SaResult
      * @author Callay
      * &#064;description 销售员根据id获取销售员信息
