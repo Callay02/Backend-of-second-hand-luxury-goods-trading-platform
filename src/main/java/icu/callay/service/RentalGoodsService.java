@@ -28,6 +28,8 @@ public interface RentalGoodsService extends IService<RentalGoods> {
     SaResult getGoodsById(String id);
 
     SaResult adminGetGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo);
+
+    SaResult rentalGoodsToGoods(String rgid);
 }
 
 

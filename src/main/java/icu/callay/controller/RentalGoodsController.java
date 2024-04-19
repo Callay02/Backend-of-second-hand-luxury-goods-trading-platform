@@ -126,5 +126,10 @@ public class RentalGoodsController {
         return rentalGoodsService.adminGetGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
     }
 
+    @GetMapping("rentalGoodsToGoods")
+    public SaResult rentalGoodsToGoods(String rgid){
+        return rentalGoodsService.rentalGoodsToGoods(rgid);
+    }
+
 }
 

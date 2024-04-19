@@ -177,5 +177,19 @@ public class GoodsController {
     public SaResult adminGetGoodsPageByBrandAndTypeAndInfo(@RequestBody SearchGoodsVo searchGoodsVo){
         return goodsService.adminGetGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
     }
+
+    /**
+     * @param gid:
+     * @param rent:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 出售商品转租赁商品
+     * &#064;2024/4/19 18:39
+     */
+    @SaCheckRole("管理员")
+    @GetMapping("goodsToRentalGoods")
+    public SaResult goodsToRentalGoods(String gid,String rent){
+        return goodsService.goodsToRentalGoods(gid,rent);
+    }
 }
 

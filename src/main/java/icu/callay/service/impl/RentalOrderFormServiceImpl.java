@@ -173,16 +173,14 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             rentalOrderFormMapper.selectPage(orderFormPage,new QueryWrapper<RentalOrderForm>().eq("state",state));
 
             List<RentalOrderFormVo> orderFormVoList = new ArrayList<>();
-            orderFormPage.getRecords().forEach(orderForm -> {
 
+            orderFormPage.getRecords().forEach(orderForm -> {
                 RentalOrderFormVo orderFormVo = new RentalOrderFormVo();
                 BeanUtils.copyProperties(orderForm,orderFormVo);
 
                 //用户信息获取
                 RegularUser regularUser = regularUserMapper.selectById(orderForm.getUid());
                 BeanUtils.copyProperties(regularUser,orderFormVo);
-
-
                 User user = userMapper.selectById(orderForm.getUid());
                 BeanUtils.copyProperties(user,orderFormVo);
 
@@ -198,7 +196,6 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                 orderFormVo.setState(orderForm.getState());
                 orderFormVo.setAddress(orderForm.getAddress());
                 orderFormVo.setUpdateTime(orderForm.getUpdateTime());
-                orderFormVo.setDeliveryTime(new Date());
                 orderFormVo.setDeliveryTime(orderForm.getDeliveryTime());
 
                 //计算租赁时间和总租金
@@ -222,7 +219,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                     orderFormVo.setDay(day);
                     orderFormVo.setRentTotal(rentTotal);
                 }
-
+                orderFormVo.setUid(String.valueOf(user.getId()));
                 orderFormVoList.add(orderFormVo);
             });
 
@@ -233,7 +230,8 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             return SaResult.data(orderFormPageVo);
         }
         catch (Exception e){
-            throw new RuntimeException("获取订单信息失败");
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -263,10 +261,12 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
         try {
             RentalOrderForm orderForm1 = getById(rentalOrderForm.getId());
             if(orderForm1.getState()==0){
-                rentalOrderForm.setState(1);
-                rentalOrderForm.setUpdateTime(new Date());
-                rentalOrderForm.setDeliveryTime(new Date());
-                update(rentalOrderForm,new UpdateWrapper<RentalOrderForm>().eq("id",rentalOrderForm.getId()));
+                orderForm1.setState(1);
+                orderForm1.setLogisticsNumber(rentalOrderForm.getLogisticsNumber());
+                orderForm1.setCourierCode(rentalOrderForm.getCourierCode());
+                orderForm1.setUpdateTime(new Date());
+                orderForm1.setDeliveryTime(new Date());
+                update(orderForm1,new UpdateWrapper<RentalOrderForm>().eq("id",orderForm1.getId()));
                 return SaResult.ok("发货成功");
             }
             return SaResult.error("商品已发货");

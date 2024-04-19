@@ -3,10 +3,8 @@ package icu.callay.service;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.extension.service.IService;
 import icu.callay.entity.Goods;
-import icu.callay.entity.GoodsBrand;
 import icu.callay.vo.SearchGoodsVo;
 
-import java.util.List;
 
 /**
  * (Goods)表服务接口
@@ -39,6 +37,8 @@ public interface GoodsService extends IService<Goods> {
     SaResult getGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo);
 
     SaResult adminGetGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo);
+
+    SaResult goodsToRentalGoods(String gid,String rent);
 }
 
 

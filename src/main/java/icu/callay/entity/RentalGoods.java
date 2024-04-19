@@ -2,7 +2,7 @@ package icu.callay.entity;
 
 import java.util.Date;
 
-import cn.dev33.satoken.util.SaResult;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,6 +31,7 @@ public class RentalGoods implements Serializable {
 
     private String info;
 
+    //商品原价+保证金500
     private Double deposit;
 
     private Double rent;
@@ -39,9 +40,16 @@ public class RentalGoods implements Serializable {
 
     private Integer fineness;
 
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss",timezone = "GMT+8")
     private Date addTime;
 
     private Integer state;
+
+    private String apid;
+
+    private String antiCounterfeitingCode;
+
+    private String uid;
 
 }
 

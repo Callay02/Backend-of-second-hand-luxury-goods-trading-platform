@@ -112,6 +112,13 @@
             <version>4.34.0.ALL</version>
         </dependency>
 
+        <!--物流查询 51tracking-sdk-java-->
+        <dependency>
+            <groupId>io.github.51tracking</groupId>
+            <artifactId>51tracking-sdk-java</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

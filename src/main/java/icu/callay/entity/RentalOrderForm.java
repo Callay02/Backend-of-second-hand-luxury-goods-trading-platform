@@ -29,7 +29,7 @@ public class RentalOrderForm implements Serializable {
 
     private String gid;
 
-    private Integer logisticsNumber;
+    private String logisticsNumber;
 
     private Integer state;
 
@@ -55,6 +55,8 @@ public class RentalOrderForm implements Serializable {
     private Double rentTotal;
 
     private String remark;
+
+    private String courierCode;
 
 }
 

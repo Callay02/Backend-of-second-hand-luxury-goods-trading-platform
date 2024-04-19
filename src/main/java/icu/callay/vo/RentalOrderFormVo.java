@@ -15,7 +15,7 @@ public class RentalOrderFormVo {
 
     private String gid;
 
-    private Integer logisticsNumber;
+    private String logisticsNumber;
 
     private Integer state;
 
@@ -58,5 +58,7 @@ public class RentalOrderFormVo {
     private Double rentTotal;
 
     private String remark;
+
+    private String courierCode;
 
 }

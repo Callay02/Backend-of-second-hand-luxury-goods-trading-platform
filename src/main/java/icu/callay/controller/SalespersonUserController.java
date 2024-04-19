@@ -30,7 +30,7 @@ public class SalespersonUserController {
      * &#064;2024/4/5 14:51
      */
     @GetMapping("getUserInfoById")
-    @SaCheckRole("销售员")
+    @SaCheckRole("代理商")
     public SaResult getUserInfoById(){
         return salespersonUserService.getUserInfoById();
     }
@@ -43,7 +43,7 @@ public class SalespersonUserController {
      * &#064;2024/4/5 14:51
      */
     @PostMapping("updateUserInfoById")
-    @SaCheckRole("销售员")
+    @SaCheckRole("代理商")
     public SaResult updateUserInfoById(@RequestBody SalespersonUser salespersonUser){
         return salespersonUserService.updateUserInfoById(salespersonUser);
     }

@@ -11,7 +11,7 @@ public class OrderFormVo {
     //订单号
     private Long id;
 
-    private Integer logisticsNumber;
+    private String logisticsNumber;
 
     private Integer state;
 
@@ -44,5 +44,7 @@ public class OrderFormVo {
     private String img;
 
     private Integer fineness;
+
+    private String courierCode;
 
 }

@@ -147,7 +147,7 @@ public class OrderFormController {
      * &#064;2024/4/5 14:27
      */
     @PostMapping("createOrderFormBySid")
-    @SaCheckRole("销售员")
+    @SaCheckRole("代理商")
     public SaResult createOrderFormBySid(@RequestBody OrderForm orderForm){
         return orderFormService.createOrderFormBySid(orderForm);
     }

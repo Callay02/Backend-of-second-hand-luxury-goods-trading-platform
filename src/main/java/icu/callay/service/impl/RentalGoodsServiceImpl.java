@@ -1,5 +1,6 @@
 package icu.callay.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -33,6 +34,7 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
     private final RentalGoodsMapper rentalGoodsMapper;
     private final GoodsBrandMapper goodsBrandMapper;
     private final GoodsTypeMapper goodsTypeMapper;
+    private final GoodsMapper goodsMapper;
 
 
     @Override
@@ -215,6 +217,28 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
         }
         catch (Exception e){
             throw new RuntimeException("查找商品信息失败");
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SaResult rentalGoodsToGoods(String rgid) {
+        try {
+            RentalGoods rentalGoods = getById(rgid);
+            Goods goods = new Goods();
+            BeanUtils.copyProperties(rentalGoods,goods);
+            goods.setId(null);
+            goods.setPrice(rentalGoods.getDeposit()-500.0);
+            goods.setAddTime(new Date());
+            if(rentalGoods.getUid()==null){
+                rentalGoods.setUid((String) StpUtil.getLoginId());
+            }
+            goods.setUserId(Long.valueOf(rentalGoods.getUid()));
+            goodsMapper.insert(goods);
+            remove(new QueryWrapper<RentalGoods>().eq("id",rgid));
+            return SaResult.ok("转移成功");
+        }catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 

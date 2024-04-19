@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import icu.callay.entity.GoodsType;
+import icu.callay.entity.RentalGoods;
 import icu.callay.mapper.GoodsBrandMapper;
 import icu.callay.mapper.GoodsMapper;
 import icu.callay.entity.Goods;
 import icu.callay.mapper.GoodsTypeMapper;
+import icu.callay.mapper.RentalGoodsMapper;
 import icu.callay.service.GoodsService;
 import icu.callay.vo.GoodsPageVo;
 import icu.callay.vo.GoodsVo;
@@ -37,6 +39,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     private final GoodsMapper goodsMapper;
     private final GoodsBrandMapper goodsBrandMapper;
     private final GoodsTypeMapper goodsTypeMapper;
+    private final RentalGoodsMapper rentalGoodsMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -312,6 +315,27 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         }
         catch (Exception e){
             throw new RuntimeException("查找商品失败");
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SaResult goodsToRentalGoods(String gid,String rent) {
+        try {
+            Goods goods = getById(gid);
+            RentalGoods rentalGoods = new RentalGoods();
+            BeanUtils.copyProperties(goods,rentalGoods);
+            rentalGoods.setId(null);
+            rentalGoods.setDeposit(goods.getPrice()+500.0);
+            rentalGoods.setRent(Double.valueOf(rent));
+            rentalGoods.setAddTime(new Date());
+            rentalGoods.setUid(String.valueOf(goods.getUserId()));
+            rentalGoodsMapper.insert(rentalGoods);
+            remove(new QueryWrapper<Goods>().eq("id",gid));
+            return SaResult.ok("转移成功");
+        }
+        catch (Exception e){
+            throw new RuntimeException("转移失败");
         }
     }
 
