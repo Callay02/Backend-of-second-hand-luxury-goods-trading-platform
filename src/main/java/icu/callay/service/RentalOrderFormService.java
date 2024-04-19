@@ -33,6 +33,8 @@ public interface RentalOrderFormService extends IService<RentalOrderForm> {
     SaResult userOverdueSettlement(String id);
 
     SaResult adminSignAndSettleById(String id);
+
+    SaResult userWantBuy(String id);
 }
 
 

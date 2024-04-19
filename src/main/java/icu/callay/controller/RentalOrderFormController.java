@@ -168,5 +168,18 @@ public class RentalOrderFormController {
     public SaResult adminSignAndSettleById(@RequestParam("id")String id){
         return rentalOrderFormService.adminSignAndSettleById(id);
     }
+
+    /**
+     * @param id:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 用户购买租赁商品
+     * &#064;2024/4/20 4:47
+     */
+    @GetMapping("userWantBuy")
+    @SaCheckRole("普通用户")
+    public SaResult userWantBuy(String id){
+        return rentalOrderFormService.userWantBuy(id);
+    }
 }
 

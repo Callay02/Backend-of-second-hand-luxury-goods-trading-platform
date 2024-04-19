@@ -126,10 +126,19 @@ public class RentalGoodsController {
         return rentalGoodsService.adminGetGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
     }
 
+    /**
+     * @param rgid:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 租赁商品转为出售商品
+     * &#064;2024/4/20 3:51
+     */
+    @SaCheckRole("管理员")
     @GetMapping("rentalGoodsToGoods")
     public SaResult rentalGoodsToGoods(String rgid){
         return rentalGoodsService.rentalGoodsToGoods(rgid);
     }
+
 
 }
 

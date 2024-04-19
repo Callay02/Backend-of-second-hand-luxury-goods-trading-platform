@@ -242,6 +242,7 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
         }
     }
 
+
 }
 
 

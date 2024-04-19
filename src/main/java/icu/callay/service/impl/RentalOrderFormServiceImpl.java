@@ -35,6 +35,8 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
     private final GoodsTypeMapper goodsTypeMapper;
     private final RegularUserMapper regularUserMapper;
     private final UserMapper userMapper;
+    private final GoodsMapper goodsMapper;
+    private final OrderFormMapper orderFormMapper;
 
 
     @Override
@@ -390,6 +392,51 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
         }
         catch (Exception e){
             throw new RuntimeException("结算失败");
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SaResult userWantBuy(String id) {
+        try {
+            RentalOrderForm rentalOrderForm = getById(id);
+            String uid = (String) StpUtil.getLoginId();
+            if(Objects.equals(rentalOrderForm.getUid(), uid)){
+                RegularUser regularUser =regularUserMapper.selectById(uid);
+                RentalGoods rentalGoods = rentalGoodsMapper.selectById(rentalOrderForm.getGid());
+                String info = rentalGoods.getInfo()+"_userBuy_"+ new Date().getTime();
+                //转为出售商品
+                Goods goods = new Goods();
+                BeanUtils.copyProperties(rentalGoods,goods);
+                goods.setId(null);
+                goods.setPrice(rentalGoods.getDeposit()-500.0);
+                goods.setAddTime(new Date());
+                if(rentalGoods.getUid()==null){
+                    rentalGoods.setUid(uid);
+                }
+                goods.setUserId(Long.valueOf(rentalGoods.getUid()));
+                goods.setInfo(info);
+                goodsMapper.insert(goods);
+                //删除原租赁商品
+                rentalGoodsMapper.delete(new QueryWrapper<RentalGoods>().eq("id",rentalOrderForm.getGid()));
+                //删除租赁订单
+                remove(new QueryWrapper<RentalOrderForm>().eq("id",id));
+                //创建出售订单
+                OrderForm orderForm = new OrderForm();
+                orderForm.setGid(goodsMapper.selectOne(new QueryWrapper<Goods>().eq("info",info)).getId());
+                orderForm.setUid(regularUser.getId());
+                orderForm.setAddress(regularUser.getAddress());
+                orderForm.setState(2);
+                orderForm.setCreateTime(new Date());
+                orderFormMapper.insert(orderForm);
+                //退回保证金
+                regularUserMapper.update(new UpdateWrapper<RegularUser>().eq("id",StpUtil.getLoginId()).set("money",regularUser.getMoney()+500.0));
+                return SaResult.ok("购买成功");
+            }
+            return SaResult.error("用户不匹配");
+        }
+        catch (Exception e){
+            throw new RuntimeException(e.getMessage());
         }
     }
 

@@ -30,6 +30,7 @@ public interface RentalGoodsService extends IService<RentalGoods> {
     SaResult adminGetGoodsPageByBrandAndTypeAndInfo(SearchGoodsVo searchGoodsVo);
 
     SaResult rentalGoodsToGoods(String rgid);
+
 }
 
 
