@@ -13,7 +13,7 @@ import icu.callay.entity.RegularUser;
 public interface RegularUserService extends IService<RegularUser> {
 
 
-    SaResult getUserInfoById(int id);
+    SaResult getUserInfoById();
 
     SaResult updateUserInfoById(RegularUser regularUser);
 

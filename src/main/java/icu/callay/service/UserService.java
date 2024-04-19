@@ -19,7 +19,7 @@ public interface UserService extends IService<User> {
 
     SaResult getCode(String email,String type);
 
-    SaResult getUserInfo(Long id,String pwd);
+    SaResult getUserInfo();
 
     SaResult getUserPageByType(int type, int page, int rows);
 

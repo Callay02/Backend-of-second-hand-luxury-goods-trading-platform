@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.User;
@@ -9,7 +10,6 @@ import icu.callay.service.UserService;
 import icu.callay.vo.UserRegisterVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -61,7 +61,7 @@ public class UserController {
      * @param userRegisterVo:
      * @return SaResult
      * @author Callay
-     * &#064;description  普通用户注册
+     * &#064;description  用户注册
      * &#064;date  2024/4/5 13:24
      */
     @PostMapping("register")
@@ -77,6 +77,7 @@ public class UserController {
      * &#064;date  2024/4/5 13:24
      */
     @PostMapping("adminAddUser")
+    @SaCheckRole("管理员")
     public SaResult adminAddUser(@RequestBody User user){
         return userService.adminAddUser(user);
     }
@@ -106,17 +107,14 @@ public class UserController {
     }
 
     /**
-     * @param id:
-     * @param pwd:
      * @return SaResult
      * @author Callay
      * &#064;description  根据用户id和密码获取用户信息
      * &#064;date  2024/4/5 13:25
      */
-    //TODO
     @GetMapping("getUserInfo")
-    public SaResult getUserInfo(@RequestParam(name = "id") Long id,@RequestParam("password")String pwd){
-        return userService.getUserInfo(id,pwd);
+    public SaResult getUserInfo(){
+        return userService.getUserInfo();
     }
 
     /**
@@ -129,6 +127,7 @@ public class UserController {
      * &#064;2024/4/5 13:27
      */
     @GetMapping("getUserPageByType")
+    @SaCheckRole("管理员")
     public SaResult getUserPageByType(@RequestParam("type")int type,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return userService.getUserPageByType(type,page,rows);
     }
@@ -141,6 +140,7 @@ public class UserController {
      * &#064;2024/4/5 13:28
      */
     @PostMapping("deleteUserById")
+    @SaCheckRole("管理员")
     public SaResult deleteUserById(@RequestBody User user){
         return userService.deleteUserById(user);
     }
@@ -165,6 +165,7 @@ public class UserController {
      * &#064;2024/4/5 13:29
      */
     @GetMapping("adminGetUserNumberByType")
+    @SaCheckRole("管理员")
     public SaResult adminGetUserNumberByType(@RequestParam("type")String type){
         return userService.adminGetUserNumberByType(type);
     }

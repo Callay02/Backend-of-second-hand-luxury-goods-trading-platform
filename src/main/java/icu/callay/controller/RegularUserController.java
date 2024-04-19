@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.RegularUser;
 import icu.callay.service.RegularUserService;
@@ -23,15 +24,15 @@ public class RegularUserController {
 
 
     /**
-     * @param id:
      * @return SaResult
      * @author Callay
      * &#064;description 根据用户id获取用户信息
      * &#064;2024/4/5 14:39
      */
     @GetMapping("getUserInfoById")
-    public SaResult getUserInfoById(@RequestParam("id")int id){
-        return regularUserService.getUserInfoById(id);
+    @SaCheckRole("普通用户")
+    public SaResult getUserInfoById(){
+        return regularUserService.getUserInfoById();
     }
 
     /**
@@ -42,6 +43,7 @@ public class RegularUserController {
      * &#064;2024/4/5 14:40
      */
     @PostMapping("updateUserInfoById")
+    @SaCheckRole("普通用户")
     public SaResult updateUserInfoById(@RequestBody RegularUser regularUser){
         return regularUserService.updateUserInfoById(regularUser);
     }
@@ -54,6 +56,7 @@ public class RegularUserController {
      * &#064;2024/4/5 14:40
      */
     @PostMapping("recharge")
+    @SaCheckRole("管理员")
     public SaResult recharge(@RequestBody RegularUser regularUser){
         return regularUserService.recharge(regularUser);
     }

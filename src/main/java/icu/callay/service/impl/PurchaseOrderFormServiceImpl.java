@@ -51,7 +51,7 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
             return SaResult.ok("创建成功");
         }
         catch (Exception e){
-            throw new RuntimeException("创建订单失败");
+            throw new RuntimeException(e.getMessage());
         }
     }
 

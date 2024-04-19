@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.GoodsType;
 import icu.callay.service.GoodsTypeService;
@@ -56,6 +57,7 @@ public class GoodsTypeController {
      * &#064;2024/4/5 14:14
      */
     @PostMapping("addGoodsType")
+    @SaCheckRole("管理员")
     public SaResult addGoodsType(@RequestBody GoodsType goodsType){
         return goodsTypeService.addGoodsType(goodsType);
     }
@@ -68,6 +70,7 @@ public class GoodsTypeController {
      * &#064;2024/4/5 14:14
      */
     @GetMapping("deleteTypeById")
+    @SaCheckRole("管理员")
     public SaResult deleteTypeById(@RequestParam("type")int type){
         return goodsTypeService.deleteTypeById(type);
     }
@@ -80,6 +83,7 @@ public class GoodsTypeController {
      * &#064;2024/4/5 14:15
      */
     @PostMapping("updateTypeName")
+    @SaCheckRole("管理员")
     public SaResult updateTypeName(@RequestBody GoodsType goodsType){
         return goodsTypeService.updateTypeName(goodsType);
     }

@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.OrderForm;
 import icu.callay.service.OrderFormService;
@@ -107,6 +108,7 @@ public class OrderFormController {
      * &#064;2024/4/5 14:26
      */
     @GetMapping("getOrderFormPageByState")
+    @SaCheckRole("管理员")
     public SaResult getOrderFormPageByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return orderFormService.getOrderFormPageByState(state,page,rows);
     }
@@ -119,6 +121,7 @@ public class OrderFormController {
      * &#064;2024/4/5 14:26
      */
     @PostMapping("delivery")
+    @SaCheckRole("管理员")
     public SaResult delivery(@RequestBody OrderForm orderForm){
         return orderFormService.delivery(orderForm);
     }
@@ -131,6 +134,7 @@ public class OrderFormController {
      * &#064;2024/4/5 14:26
      */
     @PostMapping("updateShippedOrderFormById")
+    @SaCheckRole("管理员")
     public SaResult updateShippedOrderFormById(@RequestBody OrderForm orderForm){
         return orderFormService.updateShippedOrderFormById(orderForm);
     }
@@ -143,6 +147,7 @@ public class OrderFormController {
      * &#064;2024/4/5 14:27
      */
     @PostMapping("createOrderFormBySid")
+    @SaCheckRole("销售员")
     public SaResult createOrderFormBySid(@RequestBody OrderForm orderForm){
         return orderFormService.createOrderFormBySid(orderForm);
     }
@@ -159,6 +164,7 @@ public class OrderFormController {
      * &#064;2024/4/8 13:55
      */
     @GetMapping("adminGetSalespersonOrderFormPageByisSettleAndSidAndState")
+    @SaCheckRole("管理员")
     public SaResult adminGetSalespersonOrderFormByisSettleAndSid(@RequestParam("sid")String sid,@RequestParam("state")int state,@RequestParam("isSettle")String isSettle,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return orderFormService.adminGetSalespersonOrderFormByisSettleAndSid(sid,state,isSettle,page,rows);
     }
@@ -171,6 +177,7 @@ public class OrderFormController {
      * &#064;2024/4/8 15:14
      */
     @GetMapping("settleSalespersonOrderFormByid")
+    @SaCheckRole("管理员")
     public SaResult settleSalespersonOrderFormByid(@RequestParam("id")String id){
         return orderFormService.settleSalespersonOrderFormByid(id);
     }
@@ -184,6 +191,7 @@ public class OrderFormController {
      * &#064;2024/4/16 0:16
      */
     @GetMapping("getSalesVolume")
+    @SaCheckRole("管理员")
     public SaResult getSalesVolume(String beginTime,String endTime){
         return orderFormService.getSalesVolume(beginTime,endTime);
     }

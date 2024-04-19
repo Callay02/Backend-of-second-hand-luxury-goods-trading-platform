@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.GoodsBrand;
 import icu.callay.service.GoodsBrandService;
@@ -56,6 +57,7 @@ public class GoodsBrandController {
      * &#064;2024/4/5 14:02
      */
     @PostMapping("addBrand")
+    @SaCheckRole("管理员")
     public SaResult addBrand(@RequestBody GoodsBrand goodsBrand){
         return goodsBrandService.addBrand(goodsBrand);
     }
@@ -68,6 +70,7 @@ public class GoodsBrandController {
      * &#064;2024/4/5 14:02
      */
     @PostMapping("deleteBrandById")
+    @SaCheckRole("管理员")
     public SaResult deleteBrandById(@RequestBody GoodsBrand goodsBrand){
         return goodsBrandService.deleteBrandById(goodsBrand);
     }
@@ -80,6 +83,7 @@ public class GoodsBrandController {
      * &#064;2024/4/5 14:02
      */
     @PostMapping("updateBrand")
+    @SaCheckRole("管理员")
     public SaResult updateBrand(@RequestBody GoodsBrand goodsBrand){
         return goodsBrandService.updateBrand(goodsBrand);
     }

@@ -1,5 +1,6 @@
 package icu.callay.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -185,8 +186,9 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     @Transactional(rollbackFor = Exception.class)
     public SaResult getSignedById(Long id) {
         try{
+            String uid = (String) StpUtil.getLoginId();
             QueryWrapper<OrderForm> orderFormQueryWrapper = new QueryWrapper<>();
-            orderFormQueryWrapper.eq("uid",id).and(wrapper->{
+            orderFormQueryWrapper.eq("uid",uid).and(wrapper->{
                 wrapper.eq("state",2);
             });
             List<OrderFormVo> orderFormList = new ArrayList<>();

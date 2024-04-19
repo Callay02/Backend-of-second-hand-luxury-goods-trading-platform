@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.ShoppingCart;
 import icu.callay.service.ShoppingCartService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("shoppingCart")
+@SaCheckRole("普通用户")
 public class ShoppingCartController {
 
     private final ShoppingCartService shoppingCartService;

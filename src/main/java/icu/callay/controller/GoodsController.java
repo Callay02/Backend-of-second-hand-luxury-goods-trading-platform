@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.Goods;
 import icu.callay.service.GoodsService;
@@ -9,8 +10,6 @@ import icu.callay.vo.SearchGoodsVo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * (Goods)表控制层
@@ -42,7 +41,7 @@ public class GoodsController {
      * @param type:
      * @return SaResult
      * @author Callay
-     * &#064;description 更加商品类型获取商品信息
+     * &#064;description 根据商品类型获取商品信息
      * &#064;2024/4/5 14:04
      */
     @GetMapping("getGoodsByType")
@@ -98,6 +97,7 @@ public class GoodsController {
      * &#064;2024/4/5 14:06
      */
     @PostMapping("addGoods")
+    @SaCheckRole("管理员")
     public SaResult addGoods(@RequestBody Goods goods){
         return goodsService.addGoods(goods);
     }
@@ -110,6 +110,7 @@ public class GoodsController {
      * &#064;2024/4/5 14:07
      */
     @PostMapping("deleteGoodsById")
+    @SaCheckRole("管理员")
     public SaResult deleteGoodsById(@RequestBody Goods goods){
         return goodsService.deleteGoodsById(goods);
     }
@@ -122,6 +123,7 @@ public class GoodsController {
      * &#064;2024/4/5 14:07
      */
     @PostMapping("updateGoods")
+    @SaCheckRole("管理员")
     public SaResult updateGoods(@RequestBody Goods goods){
         return goodsService.updateGoods(goods);
     }
@@ -146,6 +148,7 @@ public class GoodsController {
      * &#064;2024/4/5 14:10
      */
     @PostMapping("updateGoodsById")
+    @SaCheckRole("管理员")
     public SaResult updateGoodsById(@RequestBody Goods goods){
         return goodsService.updateGoodsById(goods);
     }
@@ -170,6 +173,7 @@ public class GoodsController {
      * &#064;2024/4/5 16:23
      */
     @PostMapping("adminGetGoodsPageByBrandAndTypeAndInfo")
+    @SaCheckRole("管理员")
     public SaResult adminGetGoodsPageByBrandAndTypeAndInfo(@RequestBody SearchGoodsVo searchGoodsVo){
         return goodsService.adminGetGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
     }

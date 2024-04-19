@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.RentalOrderForm;
 import icu.callay.service.RentalOrderFormService;
@@ -32,6 +33,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:47
      */
     @GetMapping("userGetOrderFormByState")
+    @SaCheckRole("普通用户")
     public SaResult userGetOrderFormByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return rentalOrderFormService.userGetOrderFormByState(state,page,rows);
     }
@@ -44,6 +46,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:48
      */
     @GetMapping("createOrderFormByGid")
+    @SaCheckRole("普通用户")
     public SaResult createOrderFormByGid(@RequestParam("gid")String gid){
         return rentalOrderFormService.createOrderFormByGid(gid);
     }
@@ -52,7 +55,7 @@ public class RentalOrderFormController {
      * @param id:
      * @return SaResult
      * @author Callay
-     * &#064;description 普通用户根据订单id取消订单
+     * &#064;description 普通用户和管理员根据订单id取消订单
      * &#064;2024/4/5 14:48
      */
     @GetMapping("cancelOrderById")
@@ -70,6 +73,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:49
      */
     @GetMapping("getOrderFormPageByState")
+    @SaCheckRole("管理员")
     public SaResult getOrderFormPageByState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return rentalOrderFormService.getOrderFormPageByState(state,page,rows);
     }
@@ -82,6 +86,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:49
      */
     @GetMapping("adminCancelOrderById")
+    @SaCheckRole("管理员")
     public SaResult adminCancelOrderById(@RequestParam("id")String id){
         return rentalOrderFormService.adminCancelOrderById(id);
     }
@@ -94,6 +99,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:49
      */
     @PostMapping("delivery")
+    @SaCheckRole("管理员")
     public SaResult delivery(@RequestBody RentalOrderForm rentalOrderForm){
         return rentalOrderFormService.delivery(rentalOrderForm);
     }
@@ -106,6 +112,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:50
      */
     @PostMapping("updateShippedOrderFormById")
+    @SaCheckRole("管理员")
     public SaResult updateShippedOrderFormById(@RequestBody RentalOrderForm orderForm){
         return rentalOrderFormService.updateShippedOrderFormById(orderForm);
     }
@@ -118,6 +125,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:50
      */
     @GetMapping("signById")
+    @SaCheckRole("普通用户")
     public SaResult signById(@RequestParam("id")String id){
         return rentalOrderFormService.signById(id);
     }
@@ -130,6 +138,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:50
      */
     @PostMapping("userReturn")
+    @SaCheckRole("普通用户")
     public SaResult userReturn(@RequestBody RentalOrderForm rentalOrderForm){
         return rentalOrderFormService.userReturn(rentalOrderForm);
     }
@@ -142,6 +151,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:50
      */
     @GetMapping("userOverdueSettlementById")
+    @SaCheckRole("普通用户")
     public SaResult userOverdueSettlement(@RequestParam("id")String id){
         return rentalOrderFormService.userOverdueSettlement(id);
     }
@@ -154,6 +164,7 @@ public class RentalOrderFormController {
      * &#064;2024/4/5 14:50
      */
     @GetMapping("adminSignAndSettleById")
+    @SaCheckRole("管理员")
     public SaResult adminSignAndSettleById(@RequestParam("id")String id){
         return rentalOrderFormService.adminSignAndSettleById(id);
     }

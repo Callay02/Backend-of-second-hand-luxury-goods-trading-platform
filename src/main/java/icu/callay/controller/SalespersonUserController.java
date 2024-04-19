@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.SalespersonUser;
 import icu.callay.service.SalespersonUserService;
@@ -29,6 +30,7 @@ public class SalespersonUserController {
      * &#064;2024/4/5 14:51
      */
     @GetMapping("getUserInfoById")
+    @SaCheckRole("销售员")
     public SaResult getUserInfoById(){
         return salespersonUserService.getUserInfoById();
     }
@@ -41,6 +43,7 @@ public class SalespersonUserController {
      * &#064;2024/4/5 14:51
      */
     @PostMapping("updateUserInfoById")
+    @SaCheckRole("销售员")
     public SaResult updateUserInfoById(@RequestBody SalespersonUser salespersonUser){
         return salespersonUserService.updateUserInfoById(salespersonUser);
     }

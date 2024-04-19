@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.service.PlatformRevenueFlowFormService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class PlatformRevenueFlowFormController {
     private final PlatformRevenueFlowFormService platformRevenueFlowFormService;
 
     @GetMapping("getPageByFrom")
+    @SaCheckRole("管理员")
     public SaResult getPageByForm(String type,String from,int page,int rows){
         return platformRevenueFlowFormService.getPageByForm(type,from,page,rows);
     }

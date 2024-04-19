@@ -1,5 +1,6 @@
 package icu.callay.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -30,11 +31,12 @@ public class RegularUserServiceImpl extends ServiceImpl<RegularUserMapper, Regul
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SaResult getUserInfoById(int id) {
+    public SaResult getUserInfoById() {
+        String uid = (String) StpUtil.getLoginId();
         RegularUserVo regularUserVo = new RegularUserVo();
-        BeanUtils.copyProperties(userMapper.selectById(id),regularUserVo);
+        BeanUtils.copyProperties(userMapper.selectById(uid),regularUserVo);
         try {
-            BeanUtils.copyProperties(getById(id),regularUserVo);
+            BeanUtils.copyProperties(getById(uid),regularUserVo);
             return SaResult.data(regularUserVo);
         }catch (Exception e){
             throw new RuntimeException("请填写个人信息");

@@ -25,4 +25,6 @@ public class GoodsVo {
     private Date addTime;
 
     private Integer state;
+
+    private String antiCounterfeitingCode;
 }

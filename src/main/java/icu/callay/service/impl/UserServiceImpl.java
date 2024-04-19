@@ -30,6 +30,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -71,6 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 if(selectUser.getIsDeleted()==1)
                     return SaResult.error("该账号已注销");
                 StpUtil.login(selectUser.getId());
+                //System.out.println(StpUtil.getRoleList());
                 return SaResult.data(StpUtil.getTokenInfo());
             }
             else
@@ -157,21 +159,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public SaResult getUserInfo(Long id,String pwd) {
+    public SaResult getUserInfo() {
         try {
-            User user = getById(id);
+            User user = getById((Serializable) StpUtil.getLoginId());
 
-            //AES解密密码
-            String a = user.getIdCard();
-            String aesKey = Base64.encode(a);
-            AES aes = SecureUtil.aes(aesKey.getBytes());
-            String encryptHex = user.getPassword();
-            String password = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
-
-            if(password.equals(pwd)){
-                return SaResult.data(user);
-            }
-            return SaResult.error();
+            return SaResult.data(user);
         }
         catch (Exception e){
             throw new RuntimeException("用户信息获取失败");

@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.RentalGoods;
 import icu.callay.service.RentalGoodsService;
@@ -44,6 +45,7 @@ public class RentalGoodsController {
      * &#064;2024/4/5 14:43
      */
     @PostMapping("addGoods")
+    @SaCheckRole("管理员")
     public SaResult addGoods(@RequestBody RentalGoods rentalGoods){
         return rentalGoodsService.addGoods(rentalGoods);
     }
@@ -56,6 +58,7 @@ public class RentalGoodsController {
      * &#064;2024/4/5 14:43
      */
     @GetMapping("getGoodsByIdNoVo")
+    @SaCheckRole("管理员")
     public SaResult getGoodsByIdNoVo(@RequestParam String id){
         return rentalGoodsService.getGoodsByIdNoVo(id);
     }
@@ -68,6 +71,7 @@ public class RentalGoodsController {
      * &#064;2024/4/5 14:43
      */
     @PostMapping("updateGoodsById")
+    @SaCheckRole("管理员")
     public SaResult updateGoodsById(@RequestBody RentalGoods rentalGoods){
         return rentalGoodsService.updateGoodsById(rentalGoods);
     }
@@ -80,6 +84,7 @@ public class RentalGoodsController {
      * &#064;2024/4/5 14:43
      */
     @PostMapping("deleteGoodsById")
+    @SaCheckRole("管理员")
     public SaResult deleteGoodsById(@RequestBody RentalGoods rentalGoods){
         return rentalGoodsService.deleteGoodsById(rentalGoods);
     }
@@ -116,6 +121,7 @@ public class RentalGoodsController {
      * &#064;2024/4/5 16:39
      */
     @PostMapping("adminGetGoodsPageByBrandAndTypeAndInfo")
+    @SaCheckRole("管理员")
     public SaResult adminGetGoodsPageByBrandAndTypeAndInfo(@RequestBody SearchGoodsVo searchGoodsVo){
         return rentalGoodsService.adminGetGoodsPageByBrandAndTypeAndInfo(searchGoodsVo);
     }

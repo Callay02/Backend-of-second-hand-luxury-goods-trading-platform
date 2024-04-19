@@ -2,6 +2,7 @@ package icu.callay.controller;
 
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.PurchaseOrderForm;
 import icu.callay.service.PurchaseOrderFormService;
@@ -69,6 +70,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:31
      */
     @GetMapping("updatePurchaseOrderFormSateById")
+    @SaCheckRole("管理员")
     public SaResult updatePurchaseOrderFormSateById(@RequestParam("id")Long id){
         return purchaseOrderFormService.updatePurchaseOrderFormSateById(id);
     }
@@ -81,6 +83,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:31
      */
     @GetMapping("getPurchaseOrderFormById")
+    @SaCheckRole("鉴定师")
     public SaResult getPurchaseOrderFormById(@RequestParam("id")Long id){
         return purchaseOrderFormService.getPurchaseOrderFormById(id);
     }
@@ -93,6 +96,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:31
      */
     @GetMapping("updateStateSet2ById")
+    @SaCheckRole("鉴定师")
     public SaResult updateStateSet2ById(@RequestParam("id")Long id){
         return purchaseOrderFormService.updateStateSet2ById(id);
     }
@@ -105,6 +109,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:32
      */
     @PostMapping("updateStateSet3ById")
+    @SaCheckRole("鉴定师")
     public SaResult updateStateSet3ById(@RequestBody PurchaseOrderForm purchaseOrderForm){
         return purchaseOrderFormService.updateStateSet3ById(purchaseOrderForm);
     }
@@ -119,6 +124,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:32
      */
     @GetMapping("getPurchaseOrderFormPageByApid")
+    @SaCheckRole("鉴定师")
     public SaResult getPurchaseOrderFormPageByApid(@RequestParam("apid")String apid,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return purchaseOrderFormService.getPurchaseOrderFormPageByApid(apid,page,rows);
     }
@@ -131,6 +137,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:33
      */
     @GetMapping("updateStateSet4ByIdAndUid")
+    @SaCheckRole("普通用户")
     public SaResult updateStateSet4ByIdAndUid(@RequestParam("id")Long id){
         return purchaseOrderFormService.updateStateSet4ByIdAndUid(id);
     }
@@ -143,6 +150,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:34
      */
     @PostMapping("updateStateSet5ById")
+    @SaCheckRole("管理员")
     public SaResult updateStateSet5ById(@RequestBody PurchaseOrderForm purchaseOrderForm){
         return purchaseOrderFormService.updateStateSet5ById(purchaseOrderForm);
     }
@@ -155,6 +163,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:34
      */
     @GetMapping("userConfirmsSale")
+    @SaCheckRole("普通用户")
     public SaResult userConfirmsSale(@RequestParam("id")Long id){
         return purchaseOrderFormService.userConfirmsSale(id);
     }
@@ -167,6 +176,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:34
      */
     @PostMapping("updatePurchaseOrderFormById")
+    @SaCheckRole("管理员")
     public SaResult updatePurchaseOrderFormById(@RequestBody PurchaseOrderForm purchaseOrderForm){
         return purchaseOrderFormService.updatePurchaseOrderFormById(purchaseOrderForm);
     }
@@ -179,6 +189,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:34
      */
     @GetMapping("productListingById")
+    @SaCheckRole("管理员")
     public SaResult productListingById(@RequestParam("id")Long id){
         return purchaseOrderFormService.productListingById(id);
     }
@@ -191,6 +202,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:35
      */
     @GetMapping("updateStateSet6ById")
+    @SaCheckRole("普通用户")
     public SaResult updateStateSet6ById(@RequestParam("id")Long id){
         return purchaseOrderFormService.updateStateSet6ById(id);
     }
@@ -205,6 +217,7 @@ public class PurchaseOrderFormController {
      * &#064;2024/4/5 14:35
      */
     @GetMapping("getPageByUidAndState")
+    @SaCheckRole("普通用户")
     public SaResult getPageByIdAndState(@RequestParam("state")int state,@RequestParam("page")int page,@RequestParam("rows")int rows){
         return purchaseOrderFormService.getPageByIdAndState(state,page,rows);
     }
