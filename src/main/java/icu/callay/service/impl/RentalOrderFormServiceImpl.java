@@ -109,7 +109,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
             });
             return SaResult.data(orderFormList);
         } catch (Exception e) {
-            throw new RuntimeException("获取商品信息失败");
+            throw new RuntimeException("订单获取失败");
         }
     }
 
@@ -233,7 +233,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
         }
         catch (Exception e){
             System.out.println(e.getMessage());
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException("订单获取失败");
         }
     }
 

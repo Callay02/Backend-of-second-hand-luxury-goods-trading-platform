@@ -32,7 +32,7 @@ public class GoodsBrandServiceImpl extends ServiceImpl<GoodsBrandMapper, GoodsBr
     @Transactional(rollbackFor = Exception.class)
     public SaResult getGoodsBrand() {
         try {
-            List<GoodsBrand> goodsBrandList = goodsBrandMapper.getGoodsBrand();
+            List<GoodsBrand> goodsBrandList = goodsBrandMapper.selectList(new QueryWrapper<GoodsBrand>().eq("state",1));
             return SaResult.data(goodsBrandList);
         }
         catch (Exception e){
@@ -45,7 +45,7 @@ public class GoodsBrandServiceImpl extends ServiceImpl<GoodsBrandMapper, GoodsBr
     public SaResult getGoodsBrandPage(int page, int rows) {
         try {
             Page<GoodsBrand> brandPage = new Page<>(page,rows);
-            goodsBrandMapper.selectPage(brandPage,null);
+            goodsBrandMapper.selectPage(brandPage,new QueryWrapper<GoodsBrand>().eq("state",1));
 
             GoodsBrandPageVo goodsBrandPageVo = new GoodsBrandPageVo();
             goodsBrandPageVo.setGoodsBrandList(brandPage.getRecords());
@@ -63,6 +63,7 @@ public class GoodsBrandServiceImpl extends ServiceImpl<GoodsBrandMapper, GoodsBr
     public SaResult addBrand(GoodsBrand goodsBrand) {
         try {
             if(count(new QueryWrapper<GoodsBrand>().eq("id",goodsBrand.getId()))==0){
+                goodsBrand.setState(1);
                 save(goodsBrand);
                 return SaResult.ok("添加成功");
             }
@@ -77,7 +78,7 @@ public class GoodsBrandServiceImpl extends ServiceImpl<GoodsBrandMapper, GoodsBr
     @Transactional(rollbackFor = Exception.class)
     public SaResult deleteBrandById(GoodsBrand goodsBrand) {
         try{
-            remove(new QueryWrapper<GoodsBrand>().eq("id",goodsBrand.getId()));
+            update(new UpdateWrapper<GoodsBrand>().eq("id",goodsBrand.getId()).set("state",0));
             return SaResult.ok("删除成功");
         }
         catch (Exception e){

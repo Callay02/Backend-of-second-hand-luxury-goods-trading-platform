@@ -171,6 +171,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
                 orderFormVo.setId(orderForm.getId());
                 orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
                 orderFormVo.setAddress(orderForm.getAddress());
+                orderFormVo.setCourierCode(orderForm.getCourierCode());
 
                 orderFormList.add(orderFormVo);
 

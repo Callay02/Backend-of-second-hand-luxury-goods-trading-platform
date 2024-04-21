@@ -1,6 +1,5 @@
 package icu.callay.entity;
 
-import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
@@ -28,5 +27,6 @@ public class GoodsType implements Serializable {
 
     private String name;
 
+    private Integer state;
 }
 

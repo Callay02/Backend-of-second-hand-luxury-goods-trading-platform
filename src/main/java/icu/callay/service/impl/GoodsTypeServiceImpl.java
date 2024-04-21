@@ -31,7 +31,7 @@ public class GoodsTypeServiceImpl extends ServiceImpl<GoodsTypeMapper, GoodsType
     @Transactional(rollbackFor = Exception.class)
     public SaResult getGoodsType() {
         try{
-            List<GoodsType> goodsTypeList =goodsTypeMapper.getGoodsType();
+            List<GoodsType> goodsTypeList =goodsTypeMapper.selectList(new QueryWrapper<GoodsType>().eq("state",1));
             return SaResult.data(goodsTypeList);
         }
         catch (Exception e) {
@@ -44,7 +44,7 @@ public class GoodsTypeServiceImpl extends ServiceImpl<GoodsTypeMapper, GoodsType
     public SaResult getGoodsTypePage(int page, int rows) {
         try {
             Page<GoodsType> goodsTypePage = new Page<>(page,rows);
-            goodsTypeMapper.selectPage(goodsTypePage,null);
+            goodsTypeMapper.selectPage(goodsTypePage,new QueryWrapper<GoodsType>().eq("state",1));
 
             GoodsTypePageVo goodsTypePageVo = new GoodsTypePageVo();
             goodsTypePageVo.setGoodsTypeList(goodsTypePage.getRecords());
@@ -62,6 +62,7 @@ public class GoodsTypeServiceImpl extends ServiceImpl<GoodsTypeMapper, GoodsType
     public SaResult addGoodsType(GoodsType goodsType) {
         try {
             if(count(new QueryWrapper<GoodsType>().eq("type",goodsType.getType()))==0){
+                goodsType.setState(1);
                 save(goodsType);
                 return SaResult.ok("添加成功");
             }
@@ -77,7 +78,7 @@ public class GoodsTypeServiceImpl extends ServiceImpl<GoodsTypeMapper, GoodsType
     @Transactional(rollbackFor = Exception.class)
     public SaResult deleteTypeById(int type) {
         try{
-            remove(new QueryWrapper<GoodsType>().eq("type",type));
+            update(new UpdateWrapper<GoodsType>().eq("type",type).set("state",0));
             return SaResult.ok("删除成功");
         }
         catch (Exception e){

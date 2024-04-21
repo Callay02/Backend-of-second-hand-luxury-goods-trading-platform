@@ -27,5 +27,6 @@ public class GoodsBrand implements Serializable {
 
     private String name;
 
+    private Integer state;
 }
 

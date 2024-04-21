@@ -43,7 +43,9 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
         try {
             Page<RentalGoods> rentalGoodsPage = new Page<>(page,rows);
             if(Objects.equals(state, "")){
-                rentalGoodsMapper.selectPage(rentalGoodsPage,new QueryWrapper<>());
+                QueryWrapper<RentalGoods> rentalGoodsQueryWrapper = new QueryWrapper<>();
+                rentalGoodsQueryWrapper.eq("state",0).or().eq("state",1);
+                rentalGoodsMapper.selectPage(rentalGoodsPage,rentalGoodsQueryWrapper);
             }
             else{
                 rentalGoodsMapper.selectPage(rentalGoodsPage,new QueryWrapper<RentalGoods>().eq("state",state));
@@ -235,7 +237,7 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
             }
             goods.setUserId(Long.valueOf(rentalGoods.getUid()));
             goodsMapper.insert(goods);
-            remove(new QueryWrapper<RentalGoods>().eq("id",rgid));
+            update(new UpdateWrapper<RentalGoods>().eq("id",rgid).set("state",3));
             return SaResult.ok("转移成功");
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
