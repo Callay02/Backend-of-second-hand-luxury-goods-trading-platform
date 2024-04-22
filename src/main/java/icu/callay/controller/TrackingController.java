@@ -47,11 +47,9 @@ public class TrackingController {
             createTrackingParams.setTrackingNumber(trackingNumber);
             createTrackingParams.setCourierCode(courierCode);
             Tracking51Response<Tracking> result = tracking51.trackings.CreateTracking(createTrackingParams);
-            System.out.println(result.getMeta().getCode());
+
             if(result.getData() != null){
                 Tracking trackings = result.getData();
-                System.out.println(trackings);
-                System.out.println(trackings.getTrackingNumber());
                 return SaResult.data(trackings);
             }
             return SaResult.error();

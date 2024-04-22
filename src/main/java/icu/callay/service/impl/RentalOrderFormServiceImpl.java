@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import icu.callay.controller.TrackingController;
 import icu.callay.entity.*;
 import icu.callay.mapper.*;
 import icu.callay.service.RentalOrderFormService;
@@ -37,6 +38,7 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
     private final UserMapper userMapper;
     private final GoodsMapper goodsMapper;
     private final OrderFormMapper orderFormMapper;
+    private final TrackingController trackingController;
 
 
     @Override
@@ -263,13 +265,17 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
         try {
             RentalOrderForm orderForm1 = getById(rentalOrderForm.getId());
             if(orderForm1.getState()==0){
-                orderForm1.setState(1);
-                orderForm1.setLogisticsNumber(rentalOrderForm.getLogisticsNumber());
-                orderForm1.setCourierCode(rentalOrderForm.getCourierCode());
-                orderForm1.setUpdateTime(new Date());
-                orderForm1.setDeliveryTime(new Date());
-                update(orderForm1,new UpdateWrapper<RentalOrderForm>().eq("id",orderForm1.getId()));
-                return SaResult.ok("发货成功");
+
+                if(trackingController.create(rentalOrderForm.getCourierCode(),rentalOrderForm.getLogisticsNumber()).getCode()==200){
+                    orderForm1.setState(1);
+                    orderForm1.setLogisticsNumber(rentalOrderForm.getLogisticsNumber());
+                    orderForm1.setCourierCode(rentalOrderForm.getCourierCode());
+                    orderForm1.setUpdateTime(new Date());
+                    orderForm1.setDeliveryTime(new Date());
+                    update(orderForm1,new UpdateWrapper<RentalOrderForm>().eq("id",orderForm1.getId()));
+                    return SaResult.ok("发货成功");
+                }
+                return SaResult.ok("物流信息录入失败");
             }
             return SaResult.error("商品已发货");
         }
@@ -342,9 +348,14 @@ public class RentalOrderFormServiceImpl extends ServiceImpl<RentalOrderFormMappe
                         .set("end_time",new Date())
                         .set("state",3)
                         .set("logistics_number",rentalOrderForm.getLogisticsNumber())
+                        .set("courier_code",rentalOrderForm.getCourierCode())
                         .set("update_time",new Date());
-                update(updateWrapper);
-                return SaResult.ok("退回成功");
+
+                if(trackingController.create(rentalOrderForm.getCourierCode(),rentalOrderForm.getLogisticsNumber()).getCode()==200){
+                    update(updateWrapper);
+                    return SaResult.ok("退回成功");
+                }
+                return SaResult.error("物流信息录入失败");
             }
             return SaResult.error("用户不匹配");
         }catch (Exception e){

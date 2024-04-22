@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import icu.callay.controller.TrackingController;
 import icu.callay.entity.Goods;
 import icu.callay.entity.RegularUser;
 import icu.callay.mapper.*;
@@ -38,17 +39,21 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
     private final GoodsBrandMapper goodsBrandMapper;
     private final RegularUserMapper regularUserMapper;
     private final GoodsMapper goodsMapper;
+    private final TrackingController trackingController;
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public SaResult createOrderForm(PurchaseOrderForm purchaseOrderForm) {
         try {
-            purchaseOrderForm.setCreateTime(new Date());
-            purchaseOrderForm.setUpdateTime(new Date());
-            purchaseOrderForm.setState(0);
-            save(purchaseOrderForm);
-            return SaResult.ok("创建成功");
+            if(trackingController.create(purchaseOrderForm.getCourierCode(),purchaseOrderForm.getLogisticsNumber()).getCode()==200){
+                purchaseOrderForm.setCreateTime(new Date());
+                purchaseOrderForm.setUpdateTime(new Date());
+                purchaseOrderForm.setState(0);
+                save(purchaseOrderForm);
+                return SaResult.ok("创建成功");
+            }
+            return SaResult.error("物流信息录入错误");
         }
         catch (Exception e){
             throw new RuntimeException(e.getMessage());
@@ -227,10 +232,13 @@ public class PurchaseOrderFormServiceImpl extends ServiceImpl<PurchaseOrderFormM
     @Transactional(rollbackFor = Exception.class)
     public SaResult updateStateSet5ById(PurchaseOrderForm purchaseOrderForm) {
         try {
-            purchaseOrderForm.setState(5);
-            purchaseOrderForm.setUpdateTime(new Date());
-            update(purchaseOrderForm,new UpdateWrapper<PurchaseOrderForm>().eq("id",purchaseOrderForm.getId()));
-            return SaResult.ok("退货成功");
+            if(trackingController.create(purchaseOrderForm.getCourierCode(),purchaseOrderForm.getLogisticsNumber()).getCode()==200){
+                purchaseOrderForm.setState(5);
+                purchaseOrderForm.setUpdateTime(new Date());
+                update(purchaseOrderForm,new UpdateWrapper<PurchaseOrderForm>().eq("id",purchaseOrderForm.getId()));
+                return SaResult.ok("退货成功");
+            }
+            return SaResult.ok("物流信息录入失败");
         }
         catch (Exception e){
             throw new RuntimeException("退货失败");

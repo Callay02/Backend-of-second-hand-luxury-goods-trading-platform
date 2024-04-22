@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import icu.callay.controller.TrackingController;
 import icu.callay.entity.*;
 import icu.callay.mapper.*;
 import icu.callay.service.OrderFormService;
@@ -40,6 +41,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
     private final UserMapper userMapper;
     private final SalespersonUserMapper salespersonUserMapper;
     private final RentalOrderFormMapper rentalOrderFormMapper;
+    private final TrackingController trackingController;
 
 
     @Override
@@ -212,6 +214,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
                 orderFormVo.setId(orderForm.getId());
                 orderFormVo.setLogisticsNumber(orderForm.getLogisticsNumber());
                 orderFormVo.setAddress(orderForm.getAddress());
+                orderFormVo.setCourierCode(orderForm.getCourierCode());
 
                 orderFormList.add(orderFormVo);
 
@@ -296,10 +299,14 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
         try {
             OrderForm orderForm1 = getById(orderForm.getId());
             if(orderForm1.getState()==0){
-                orderForm.setState(1);
-                orderForm.setDeliveryTime(new Date());
-                update(orderForm,new UpdateWrapper<OrderForm>().eq("id",orderForm.getId()));
-                return SaResult.ok("发货成功");
+                //录入物流信息
+                if(trackingController.create(orderForm.getCourierCode(),orderForm.getLogisticsNumber()).getCode()==200){
+                    orderForm.setState(1);
+                    orderForm.setDeliveryTime(new Date());
+                    update(orderForm,new UpdateWrapper<OrderForm>().eq("id",orderForm.getId()));
+                    return SaResult.ok("发货成功");
+                }
+                return SaResult.error("物流信息录入失败");
             }
             return SaResult.error("商品已发货");
         }
