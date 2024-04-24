@@ -181,5 +181,17 @@ public class UserController {
     public SaResult userResetPassword(@RequestBody UserRegisterVo user){
         return userService.userResetPassword(user);
     }
+
+    /**
+     * @param user:
+     * @return SaResult
+     * @author Callay
+     * &#064;description 管理员更改用户密码
+     * &#064;2024/4/24 14:58
+     */
+    @PostMapping("adminChangePasswordById")
+    public SaResult adminChangePasswordById(@RequestBody User user){
+        return userService.adminChangePasswordById(user);
+    }
 }
 

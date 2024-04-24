@@ -32,6 +32,8 @@ public interface UserService extends IService<User> {
     SaResult adminAddUser(User user);
 
     SaResult userResetPassword(UserRegisterVo user);
+
+    SaResult adminChangePasswordById(User user);
 }
 
 

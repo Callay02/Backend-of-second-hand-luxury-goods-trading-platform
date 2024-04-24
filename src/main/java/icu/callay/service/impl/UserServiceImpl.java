@@ -382,6 +382,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SaResult adminChangePasswordById(User user) {
+        try {
+            //AES加密密码
+            String a = user.getIdCard();
+            String aesKey = Base64.encode(a);
+            AES aes = SecureUtil.aes(aesKey.getBytes());
+            String aesPasswd = aes.encryptHex(user.getPassword());
+
+            update(new UpdateWrapper<User>().eq("id",user.getId()).set("password",aesPasswd).set("update_time",new Date()));
+            return SaResult.ok("更改成功");
+        }
+        catch (Exception e){
+            throw new RuntimeException("更改失败");
+        }
+    }
+
 
 }
 
