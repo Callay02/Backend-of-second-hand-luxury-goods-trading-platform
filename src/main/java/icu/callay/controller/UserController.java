@@ -193,5 +193,17 @@ public class UserController {
     public SaResult adminChangePasswordById(@RequestBody User user){
         return userService.adminChangePasswordById(user);
     }
+
+    /**
+     * @return SaResult
+     * @author Callay
+     * &#064;description 获取在线用户数量
+     * &#064;2024/4/26 23:50
+     */
+    @SaCheckRole("管理员")
+    @GetMapping("getOnlineUserNumber")
+    public SaResult getOnlineUserNumber(){
+        return userService.getOnlineUserNumber();
+    }
 }
 

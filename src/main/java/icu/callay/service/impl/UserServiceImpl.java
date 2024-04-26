@@ -19,11 +19,9 @@ import icu.callay.entity.User;
 import icu.callay.mapper.RegularUserMapper;
 import icu.callay.mapper.SalespersonUserMapper;
 import icu.callay.mapper.UserMapper;
+import icu.callay.mapper.UserTypeMapper;
 import icu.callay.service.UserService;
-import icu.callay.vo.RegularUserVo;
-import icu.callay.vo.SalespersonUserVo;
-import icu.callay.vo.UserPageVo;
-import icu.callay.vo.UserRegisterVo;
+import icu.callay.vo.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -397,6 +395,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         catch (Exception e){
             throw new RuntimeException("更改失败");
+        }
+    }
+
+    @Override
+    public SaResult getOnlineUserNumber() {
+        try {
+            OnlineUserNumberVo onlineUserNumberVo = new OnlineUserNumberVo();
+            List<String> loginIds = StpUtil.searchSessionId("",0,-1,false);
+            loginIds.forEach(loginId ->{
+                User onlineUser = getById(loginId.split(":")[3]);
+                switch (onlineUser.getType()){
+                    case 0:
+                        onlineUserNumberVo.setRegularUser(onlineUserNumberVo.getRegularUser()+1);
+                        break;
+                    case 1:
+                        onlineUserNumberVo.setSalesperson(onlineUserNumberVo.getSalesperson()+1);
+                        break;
+                    case 2:
+                        onlineUserNumberVo.setAppraiser(onlineUserNumberVo.getAppraiser()+1);
+                        break;
+                    case 3:
+                        onlineUserNumberVo.setAdmin(onlineUserNumberVo.getAdmin()+1);
+                }
+            });
+            return SaResult.data(onlineUserNumberVo);
+        }
+        catch (Exception e){
+            return SaResult.error(e.getMessage());
         }
     }
 
