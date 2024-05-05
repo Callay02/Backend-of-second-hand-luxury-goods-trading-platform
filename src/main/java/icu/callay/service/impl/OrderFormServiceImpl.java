@@ -322,6 +322,7 @@ public class OrderFormServiceImpl extends ServiceImpl<OrderFormMapper, OrderForm
             OrderForm orderForm1 = getById(orderForm.getId());
             if(orderForm1.getState()==1){
                 orderForm.setDeliveryTime(new Date());
+                trackingController.create(orderForm.getCourierCode(),orderForm.getLogisticsNumber());
                 update(orderForm,new UpdateWrapper<OrderForm>().eq("id",orderForm.getId()));
                 return SaResult.ok("更新成功");
             }
