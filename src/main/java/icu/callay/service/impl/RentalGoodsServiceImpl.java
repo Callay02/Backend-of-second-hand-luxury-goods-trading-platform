@@ -114,7 +114,7 @@ public class RentalGoodsServiceImpl extends ServiceImpl<RentalGoodsMapper, Renta
     @Transactional(rollbackFor = Exception.class)
     public SaResult deleteGoodsById(RentalGoods rentalGoods) {
         try {
-            remove(new QueryWrapper<RentalGoods>().eq("id",rentalGoods.getId()));
+            update(new UpdateWrapper<RentalGoods>().eq("id",rentalGoods.getId()).set("state",0));
             return SaResult.ok("删除成功");
         }
         catch (Exception e){
