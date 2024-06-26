@@ -8,7 +8,6 @@ import icu.callay.entity.Goods;
 import icu.callay.service.GoodsService;
 import icu.callay.vo.SearchGoodsVo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
  * @author Callay
  * @since 2024-01-30 19:08:08
  */
-@Slf4j
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor

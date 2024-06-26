@@ -154,7 +154,7 @@ public class AliPayController {
                 String alipayTradeNo=params.get("trade_no");
                 String buyerPayAmount = params.get("buyer_pay_amount");
                 String uid = tradeNo.split("_")[1];
-                log.info("用户id："+uid);
+                log.info("用户id:"+uid);
                 try {
                     //充值类型订单
                     if(Objects.equals(params.get("subject"), "充值")){

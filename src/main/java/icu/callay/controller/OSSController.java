@@ -6,6 +6,8 @@ import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +21,15 @@ import java.util.Map;
 @RequestMapping("/oss")
 public class OSSController {
 
+    @Value("${aliyunoss.accessId}")
+    private String accessId;
+    @Value("${aliyunoss.accessKey}")
+    private String accessKey;
+    @Value("${aliyunoss.endpoint}")
+    private String endpoint;
+    @Value("${aliyunoss.bucket}")
+    private String bucket;
+
     /**
      * @return SaResult
      * @author Callay
@@ -27,10 +38,6 @@ public class OSSController {
      */
     @RequestMapping("/policy")
     public SaResult policy(){
-        String accessId ="LTAI5tDqLBMKXMws6CkuGZNh";
-        String accessKey="8sxryFQXWDFSoseavjzIPxID1gjA6J";
-        String endpoint="oss-cn-hangzhou.aliyuncs.com";
-        String bucket="callay-spdb";
         String host="https://"+bucket+"."+endpoint;
 
         String dir="goods-img/"+ LocalDate.now()+"/";

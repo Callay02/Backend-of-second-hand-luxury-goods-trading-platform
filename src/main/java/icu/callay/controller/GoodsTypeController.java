@@ -7,7 +7,6 @@ import cn.dev33.satoken.util.SaResult;
 import icu.callay.entity.GoodsType;
 import icu.callay.service.GoodsTypeService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
  * @author Callay
  * @since 2024-01-30 19:07:47
  */
-@Slf4j
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
